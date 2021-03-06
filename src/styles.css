@@ -1,0 +1,23 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+html,
+body,
+main,
+.App,
+#root {
+  height: 100%;
+}
+
+.so {
+  background-color: white;
+  color: red;
+  font-size: 2em;
+}

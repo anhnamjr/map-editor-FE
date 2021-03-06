@@ -1,0 +1,104 @@
+import React, { useState } from "react";
+import { FeatureGroup, Polyline, Marker, Polygon } from "react-leaflet";
+import { EditControl } from "react-leaflet-draw";
+import { useDispatch } from "react-redux";
+import { STORE_GEOM_COOR } from "../../constants/actions";
+import { reverseCoor } from "../../utils";
+import { Popover } from "antd";
+
+export default function Draw({ geoData }) {
+  const dispatch = useDispatch();
+  const [showPopover, setShowPopover] = useState(false);
+
+  const controlCreate = (e) => {
+    let geom = e.layer.toGeoJSON().geometry;
+    console.log(geom);
+    dispatch({ type: STORE_GEOM_COOR, payload: geom });
+  };
+
+  const handleEdit = (e) => {
+    console.log(Object.entries(e.layers._layers));
+  };
+
+  const handleEditStart = (e) => {
+    console.log(e);
+  };
+
+  const handleDelete = (e) => {
+    console.log(e);
+  };
+
+  const handleClick = (e) => {
+    console.log(e.layer.toGeoJSON());
+  };
+
+  const showGeomPopover = (item) => {
+    console.log(showPopover);
+    setShowPopover(true);
+  };
+
+  const renderGeo = (geoData) => {
+    if (geoData.features) {
+      return geoData.features.map((item) => {
+        let geomInfo = null;
+        if (item.geometry.type === "LineString") {
+          geomInfo = (
+            <Polyline
+              key={item.properties.geoID}
+              positions={reverseCoor(item.geometry.coordinates)}
+              onClick={() => showGeomPopover(item)}
+            />
+          );
+        }
+        if (item.geometry.type === "Polygon") {
+          geomInfo = (
+            <Polygon
+              key={item.properties.geoID}
+              positions={reverseCoor(item.geometry.coordinates[0])}
+              onClick={() => showGeomPopover(item)}
+            />
+          );
+        }
+        if (item.geometry.type === "Point") {
+          geomInfo = (
+            <Marker
+              key={item.properties.geoID}
+              position={[
+                item.geometry.coordinates[1],
+                item.geometry.coordinates[0],
+              ]}
+              onClick={() => showGeomPopover(item)}
+            />
+          );
+        }
+
+        return (
+          <Popover
+            key={item.geometry.coordinates[0]}
+            content={<div onClick={() => setShowPopover(false)}>Close</div>}
+            title="Title"
+            placement="top"
+            trigger="click"
+            visible={showPopover}
+          >
+            {geomInfo}
+          </Popover>
+        );
+      });
+    }
+  };
+
+  return (
+    <FeatureGroup onClick={handleClick}>
+      <EditControl
+        position="topright"
+        key="feature-group"
+        onEdited={handleEdit}
+        onDeleted={handleDelete}
+        onCreated={controlCreate}
+        onEditStart={handleEditStart}
+      />
+      {geoData.features && renderGeo(geoData)}
+    </FeatureGroup>
+  );
+}
