@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "./styles.css";
 import "antd/dist/antd.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
-import MapSidebar from "./components/MapSidebar";
+import MapSidebar from "../../components/MapSidebar";
 import { useSelector } from "react-redux";
-import MapLayerControl from "./components/MapLayerControl";
-import Draw from "./components/Draw";
+import MapLayerControl from "../../components/MapLayerControl";
+import Draw from "../../components/Draw";
 
-const App = () => {
+const Maps = () => {
   const [geoData, setGeoData] = useState({});
   const data = useSelector((state) => state.layerReducer.layerData);
 
@@ -32,4 +31,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Maps;
