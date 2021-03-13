@@ -10,7 +10,7 @@ const { TabPane } = Tabs;
 const CustomPopup = () => {
   return (
     <Popup>
-      <Tabs defaultActiveKey="2">
+      <Tabs defaultActiveKey="1">
         <TabPane
           tab={
             <span>
@@ -20,7 +20,7 @@ const CustomPopup = () => {
           }
           key="1"
         >
-          Tab 1
+
         </TabPane>
         <TabPane
           tab={

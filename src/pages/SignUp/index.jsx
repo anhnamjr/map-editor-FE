@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import './style.css';
 import { Form, Input, Select, Checkbox, Button } from 'antd';
+import axios from 'axios'
+import { BASE_URL } from '../../constants/endpoint'
 const { Option } = Select;
+
 
 const formItemLayout = {
   labelCol: {
-    
+
     xs: {
       span: 24,
     },
@@ -44,32 +47,55 @@ export default function SignUp() {
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
+    const data = {username: values.username, password: values.password, email: values.email}
+    console.log(data)
+    const result = axios.post(`${BASE_URL}/register`, data).then(console.log(result))
+
+    
+
   }
-    const prefixSelector = (
-      <Form.Item name="prefix" noStyle>
-        <Select
-          style={{
-            width: 70,
-          }}
-        >
-          <Option value="84">+84</Option>
-          <Option value="87">+87</Option>
-        </Select>
-      </Form.Item>
-    );
-  
+  const prefixSelector = (
+    <Form.Item name="prefix" noStyle>
+      <Select
+        style={{
+          width: 70,
+        }}
+      >
+        <Option value="84">+84</Option>
+        <Option value="87">+87</Option>
+      </Select>
+    </Form.Item>
+  );
+
   return (
     <Form
-    {...formItemLayout}
-    form={form}
-    name="register"
-    onFinish={onFinish}
-    initialValues={{
-      prefix: '84',
-    }}
-    scrollToFirstError
+      {...formItemLayout}
+      form={form}
+      name="register"
+      onFinish={onFinish}
+      initialValues={{
+        prefix: '84',
+      }}
+      scrollToFirstError
     >
       <h1>Sign up</h1>
+      <Form.Item
+        name="username"
+        label="Username"
+        rules={[
+          // {
+          //   type: 'text',
+          //   message: 'Username was existed!',
+          // },
+          {
+            required: true,
+            message: 'Please input your username',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
       <Form.Item
         name="email"
         label="E-mail"
