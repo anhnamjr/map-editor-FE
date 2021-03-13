@@ -2,12 +2,14 @@ import React from "react";
 import { Tabs, Table } from "antd";
 import { Popup } from "react-leaflet";
 import { AppleOutlined, AndroidOutlined } from "@ant-design/icons";
+import PropertyTab from "../PropertyTab";
+import AttributeTab from "../AttributeTab";
 
-import './style.scss'
+import "./style.scss";
 
 const { TabPane } = Tabs;
 
-const CustomPopup = () => {
+const CustomPopup = ({ item }) => {
   return (
     <Popup>
       <Tabs defaultActiveKey="2">
@@ -20,7 +22,7 @@ const CustomPopup = () => {
           }
           key="1"
         >
-          Tab 1
+          <PropertyTab item={item} />
         </TabPane>
         <TabPane
           tab={
@@ -31,7 +33,7 @@ const CustomPopup = () => {
           }
           key="2"
         >
-          Tab 2
+          <AttributeTab item={item} />
         </TabPane>
       </Tabs>
     </Popup>

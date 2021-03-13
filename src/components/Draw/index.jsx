@@ -1,10 +1,19 @@
 import React from "react";
-import { FeatureGroup, Polyline, Marker, Polygon, Popup } from "react-leaflet";
+import {
+  FeatureGroup,
+  Polyline,
+  Marker,
+  Polygon,
+  Circle,
+  Popup,
+} from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
 import { reverseCoor } from "../../utils";
 import CustomPopup from "./components/CustomPopup";
+import ReactDOMServer from "react-dom/server";
+import AttributeTab from "./components/AttributeTab";
 
 export default function Draw({ geoData }) {
   const dispatch = useDispatch();
@@ -12,8 +21,14 @@ export default function Draw({ geoData }) {
     let geom = e.layer.toGeoJSON().geometry;
     geom = {
       type: geom.type,
-      coordinates: [geom.coordinates],
+      coordinates: geom.coordinates,
     };
+    if (e.layer._mRadius) {
+      geom = {
+        ...geom,
+        properties: { ...geom.properties, radius: e.layer._mRadius },
+      };
+    }
     dispatch({ type: STORE_GEOM_COOR, payload: geom });
   };
 
@@ -30,7 +45,21 @@ export default function Draw({ geoData }) {
   };
 
   const handleClick = (e) => {
-    console.log(e.layer.toGeoJSON());
+    // console.log(e.layer.toGeoJSON().geometry);
+    var layer = e.layer;
+    const initState = {
+      color: "",
+      fillColor: "",
+      fillOpacity: 0.5,
+      weight: 1,
+      dashArray: 0,
+    };
+    // console.log(
+    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
+    // );
+    // layer.bindPopup(
+    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
+    // );
   };
 
   const showGeomPopover = (item) => {
@@ -47,7 +76,7 @@ export default function Draw({ geoData }) {
               positions={reverseCoor(item.geometry.coordinates)}
               onClick={() => showGeomPopover(item)}
             >
-              <CustomPopup />
+              <CustomPopup item={item} />
             </Polyline>
           );
         }
@@ -61,25 +90,40 @@ export default function Draw({ geoData }) {
               fillColor="red"
               weight={5}
               dashArray={100}
-              dassOffset={100}
             >
-              <CustomPopup />
+              <CustomPopup item={item} />
             </Polygon>
           );
         }
         if (item.geometry.type === "Point") {
-          return (
-            <Marker
-              key={item.properties.geoID}
-              position={[
-                item.geometry.coordinates[1],
-                item.geometry.coordinates[0],
-              ]}
-              onClick={() => showGeomPopover(item)}
-            >
-              <CustomPopup />
-            </Marker>
-          );
+          if (item.properties.radius) {
+            return (
+              <Circle
+                key={item.properties.geoID}
+                center={[
+                  item.geometry.coordinates[1],
+                  item.geometry.coordinates[0],
+                ]}
+                radius={item.properties.radius}
+                onClick={() => showGeomPopover(item)}
+              >
+                <CustomPopup item={item} />
+              </Circle>
+            );
+          } else {
+            return (
+              <Marker
+                key={item.properties.geoID}
+                position={[
+                  item.geometry.coordinates[1],
+                  item.geometry.coordinates[0],
+                ]}
+                onClick={() => showGeomPopover(item)}
+              >
+                <CustomPopup item={item} />
+              </Marker>
+            );
+          }
         }
         return null;
       });
