@@ -1,6 +1,7 @@
 import React from "react";
 import 'antd/dist/antd.css';
 import './style.css';
+import './wallpaper.png'
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import {Link} from 'react-router-dom'
@@ -15,7 +16,10 @@ export default function SignIn() {
 
   };
 
-  return ( 
+  return (
+    <div className="container">
+
+    
     <Form
       name="normal_login"
       className="login-form"
@@ -70,5 +74,6 @@ export default function SignIn() {
 
       </Form.Item>
     </Form>
+    </div>
   );
 }

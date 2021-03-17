@@ -7,37 +7,37 @@ import { BASE_URL } from '../../constants/endpoint'
 const { Option } = Select;
 
 
-const formItemLayout = {
-  labelCol: {
+// const formItemLayout = {
+//   labelCol: {
 
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 3,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
-  },
-};
+//     xs: {
+//       span: 24,
+//     },
+//     sm: {
+//       span: 3,
+//     },
+//   },
+//   wrapperCol: {
+//     xs: {
+//       span: 24,
+//     },
+//     sm: {
+//       span: 16,
+//     },
+//   },
+// };
+// const tailFormItemLayout = {
+//   wrapperCol: {
+//     xs: {
+//       span: 24,
+//       offset: 0,
+//     },
+//     sm: {
+//       span: 16,
+//       offset: 8,
+//     },
+//   },
+// };
 
 
 
@@ -49,29 +49,17 @@ export default function SignUp() {
     console.log('Received values of form: ', values);
     const data = {username: values.username, password: values.password, email: values.email}
     console.log(data)
-    const result = axios.post(`${BASE_URL}/register`, data).then(console.log(result))
-
-    
-
+    axios.post(`${BASE_URL}/register`, data).then((res) => {
+      console.log(res)
+    })
   }
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="84">+84</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
 
   return (
     <Form
-      {...formItemLayout}
+      // {...formItemLayout}
       form={form}
       name="register"
+      className="register-form"
       onFinish={onFinish}
       initialValues={{
         prefix: '84',
@@ -151,44 +139,8 @@ export default function SignUp() {
         <Input.Password />
       </Form.Item>
 
-
-
-      <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your phone number!',
-          },
-        ]}
-      >
-        <Input
-          addonBefore={prefixSelector}
-          style={{
-            width: '100%',
-          }}
-        />
-      </Form.Item>
-
-
-
-      <Form.Item
-        name="agreement"
-        valuePropName="checked"
-        rules={[
-          {
-            validator: (_, value) =>
-              value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-          },
-        ]}
-        {...tailFormItemLayout}
-      >
-        <Checkbox>
-          I have read the <a href="">agreement</a>
-        </Checkbox>
-      </Form.Item>
-      <Form.Item {...tailFormItemLayout}>
+      
+      <Form.Item>
         <Button type="primary" htmlType="submit">
           Register
         </Button>
