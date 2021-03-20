@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Tree } from "antd";
+import { Tree, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import axios from "axios";
-import { FETCH_LAYER_DATA, FETCH_LAYER_TREE } from "../../constants/actions";
+import { FETCH_LAYER_DATA, FETCH_LAYER_TREE, CLEAR_LAYER_DATA } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 
 const LayerTree = () => {
@@ -46,20 +46,29 @@ const LayerTree = () => {
   // setSelectedKeys(selectedKeys);
   // };
 
+  const handleClearTree = () => {
+    dispatch({ type: CLEAR_LAYER_DATA });
+    setCheckedKeys([])
+    setSelectedKeys([])
+  }
+ 
   return (
-    // {
-    <Tree
-      treeData={treeData}
-      checkable
-      onExpand={onExpand}
-      expandedKeys={expandedKeys}
-      autoExpandParent={autoExpandParent}
-      onCheck={onCheck}
-      checkedKeys={checkedKeys}
-      // onSelect={onSelect}
-      selectedKeys={selectedKeys}
-    />
-    // }
+    <>
+      <Button onClick={handleClearTree}>
+        Clear All Layers
+      </Button>
+      <Tree
+        treeData={treeData}
+        checkable
+        onExpand={onExpand}
+        expandedKeys={expandedKeys}
+        autoExpandParent={autoExpandParent}
+        onCheck={onCheck}
+        checkedKeys={checkedKeys}
+        // onSelect={onSelect}
+        selectedKeys={selectedKeys}
+      />
+    </>
   );
 };
 

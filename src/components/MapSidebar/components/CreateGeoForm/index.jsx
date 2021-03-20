@@ -39,19 +39,23 @@ const AddForm = () => {
   }, [geom]);
 
   const onFinish = (values) => {
-    console.log("Success:", values);
-    form.resetFields();
+    let newGeom = JSON.parse(values.geom);
+    const params = {
+      ...values,
+      color: values.color.color || values.color,
+      geom: JSON.stringify(geom),
+    }
+
+    if(newGeom.type === "Point" && newGeom.properties.radius){
+      params.radius = newGeom.properties.radius
+    }
+    
     axios
-      .post(`${BASE_URL}/data`, {
-        ...values,
-        color: values.color.color || values.color,
-        geom: JSON.stringify(geom),
-        radius: geom.properties.radius,
-      })
-      .then((res) => {
-        // form.resetFields()
-        console.log(res.data);
-      });
+    .post(`${BASE_URL}/data`, params)
+    .then((res) => {
+      // form.resetFields()
+    });
+    form.resetFields();
   };
 
   const onFinishFailed = (errorInfo) => {

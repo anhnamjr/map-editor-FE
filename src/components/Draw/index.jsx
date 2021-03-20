@@ -12,15 +12,13 @@ import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
 import { reverseCoor } from "../../utils";
 import CustomPopup from "./components/CustomPopup";
-import ReactDOMServer from "react-dom/server";
-import AttributeTab from "./components/AttributeTab";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
 
 export const GeoContext = createContext(null);
 
 export default function Draw({ geoData }) {
-  const [deleteList, setDeleteList] = useState([]);
+  // const [deleteList, setDeleteList] = useState([]);
 
   const dispatch = useDispatch();
   const controlCreate = (e) => {
