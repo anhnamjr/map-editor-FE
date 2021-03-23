@@ -1,11 +1,10 @@
 import React from "react";
 import { FeatureGroup } from "react-leaflet";
-import Shape from "./components/Shape";
+import Shape from "./components/Shape"
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
-import { reverseCoor, reverseCoorMultiPolygon } from "../../utils";
-import CustomPopup from "./components/CustomPopup";
+import { reverseCoor } from "../../utils";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
 
@@ -102,91 +101,11 @@ export default function Draw({ geoData }) {
     console.log(e.layer.toGeoJSON().geometry);
   };
 
+
   const renderGeo = (geoData) => {
     if (geoData.features) {
-      return geoData.features.map((item) => {
-        // if (item.geometry.type === "LineString") {
-        //   return (
-        //     <Polyline
-        //       key={item.properties.geoID}
-        //       id={item.properties.geoID}
-        //       positions={reverseCoor(item.geometry.coordinates)}
-        //       // onClick={() => showGeomPopover(item)}
-        //     >
-        //       <CustomPopup item={item} />
-        //     </Polyline>
-        //   );
-        // }
-        if (item.geometry.type === "Polygon") {
-          return (
-            <GeoContext.Provider value={item}>
-              <Polygon
-                key={item.properties.geoID}
-                id={item.properties.geoID}
-                positions={reverseCoor(item.geometry.coordinates[0])}
-                // onClick={() => showGeomPopover(item)}
-                color={item.properties.color}
-                fillColor="red"
-                weight={5}
-                dashArray={100}
-              >
-                <CustomPopup item={item} />
-              </Polygon>
-            </GeoContext.Provider>
-          );
-        }
-        if (item.geometry.type === "MultiPolygon") {
-          return (
-            <GeoContext.Provider value={item}>
-              <Polygon
-                key={item.properties.geoID}
-                id={item.properties.geoID}
-                positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
-                // positions={item.geometry.coordinates[0]}
-                // onClick={() => showGeomPopover(item)}
-                color={item.properties.color}
-                fillColor="red"
-                weight={5}
-                dashArray={100}
-              >
-                <CustomPopup item={item} />
-              </Polygon>
-            </GeoContext.Provider>
-          );
-        }
-        // if (item.geometry.type === "Point") {
-        //   if (item.properties.radius) {
-        //     return (
-        //       <Circle
-        //         key={item.properties.geoID}
-        //         id={item.properties.geoID}
-        //         center={[
-        //           item.geometry.coordinates[1],
-        //           item.geometry.coordinates[0],
-        //         ]}
-        //         radius={item.properties.radius}
-        //         // onClick={() => showGeomPopover(item)}
-        //       >
-        //         <CustomPopup item={item} />
-        //       </Circle>
-        //     );
-        //   } else {
-        //     return (
-        //       <Marker
-        //         key={item.properties.geoID}
-        //         id={item.properties.geoID}
-        //         position={[
-        //           item.geometry.coordinates[1],
-        //           item.geometry.coordinates[0],
-        //         ]}
-        //         // onClick={() => showGeomPopover(item)}
-        //       >
-        //         <CustomPopup item={item} />
-        //       </Marker>
-        //     );
-        //   }
-        // }
-        return null;
+      return geoData.features.map((item, index) => {
+        return <Shape item={item} key={index} />
       });
     }
   };
