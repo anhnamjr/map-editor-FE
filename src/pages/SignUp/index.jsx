@@ -1,68 +1,43 @@
-import React from 'react';
-import 'antd/dist/antd.css';
-import './style.css';
-import { Form, Input, Select, Checkbox, Button } from 'antd';
-import axios from 'axios'
-import { BASE_URL } from '../../constants/endpoint'
-const { Option } = Select;
-
+import React from "react";
+import "./style.css";
+import { Form, Input, Button } from "antd";
+import axios from "axios";
+import { BASE_URL } from "../../constants/endpoint";
+import { Link } from "react-router-dom";
 
 // const formItemLayout = {
-//   labelCol: {
-
-//     xs: {
-//       span: 24,
-//     },
-//     sm: {
-//       span: 3,
-//     },
-//   },
-//   wrapperCol: {
-//     xs: {
-//       span: 24,
-//     },
-//     sm: {
-//       span: 16,
-//     },
-//   },
+//   labelCol: { span: 6 },
+//   wrapperCol: { span: 18 },
 // };
 // const tailFormItemLayout = {
-//   wrapperCol: {
-//     xs: {
-//       span: 24,
-//       offset: 0,
-//     },
-//     sm: {
-//       span: 16,
-//       offset: 8,
-//     },
-//   },
+//   wrapperCol: { offset: 8, span: 16 },
 // };
-
-
-
 
 export default function SignUp() {
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-    const data = {username: values.username, password: values.password, email: values.email}
-    console.log(data)
+    console.log("Received values of form: ", values);
+    const data = {
+      username: values.username,
+      password: values.password,
+      email: values.email,
+    };
+    console.log(data);
     axios.post(`${BASE_URL}/register`, data).then((res) => {
-      console.log(res)
-    })
-  }
+      console.log(res);
+    });
+  };
 
   return (
     <Form
-      // {...formItemLayout}
+      layout="vertical"
       form={form}
       name="register"
       className="register-form"
       onFinish={onFinish}
       initialValues={{
-        prefix: '84',
+        prefix: "84",
       }}
       scrollToFirstError
     >
@@ -77,7 +52,7 @@ export default function SignUp() {
           // },
           {
             required: true,
-            message: 'Please input your username',
+            message: "Please input your username",
           },
         ]}
       >
@@ -89,12 +64,12 @@ export default function SignUp() {
         label="E-mail"
         rules={[
           {
-            type: 'email',
-            message: 'The input is not valid E-mail!',
+            type: "email",
+            message: "The input is not valid E-mail!",
           },
           {
             required: true,
-            message: 'Please input your E-mail!',
+            message: "Please input your E-mail!",
           },
         ]}
       >
@@ -107,7 +82,7 @@ export default function SignUp() {
         rules={[
           {
             required: true,
-            message: 'Please input your password!',
+            message: "Please input your password!",
           },
         ]}
         hasFeedback
@@ -118,20 +93,22 @@ export default function SignUp() {
       <Form.Item
         name="confirm"
         label="Confirm Password"
-        dependencies={['password']}
+        dependencies={["password"]}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: "Please confirm your password!",
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
+              if (!value || getFieldValue("password") === value) {
                 return Promise.resolve();
               }
 
-              return Promise.reject(new Error('The two passwords that you entered do not match!'));
+              return Promise.reject(
+                new Error("The two passwords that you entered do not match!")
+              );
             },
           }),
         ]}
@@ -139,13 +116,14 @@ export default function SignUp() {
         <Input.Password />
       </Form.Item>
 
-      
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Register
         </Button>
       </Form.Item>
+      <p>
+        Already have an account? <Link to="/signin">Login</Link>
+      </p>
     </Form>
   );
-
 }

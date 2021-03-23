@@ -6,3 +6,12 @@ export const reverseCoor = (coor) => {
   });
   return res;
 };
+
+export const reverseCoorMultiPolygon = (coor) => {
+  let res = [];
+  coor.forEach((item) => {
+    let a = reverseCoor(item[0]);
+    res.push(a);
+  });
+  return res;
+};

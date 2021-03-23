@@ -1,6 +1,7 @@
 .App {
   font-family: sans-serif;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .leaflet-container {
@@ -20,4 +21,8 @@ main,
   background-color: white;
   color: red;
   font-size: 2em;
+}
+
+.ant-select-dropdown {
+  z-index: 2001;
 }
