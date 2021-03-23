@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Label, Input } from "./styles/form"
 
 export default function Form({ children, ...restProps }) {

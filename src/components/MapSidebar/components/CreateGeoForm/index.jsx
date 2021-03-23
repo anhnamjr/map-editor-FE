@@ -36,7 +36,7 @@ const AddForm = () => {
       geom: JSON.stringify(geom),
       categoryID: type,
     });
-  }, [geom]);
+  }, [geom, form]);
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -135,14 +135,6 @@ const AddForm = () => {
 
       <Form.Item label="Geom" name="geom">
         <Input.TextArea disabled />
-      </Form.Item>
-
-      <Form.Item label="Color" name="color">
-        <ColorPicker
-          animation="slide-up"
-          defaultColor="#333"
-          style={{ zIndex: 2000 }}
-        />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
