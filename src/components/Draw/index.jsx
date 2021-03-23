@@ -10,7 +10,7 @@ import {
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
-import { reverseCoor } from "../../utils";
+import { reverseCoor, reverseCoorMultiPolygon } from "../../utils";
 import CustomPopup from "./components/CustomPopup";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
@@ -154,6 +154,25 @@ export default function Draw({ geoData }) {
                 key={item.properties.geoID}
                 id={item.properties.geoID}
                 positions={reverseCoor(item.geometry.coordinates[0])}
+                // onClick={() => showGeomPopover(item)}
+                color={item.properties.color}
+                fillColor="red"
+                weight={5}
+                dashArray={100}
+              >
+                <CustomPopup item={item} />
+              </Polygon>
+            </GeoContext.Provider>
+          );
+        }
+        if (item.geometry.type === "MultiPolygon") {
+          return (
+            <GeoContext.Provider value={item}>
+              <Polygon
+                key={item.properties.geoID}
+                id={item.properties.geoID}
+                positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
+                // positions={item.geometry.coordinates[0]}
                 // onClick={() => showGeomPopover(item)}
                 color={item.properties.color}
                 fillColor="red"
