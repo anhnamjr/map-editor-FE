@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LayersControl, TileLayer, GeoJSON, LayerGroup, FeatureGroup } from "react-leaflet";
+import { LayersControl, TileLayer, GeoJSON, FeatureGroup } from "react-leaflet";
 import axios from "axios"
 import { BASE_URL } from "../../constants/endpoint";
 

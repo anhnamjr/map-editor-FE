@@ -9,9 +9,9 @@ import { Link } from "react-router-dom";
 //   labelCol: { span: 6 },
 //   wrapperCol: { span: 18 },
 // };
-const tailFormItemLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
+// const tailFormItemLayout = {
+//   wrapperCol: { offset: 8, span: 16 },
+// };
 
 export default function SignUp() {
   const [form] = Form.useForm();

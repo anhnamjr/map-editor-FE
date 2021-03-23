@@ -22,3 +22,7 @@ main,
   color: red;
   font-size: 2em;
 }
+
+.ant-select-dropdown {
+  z-index: 402;
+}
