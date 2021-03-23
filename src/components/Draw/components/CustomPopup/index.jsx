@@ -77,6 +77,7 @@ const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
                 </Form.Row>
               </>
             )}
+            <Form.Submit>Save</Form.Submit>
           </Form>
         </TabPane>
         <TabPane
