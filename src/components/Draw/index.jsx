@@ -1,12 +1,6 @@
-import React, { useState, createContext } from "react";
-import {
-  FeatureGroup,
-  Polyline,
-  Marker,
-  Polygon,
-  Circle,
-  Popup,
-} from "react-leaflet";
+import React from "react";
+import { FeatureGroup } from "react-leaflet";
+import Shape from "./components/Shape";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
@@ -14,8 +8,6 @@ import { reverseCoor, reverseCoorMultiPolygon } from "../../utils";
 import CustomPopup from "./components/CustomPopup";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
-
-export const GeoContext = createContext(null);
 
 export default function Draw({ geoData }) {
   // const [deleteList, setDeleteList] = useState([]);
@@ -68,7 +60,7 @@ export default function Draw({ geoData }) {
             },
           };
         //polygon
-        if (item[1]._latlngs.length == 1)
+        if (item[1]._latlngs.length === 1)
           return {
             geoID: item[1].options.id,
             geom: {
@@ -98,10 +90,6 @@ export default function Draw({ geoData }) {
     axios.post(`${BASE_URL}/edit-geom`, editedGeom);
   };
 
-  // const handleEditStart = (e) => {
-  //   console.log(e);
-  // };
-
   const handleDelete = (e) => {
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
@@ -112,24 +100,6 @@ export default function Draw({ geoData }) {
 
   const handleClick = (e) => {
     console.log(e.layer.toGeoJSON().geometry);
-    var layer = e.layer;
-    const initState = {
-      color: "",
-      fillColor: "",
-      fillOpacity: 0.5,
-      weight: 1,
-      dashArray: 0,
-    };
-    // console.log(
-    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
-    // );
-    // layer.bindPopup(
-    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
-    // );
-  };
-
-  const showGeomPopover = (item) => {
-    console.log(item);
   };
 
   const renderGeo = (geoData) => {
