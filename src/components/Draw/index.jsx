@@ -1,21 +1,12 @@
-import React, { useState, createContext } from "react";
-import {
-  FeatureGroup,
-  Polyline,
-  Marker,
-  Polygon,
-  Circle,
-  Popup,
-} from "react-leaflet";
+import React from "react";
+import { FeatureGroup } from "react-leaflet";
+import Shape from "./components/Shape";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
-import { reverseCoor, reverseCoorMultiPolygon } from "../../utils";
-import CustomPopup from "./components/CustomPopup";
+import { reverseCoor } from "../../utils";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
-
-export const GeoContext = createContext(null);
 
 export default function Draw({ geoData }) {
   // const [deleteList, setDeleteList] = useState([]);
@@ -68,7 +59,7 @@ export default function Draw({ geoData }) {
             },
           };
         //polygon
-        if (item[1]._latlngs.length == 1)
+        if (item[1]._latlngs.length === 1)
           return {
             geoID: item[1].options.id,
             geom: {
@@ -98,10 +89,6 @@ export default function Draw({ geoData }) {
     axios.post(`${BASE_URL}/edit-geom`, editedGeom);
   };
 
-  // const handleEditStart = (e) => {
-  //   console.log(e);
-  // };
-
   const handleDelete = (e) => {
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
@@ -112,111 +99,12 @@ export default function Draw({ geoData }) {
 
   const handleClick = (e) => {
     console.log(e.layer.toGeoJSON().geometry);
-    var layer = e.layer;
-    const initState = {
-      color: "",
-      fillColor: "",
-      fillOpacity: 0.5,
-      weight: 1,
-      dashArray: 0,
-    };
-    // console.log(
-    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
-    // );
-    // layer.bindPopup(
-    //   ReactDOMServer.renderToString(<CustomPopup item={initState} />)
-    // );
-  };
-
-  const showGeomPopover = (item) => {
-    console.log(item);
   };
 
   const renderGeo = (geoData) => {
     if (geoData.features) {
-      return geoData.features.map((item) => {
-        // if (item.geometry.type === "LineString") {
-        //   return (
-        //     <Polyline
-        //       key={item.properties.geoID}
-        //       id={item.properties.geoID}
-        //       positions={reverseCoor(item.geometry.coordinates)}
-        //       // onClick={() => showGeomPopover(item)}
-        //     >
-        //       <CustomPopup item={item} />
-        //     </Polyline>
-        //   );
-        // }
-        if (item.geometry.type === "Polygon") {
-          return (
-            <GeoContext.Provider value={item}>
-              <Polygon
-                key={item.properties.geoID}
-                id={item.properties.geoID}
-                positions={reverseCoor(item.geometry.coordinates[0])}
-                // onClick={() => showGeomPopover(item)}
-                color={item.properties.color}
-                fillColor="red"
-                weight={5}
-                dashArray={100}
-              >
-                <CustomPopup item={item} />
-              </Polygon>
-            </GeoContext.Provider>
-          );
-        }
-        if (item.geometry.type === "MultiPolygon") {
-          return (
-            <GeoContext.Provider value={item}>
-              <Polygon
-                key={item.properties.geoID}
-                id={item.properties.geoID}
-                positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
-                // positions={item.geometry.coordinates[0]}
-                // onClick={() => showGeomPopover(item)}
-                color={item.properties.color}
-                fillColor="red"
-                weight={5}
-                dashArray={100}
-              >
-                <CustomPopup item={item} />
-              </Polygon>
-            </GeoContext.Provider>
-          );
-        }
-        // if (item.geometry.type === "Point") {
-        //   if (item.properties.radius) {
-        //     return (
-        //       <Circle
-        //         key={item.properties.geoID}
-        //         id={item.properties.geoID}
-        //         center={[
-        //           item.geometry.coordinates[1],
-        //           item.geometry.coordinates[0],
-        //         ]}
-        //         radius={item.properties.radius}
-        //         // onClick={() => showGeomPopover(item)}
-        //       >
-        //         <CustomPopup item={item} />
-        //       </Circle>
-        //     );
-        //   } else {
-        //     return (
-        //       <Marker
-        //         key={item.properties.geoID}
-        //         id={item.properties.geoID}
-        //         position={[
-        //           item.geometry.coordinates[1],
-        //           item.geometry.coordinates[0],
-        //         ]}
-        //         // onClick={() => showGeomPopover(item)}
-        //       >
-        //         <CustomPopup item={item} />
-        //       </Marker>
-        //     );
-        //   }
-        // }
-        return null;
+      return geoData.features.map((item, index) => {
+        return <Shape item={item} key={index} />;
       });
     }
   };
