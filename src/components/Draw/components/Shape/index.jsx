@@ -9,6 +9,8 @@ export default function Shape({ item }) {
   if (item.geometry.type === "LineString") {
     return (
       <Polyline
+        type="LineString"
+        id={item.properties.geoID}
         positions={reverseCoor(item.geometry.coordinates)}
         color={shapeProps.color}
         weight={shapeProps.weight}
@@ -24,6 +26,8 @@ export default function Shape({ item }) {
   if (item.geometry.type === "Polygon") {
     return (
       <Polygon
+        type="Polygon"
+        id={item.properties.geoID}
         positions={reverseCoor(item.geometry.coordinates[0])}
         color={shapeProps.color || "#0f0f0f"}
         weight={shapeProps.weight || 3}
@@ -40,27 +44,52 @@ export default function Shape({ item }) {
   }
   if (item.geometry.type === "MultiPolygon") {
     return (
-      <Polygon
-        key={item.properties.geoID}
-        id={item.properties.geoID}
-        positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
-        color={shapeProps.color}
-        weight={shapeProps.weight}
-        fillColor={shapeProps.fill}
-        fillOpacity={shapeProps.fillOpacity}
-      >
-        <CustomPopup
-          type="Polygon"
-          shapeProps={shapeProps}
-          onChangeAttr={setShapeProps}
-        />
-      </Polygon>
+      // <Polygon
+      //   id={item.properties.geoID}
+      //   positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
+      //   color={shapeProps.color}
+      //   weight={shapeProps.weight}
+      //   fillColor={shapeProps.fill}
+      //   fillOpacity={shapeProps.fillOpacity}
+      // >
+      //   <CustomPopup
+      //     type="Polygon"
+      //     shapeProps={shapeProps}
+      //     onChangeAttr={setShapeProps}
+      //   />
+      // </Polygon>
+      <>
+        {
+          item.geometry.coordinates.map((polygon, index) => {
+            return (
+              <Polygon
+                id={item.properties.geoID}
+                type="MultiPolygon"
+                subId={index}
+                positions={reverseCoor(polygon[0])}
+                color={shapeProps.color}
+                weight={shapeProps.weight}
+                fillColor={shapeProps.fill}
+                fillOpacity={shapeProps.fillOpacity}
+              >
+                <CustomPopup
+                  type="MultiPolygon"
+                  shapeProps={shapeProps}
+                  onChangeAttr={setShapeProps}
+                />
+              </Polygon>
+            )
+          })
+        }
+      </>
     );
   }
   if (item.geometry.type === "Point") {
     if (item.properties.radius) {
       return (
         <Circle
+          type="Circle"
+          id={item.properties.geoID}
           center={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}
           radius={item.properties.radius}
           color={shapeProps.color}
@@ -78,6 +107,7 @@ export default function Shape({ item }) {
     } else {
       return (
         <Marker
+          id={item.properties.geoID}
           position={[
             item.geometry.coordinates[1],
             item.geometry.coordinates[0],

@@ -1,7 +1,11 @@
-import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA } from "../constants/actions";
+import {
+  FETCH_LAYER_DATA,
+  CLEAR_LAYER_DATA,
+  EDIT_GEOM,
+} from "../constants/actions";
 
 const initState = {
-  layerData: [],
+  layerData: {},
 };
 
 export const layerReducer = (state = initState, action) => {
@@ -15,7 +19,13 @@ export const layerReducer = (state = initState, action) => {
     case CLEAR_LAYER_DATA:
       return {
         ...state,
-        layerData: [],
+        layerData: {},
+      };
+
+    case EDIT_GEOM:
+      return {
+        ...state,
+        layerData: state.layerData,
       };
 
     default:

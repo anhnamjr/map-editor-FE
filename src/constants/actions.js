@@ -3,3 +3,4 @@ export const FETCH_LAYER_DATA = "FETCH_LAYER_DATA";
 export const CLEAR_LAYER_DATA = "CLEAR_LAYER_DATA";
 export const STORE_GEOM_COOR = "STORE_GEOM_COOR";
 export const STORE_GEOM_DATA = "STORE_GEOM_DATA";
+export const EDIT_GEOM = "EDIT_GEOM";

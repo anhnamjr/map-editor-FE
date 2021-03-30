@@ -4,14 +4,14 @@ import Shape from "./components/Shape";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
-import { reverseCoor } from "../../utils";
+import { reverseCoor, reverseCoorMultiPolygon } from "../../utils";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
+import { editGeom } from "../../actions/geom";
 
 export default function Draw({ geoData }) {
-  // const [deleteList, setDeleteList] = useState([]);
-
   const dispatch = useDispatch();
+
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
     geom = {
@@ -28,68 +28,104 @@ export default function Draw({ geoData }) {
   };
 
   const handleEdit = (e) => {
-    const editedId = Object.entries(e.layers._layers);
-    console.log(editedId); // convert job -> arr
-    const editedGeom = editedId.map((item) => {
-      //circle
-      if (item[1]._mRadius)
-        return {
-          geoID: item[1].options.id,
-          // type:'Circle',
+    const editedLayer = Object.entries(e.layers._layers)[0];
+    const shapeType = editedLayer[1].options.type
+    let editedGeom
+    if (shapeType === "MultiPolygon") {
+      const editedLayerMulti = Object.entries(e.layers._layers);
+      console.log('layer multi', editedLayerMulti)
+
+      let arrPolygon = []
+      editedLayerMulti.forEach(polygon => {
+        let geom = {
+          subId: polygon[1].options.subId, //3d
+          coordinates: [
+            reverseCoor(
+              polygon[1]._latlngs[0].map((coor) => {
+                return Object.values(coor).slice(0, 2);
+              })
+            ),
+          ],
+        }
+        arrPolygon.push(geom);
+      })
+
+      axios.get(`${BASE_URL}/single-MP?geoID=${editedLayerMulti[0][1].options.id}`).then(res => {
+        const newCoor = [...res.data.coordinates]
+        console.log(newCoor)
+        arrPolygon.forEach(item => {
+          newCoor[item.subId] = item.coordinates
+        })
+        editedGeom = {
+          geoID: editedLayerMulti[0][1].options.id,
+          geom: {
+            type: "MultiPolygon", // 2d
+            coordinates: newCoor
+          },
+        }
+        dispatch(editGeom(editedGeom))
+        return
+      })
+    } else {
+      if (shapeType === "Circle") {
+        //circle
+        editedGeom = {
+          geoID: editedLayer[1].options.id,
           geom: {
             type: "Point",
-            // coordinates: item[1]._latlngs
-            coordinates: Object.values(item[1]._latlng).reverse(),
+            coordinates: Object.values(editedLayer[1]._latlng).reverse(),
           },
-          radius: item[1]._mRadius,
+          radius: editedLayer[1]._mRadius,
         };
-
-      if (item[1]._latlngs) {
+      }
+      else if (shapeType === "LineString") {
         //line string
-        if (item[1]._latlngs.length > 1)
-          return {
-            geoID: item[1].options.id,
-            geom: {
-              type: "LineString", // 2d
-              coordinates: reverseCoor(
-                item[1]._latlngs.map((coor) => {
+        editedGeom = {
+          geoID: editedLayer[1].options.id,
+          geom: {
+            type: "LineString", // 2d
+            coordinates: reverseCoor(
+              editedLayer[1]._latlngs.map((coor) => {
+                return Object.values(coor).slice(0, 2);
+              })
+            ),
+          },
+        }
+      }
+
+      //polygon
+      else if (shapeType === "Polygon")
+        editedGeom = {
+          geoID: editedLayer[1].options.id,
+          geom: {
+            type: "Polygon", //3d
+            coordinates: [
+              reverseCoor(
+                editedLayer[1]._latlngs[0].map((coor) => {
                   return Object.values(coor).slice(0, 2);
                 })
               ),
-            },
-          };
-        //polygon
-        if (item[1]._latlngs.length === 1)
-          return {
-            geoID: item[1].options.id,
-            geom: {
-              type: "Polygon", //3d
-              coordinates: [
-                reverseCoor(
-                  item[1]._latlngs[0].map((coor) => {
-                    return Object.values(coor).slice(0, 2);
-                  })
-                ),
-              ],
-            },
-          };
-      }
-      //marker
-      return {
-        geoID: item[1].options.id,
-        geom: {
-          type: "Point",
-          // coordinates: item[1]._latlngs
-          coordinates: Object.values(item[1]._latlng).reverse(),
-        },
-      };
-    });
-    console.log(editedGeom);
+            ],
+          },
+        };
 
-    axios.post(`${BASE_URL}/edit-geom`, editedGeom);
+      //marker
+      else if (shapeType === "Point") {
+        editedGeom = {
+          geoID: editedLayer[1].options.id,
+          geom: {
+            type: "Point",
+            // coordinates: item[1]._latlngs
+            coordinates: Object.values(editedLayer[1]._latlng).reverse(),
+          },
+        };
+      }
+      dispatch(editGeom(editedGeom))
+    }
   };
 
   const handleDelete = (e) => {
+    console.log(e.layers._layers);
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
     );
@@ -116,7 +152,6 @@ export default function Draw({ geoData }) {
         key="feature-group"
         onCreated={controlCreate}
         onEdited={handleEdit}
-        // onEditStart={handleEditStart}
         onDeleted={handleDelete}
         draw={{
           circlemarker: false,
