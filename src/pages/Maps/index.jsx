@@ -16,6 +16,7 @@ const Maps = () => {
     setGeoData(data);
   }, [data]);
 
+
   return (
     <>
       <MapSidebar />

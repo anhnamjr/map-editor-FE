@@ -58,5 +58,5 @@ export default function Shape({ item }) {
       );
     }
   }
-
+  return null;
 }
