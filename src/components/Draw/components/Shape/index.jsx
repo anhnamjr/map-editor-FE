@@ -13,7 +13,7 @@ export default function Shape({ item }) {
         color={shapeProps.color}
         weight={shapeProps.weight}
       >
-        <CustomPopup type="Polyline" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+        <CustomPopup type="Polyline" item={item} shapeProps={shapeProps} onChangeAttr={setShapeProps} />
       </Polyline>
     );
   }
@@ -26,7 +26,7 @@ export default function Shape({ item }) {
         fillColor={shapeProps.fill}
         fillOpacity={shapeProps.fillOpacity}
       >
-        <CustomPopup type="Polygon" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+        <CustomPopup type="Polygon" item={item} shapeProps={shapeProps} onChangeAttr={setShapeProps} />
       </Polygon>
     );
   }
@@ -44,7 +44,7 @@ export default function Shape({ item }) {
           fillColor={shapeProps.fill}
           fillOpacity={shapeProps.fillOpacity}
         >
-          <CustomPopup type="Circle" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+          <CustomPopup type="Circle" item={item} shapeProps={shapeProps} onChangeAttr={setShapeProps} />
         </Circle>
       )
     } else {
@@ -58,5 +58,5 @@ export default function Shape({ item }) {
       );
     }
   }
-
+  return null
 }
