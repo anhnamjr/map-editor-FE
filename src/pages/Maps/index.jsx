@@ -12,6 +12,8 @@ const Maps = () => {
   const data = useSelector((state) => state.layerReducer.layerData);
   const mapRef = useRef()
 
+  const { center } = useSelector((state) => state.mapReducer)
+
   useEffect(() => {
     setGeoData(data);
   }, [data]);
@@ -19,8 +21,8 @@ const Maps = () => {
   return (
     <>
       <MapSidebar />
-      <Map className="mapStyle" zoom={13} center={[10.7646598, 106.6855794]} ref={mapRef}>
-        <MapLayerControl mapRef={mapRef}/>
+      <Map className="mapStyle" zoom={13} center={center || [10.7646598, 106.6855794]} ref={mapRef}>
+        <MapLayerControl mapRef={mapRef} />
         <ZoomControl position="topright" />
         <Draw geoData={geoData} />
         <TileLayer

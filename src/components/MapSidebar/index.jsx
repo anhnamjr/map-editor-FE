@@ -4,10 +4,11 @@ import { FiHome, FiChevronLeft, FiSearch, FiSettings } from "react-icons/fi";
 import { BsGeoAlt } from "react-icons/bs";
 import LayerTree from "../LayerTree";
 import AddForm from "./components/CreateGeoForm";
-
+import SearchForm from "./components/Search";
 const MapSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
+
   const onClose = () => setCollapsed(true);
 
   const onOpen = (tab) => {
@@ -34,7 +35,9 @@ const MapSidebar = () => {
       </Tab>
 
       <Tab id="search" header="Search" icon={<FiSearch />}>
-        <p>The noblest search is the search for excellence!</p>
+        <SearchForm
+        />
+
       </Tab>
 
       {/* <Tab id="map" header="Create Map" icon={<RiRoadMapLine />}>

@@ -1,7 +1,7 @@
-import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA } from "../constants/actions";
+import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA, UPDATE_LAYER_DATA } from "../constants/actions";
 
 const initState = {
-  layerData: [],
+  layerData: {},
 };
 
 export const layerReducer = (state = initState, action) => {
@@ -17,6 +17,21 @@ export const layerReducer = (state = initState, action) => {
         ...state,
         layerData: [],
       };
+
+    case UPDATE_LAYER_DATA:
+      return state.layerData.type ? {
+        ...state,
+        layerData: {
+          ...state.layerData,
+          features: [...state.layerData.features, action.payload]
+        },
+      } : {
+        ...state,
+        layerData: {
+          type: "FeatureCollection",
+          features: [action.payload]
+      }
+    }
 
     default:
       return { ...state };
