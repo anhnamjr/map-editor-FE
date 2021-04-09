@@ -52,7 +52,7 @@ const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
                 onChange={handleChange}
               />
             </Form.Row>
-            {(type === "Polygon" || type === "Circle")&& (
+            {(type === "Polygon" || type === "Circle") && (
               <>
                 <Form.Row>
                   <Form.Label htmlFor="fill">Fill:</Form.Label>

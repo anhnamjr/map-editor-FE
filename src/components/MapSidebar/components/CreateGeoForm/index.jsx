@@ -42,19 +42,20 @@ const AddForm = () => {
     let newGeom = JSON.parse(values.geom);
     const params = {
       ...values,
-      color: values.color.color || values.color,
+      // color: values.color.color || values.color || '#FF00FF',
       geom: JSON.stringify(geom),
     }
 
-    if(newGeom.type === "Point" && newGeom.properties.radius){
+    if (newGeom.type === "Point" && newGeom.properties.radius) {
       params.radius = newGeom.properties.radius
     }
-    
+
     axios
-    .post(`${BASE_URL}/data`, params)
-    .then((res) => {
-      // form.resetFields()
-    });
+      .post(`${BASE_URL}/create-geom`, params)
+      .then((res) => {
+        alert(res.data.msg)
+        // form.resetFields()
+      });
     form.resetFields();
   };
 

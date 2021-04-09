@@ -9,6 +9,7 @@ export default function Shape({ item }) {
   if (item.geometry.type === "LineString") {
     return (
       <Polyline
+        id={item.properties.geoID}
         positions={reverseCoor(item.geometry.coordinates)}
         color={shapeProps.color}
         weight={shapeProps.weight}
@@ -24,6 +25,7 @@ export default function Shape({ item }) {
   if (item.geometry.type === "Polygon") {
     return (
       <Polygon
+        id={item.properties.geoID}
         positions={reverseCoor(item.geometry.coordinates[0])}
         color={shapeProps.color || "#0f0f0f"}
         weight={shapeProps.weight || 3}
@@ -61,6 +63,7 @@ export default function Shape({ item }) {
     if (item.properties.radius) {
       return (
         <Circle
+          id={item.properties.geoID}
           center={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}
           radius={item.properties.radius}
           color={shapeProps.color}
@@ -78,6 +81,7 @@ export default function Shape({ item }) {
     } else {
       return (
         <Marker
+          id={item.properties.geoID}
           position={[
             item.geometry.coordinates[1],
             item.geometry.coordinates[0],

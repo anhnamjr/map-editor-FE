@@ -5,6 +5,14 @@ import { BsGeoAlt } from "react-icons/bs";
 import LayerTree from "../LayerTree";
 import AddForm from "./components/CreateGeoForm";
 import SearchForm from "./components/Search";
+import { Tabs } from 'antd';
+
+import AddMap from './components/AddMap';
+import AddLayer from './components/AddLayer';
+
+
+const { TabPane } = Tabs;
+
 const MapSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
@@ -15,7 +23,9 @@ const MapSidebar = () => {
     setCollapsed(false);
     setSelected(tab);
   };
-
+  const callback = (key) => {
+    console.log(key)
+  }
   return (
     <Sidebar
       id="sidebar"
@@ -28,10 +38,19 @@ const MapSidebar = () => {
       style={{ zIndex: 401 }}
     >
       <Tab id="maps" header="Maps" icon={<FiHome />}>
-        <>
-          <h2>Your Maps</h2>
-          <LayerTree />
-        </>
+        <Tabs defaultActiveKey="1" onChange={callback} >
+          <TabPane tab="Your Maps" key="1">
+            <h2></h2>
+            <LayerTree />
+          </TabPane>
+          <TabPane tab="Add Map" key="2">
+            <AddMap />
+          </TabPane>
+          <TabPane tab="Add Layer" key="3">
+            <AddLayer />
+          </TabPane>
+
+        </Tabs>
       </Tab>
 
       <Tab id="search" header="Search" icon={<FiSearch />}>

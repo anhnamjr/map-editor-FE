@@ -31,6 +31,7 @@ export default function Draw({ geoData }) {
     const editedId = Object.entries(e.layers._layers);
     console.log(editedId); // convert job -> arr
     const editedGeom = editedId.map((item) => {
+      console.log(item)
       //circle
       if (item[1]._mRadius)
         return {
