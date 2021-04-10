@@ -4,11 +4,6 @@ import axios from "axios";
 import { Form, Input, Select, Button } from 'antd';
 
 const { Option } = Select;
-
-// const layout = {
-//   labelCol: { span: 6 },
-//   wrapperCol: { span: 18 },
-// };
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
@@ -17,21 +12,9 @@ const tailLayout = {
 
 export default function LayerMap() {
 
-
   const [options, setOptions] = useState(([]));
 
-
-  // const [name, setName] = useState<{
-  //   value: name;
-  //   validateStatus?: ValidateStatus;
-  //   errorMsg?: string | null;
-  // }>({
-  //   value: '',
-  // });
-
-
   const onClick = () => {
-
     axios.get(`${BASE_URL}/maps`).then((res) => {
       let optionArr = [];
       res.data.maps.forEach((item) => {
@@ -39,8 +22,8 @@ export default function LayerMap() {
       })
       setOptions(optionArr)
     })
-
   }
+
   const onFinish = (values) => {
     const data = { mapID: values.Map, layerName: values.name }
     axios.post(`${BASE_URL}/layer`, data).then((res) => {
@@ -52,19 +35,11 @@ export default function LayerMap() {
     console.log('Failed:', errorInfo);
   };
 
-  // const handleChangeName = (input) => {
-  //   setNumber({
-  //     ...validatePrimeNumber(value),
-  //     value,
-  //   });
-  // }
-
 
 
   return (
 
     <Form
-      // {...layout}
       name="addLayer"
       layout="vertical"
       initialValues={{ remember: true }}
@@ -81,12 +56,9 @@ export default function LayerMap() {
         >
           {
             options && options.map((item) => {
-              return <Option value={item.key} key={item}> {item.title}</Option>
+              return <Option value={item.key} key={item.key}> {item.title}</Option>
             })
           }
-          {/* <Option value="male">male</Option>
-          <Option value="female">female</Option>
-          <Option value="other">other</Option> */}
         </Select>
       </Form.Item>
 

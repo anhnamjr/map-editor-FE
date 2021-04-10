@@ -14,20 +14,18 @@ const tailLayout = {
 
 export default function AddMap() {
 
-  const [name, setName] = useState['']
+  // const [name, setName] = useState['']
 
-  useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      console.log(name)
-      const req = { mapName: name }
-      axios.post(`${BASE_URL}/checkMapName`, req).then((res) => {
-        console.log(res)
-      })
-
-
-    }, 300);
-    return () => clearTimeout(timeOutId);
-  }, [name]);
+  // useEffect(() => {
+  //   const timeOutId = setTimeout(() => {
+  //     console.log(name)
+  //     const req = { mapName: name }
+  //     axios.post(`${BASE_URL}/checkMapName`, req).then((res) => {
+  //       console.log(res)
+  //     })
+  //   }, 300);
+  //   return () => clearTimeout(timeOutId);
+  // }, [name]);
 
 
   const onFinish = (values) => {
@@ -59,9 +57,9 @@ export default function AddMap() {
 
         label="Map name"
         name="mapName"
-        value={name}
+        // value={name}
         rules={[{ required: true, message: 'Enter new map name' }]}
-        onChange={event => setName(event.target.value)}
+      // onChange={event => setName(event.target.value)}
       >
         <Input placeholder="Enter new map name" />
       </Form.Item>
@@ -69,7 +67,7 @@ export default function AddMap() {
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit">
           Save
-  </Button>
+        </Button>
       </Form.Item>
     </Form>
 

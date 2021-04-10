@@ -23,9 +23,6 @@ const MapSidebar = () => {
     setCollapsed(false);
     setSelected(tab);
   };
-  const callback = (key) => {
-    console.log(key)
-  }
   return (
     <Sidebar
       id="sidebar"
@@ -38,7 +35,7 @@ const MapSidebar = () => {
       style={{ zIndex: 401 }}
     >
       <Tab id="maps" header="Maps" icon={<FiHome />}>
-        <Tabs defaultActiveKey="1" onChange={callback} >
+        <Tabs defaultActiveKey="1" >
           <TabPane tab="Your Maps" key="1">
             <h2></h2>
             <LayerTree />
