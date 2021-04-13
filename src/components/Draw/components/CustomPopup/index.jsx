@@ -17,6 +17,7 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
       [target.name]: value,
     });
   };
+  console.log(item)
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
   return (
     <Popup>
       <Tabs defaultActiveKey="1">
-      <TabPane
+        <TabPane
           tab={
             <span>
               <AndroidOutlined />
@@ -34,7 +35,7 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
           }
           key="1"
         >
-          <AttributeTab item={item}/>
+          <AttributeTab item={item} />
         </TabPane>
         <TabPane
           tab={
@@ -98,7 +99,7 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
             </Form.Feature>
           </Form>
         </TabPane>
-        
+
       </Tabs>
     </Popup>
   );

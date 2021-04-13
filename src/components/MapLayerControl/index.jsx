@@ -6,7 +6,7 @@ import { BASE_URL } from "../../constants/endpoint";
 
 const { BaseLayer, Overlay } = LayersControl;
 
-export default function MapLayerControl({mapRef}) {
+export default function MapLayerControl({ mapRef }) {
   const [provinceGeom, setProvinceGeom] = useState(null)
   const [districtGeom, setDistrictGeom] = useState(null)
 
@@ -14,32 +14,33 @@ export default function MapLayerControl({mapRef}) {
     const map = mapRef.current.leafletElement;
     map.on("overlayadd", (e) => {
       axios.get(`${BASE_URL}/default-layer?name=${e.name.toLowerCase()}`).then(res => {
-        switch(e.name){
-          case "Province": 
+        switch (e.name) {
+          case "Province":
             setProvinceGeom(res.data)
             break
-          case "District": 
+          case "District":
             setDistrictGeom(res.data)
             break
           default:
-            return
+            break
+
         }
       })
     });
 
     map.on("overlayremove", (e) => {
-      switch(e.name){
-        case "Province": 
+      switch (e.name) {
+        case "Province":
           setProvinceGeom(null)
           return
-        case "District": 
+        case "District":
           setDistrictGeom(null)
           return
         default:
-          return
+          break
       }
     });
-  }, []);
+  }, [mapRef]);
 
   return (
     <LayersControl position="topright">

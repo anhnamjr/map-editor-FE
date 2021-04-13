@@ -1,5 +1,5 @@
 import React from "react";
-import {geometry} from "geojson-area";
+import { geometry } from "geojson-area";
 import * as length from "geojson-length";
 import "./style.scss";
 
@@ -7,17 +7,18 @@ const PI = 3.1416
 
 
 export default function AttributeTab({ item }) {
+  console.log(item)
   const type = item.geometry.type
   const calculate = () => {
-    if(type === "Polygon" || type === "MultiPolygon") {
+    if (type === "Polygon" || type === "MultiPolygon") {
       return (
         <tr>
           <td>Square meters:</td>
           <td>{Number.parseFloat(geometry(item.geometry)).toFixed(2)}</td>
         </tr>
-      ) 
+      )
     }
-    if(type === "LineString") {
+    if (type === "LineString") {
       return (
         <tr>
           <td>Meters:</td>
@@ -25,13 +26,13 @@ export default function AttributeTab({ item }) {
         </tr>
       )
     }
-    if(type === "Point" && item.properties.radius) {
+    if (type === "Point" && item.properties.radius) {
       return (
         <tr>
           <td>Square meters:</td>
           <td>{Number.parseFloat(item.properties.radius * PI).toFixed(2)}</td>
         </tr>
-      ) 
+      )
     }
   }
 
@@ -40,7 +41,7 @@ export default function AttributeTab({ item }) {
     <div style={{ width: "100%" }}>
       <table>
         <tbody>
-          {calculate()}
+          {/* {calculate()} */}
           {calculate()}
         </tbody>
       </table>

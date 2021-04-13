@@ -1,9 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Form, Input, Button, Select } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
+import { ShapeContext } from "../../../../context/ShapeContext";
+import L from "leaflet";
+import "leaflet.pm";
+import "leaflet.pm/dist/leaflet.pm.css";
+// import {useLeaflet} from "react-leaflet"
 
 const { Option, OptGroup } = Select;
 
@@ -24,10 +29,38 @@ const tailLayout = {
 
 const types = ["Line", "Polygon", "Marker"];
 
-const AddForm = () => {
+const AddForm = ({ map }) => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
+  const { shapeItem } = useContext(ShapeContext);
   const [form] = Form.useForm();
+  var geoID = null;
+  var layerItem = null;
+
+  if (shapeItem && shapeItem.properties) {
+    geoID = shapeItem.properties.geoID ? shapeItem.properties.geoID : null;
+  }
+
+  const onEdit = () => {
+    const mymap = map.current.leafletElement;
+    layerItem = new L.GeoJSON(shapeItem, {
+      pointToLayer: (feature, latlng) => {
+        if (feature.properties.radius) {
+          return new L.Circle(latlng, feature.properties.radius);
+        } else {
+          return new L.Marker(latlng);
+        }
+      },
+    }).addTo(mymap);
+    layerItem.pm.enable();
+  };
+
+  const onSave = (e) => {
+    window.confirm("Are you sure to delete a entry?")
+    // API call here
+    layerItem.pm.disable();
+    layerItem.remove()
+  };
 
   useEffect(() => {
     const { type = "Line" } = geom;
@@ -43,7 +76,7 @@ const AddForm = () => {
       ...values,
       // color: values.color.color || values.color || '#FF00FF',
       geom: JSON.stringify(geom),
-    }
+    };
 
     if (newGeom.type === "Point" && newGeom.properties.radius) {
       params.radius = newGeom.properties.radius
@@ -138,9 +171,19 @@ const AddForm = () => {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
+        {/* <Button type="primary" htmlType="submit">
           Create
-        </Button>
+        </Button> */}
+        {geoID && (
+          <>
+            <Button type="primary" onClick={onEdit}>
+              Edit
+            </Button>
+            <Button type="primary" onClick={onSave}>
+              Save
+            </Button>
+          </>
+        )}
       </Form.Item>
     </Form>
   );
