@@ -25,7 +25,6 @@ const LayerTree = () => {
   const data = useSelector((state) => state.treeReducer.layerTree) || null;
 
   const showModal = (nodeData) => {
-    console.log(nodeData)
     setMapName(nodeData.title);
     setIsModalVisible(true);
     setEditItemType(nodeData.children ? "Map" : "Layer")
@@ -78,9 +77,16 @@ const LayerTree = () => {
   }
 
   const renderTreeItem = nodeData => {
+    console.log(nodeData)
     const menu = (
       <Menu style={{ width: 150 }}>
-        <Menu.Item key="1" onClick={() => showModal(nodeData)}>Edit</Menu.Item>
+        {
+          nodeData.children.length !== 0 &&
+          <Menu.Item key="1" onClick={() => showModal(nodeData)}>
+            Add Layer
+          </Menu.Item>
+        }
+        <Menu.Item key="2" onClick={() => showModal(nodeData)}>Edit</Menu.Item>
         {/* {!nodeData.children && <Menu.Item key="2" onClick={() => handleChangeMap(nodeData)}>Move</Menu.Item>} */}
         <Menu.Item key="3">Delete</Menu.Item>
       </Menu>
@@ -118,6 +124,7 @@ const LayerTree = () => {
           >
             <Input allowClear placeholder={`${editItemType} name`} value={mapName}
               onChange={(e) => setMapName(e.target.value)} />
+
           </Form.Item>
           {editItemType === "Layer"
             && (
