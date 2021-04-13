@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "leaflet": "1.5.1",
     "leaflet-draw": "^1.0.4",
+    "leaflet.pm": "^2.2.0",
     "node-sass": "^4.14.1",
     "rc-color-picker": "^1.2.6",
     "react": "16.8.6",

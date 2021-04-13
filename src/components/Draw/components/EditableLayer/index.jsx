@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext } from "react";
 import { FeatureGroup, useLeaflet } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
@@ -6,10 +6,23 @@ import { STORE_GEOM_COOR } from "../../../../constants/actions";
 import { reverseCoor } from "../../../../utils";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
-import Shape from "../Shape"
+import Shape from "../Shape";
+import { ShapeContext } from "../../../../context/ShapeContext";
 
-export default function EditableLayer({ item, layer, showDrawControl, onLayerClicked}) {
+
+export default function EditableLayer({ geoData }) {
+  const { setShapeItem } = useContext(ShapeContext);
   const dispatch = useDispatch();
+  const {map} = useLeaflet()
+
+  const renderGeo = (geoData) => {
+    if (geoData.features) {
+      return geoData.features.map((item, index) => (
+        <Shape item={item} key={index} />
+      ));
+    }
+  };
+
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
     geom = {
@@ -22,6 +35,10 @@ export default function EditableLayer({ item, layer, showDrawControl, onLayerCli
         properties: { ...geom.properties, radius: e.layer._mRadius },
       };
     }
+    e.layer.on("click", (e) => {
+      setShapeItem(geom);
+      map.off("click")
+    });
     dispatch({ type: STORE_GEOM_COOR, payload: geom });
   };
 
@@ -95,40 +112,22 @@ export default function EditableLayer({ item, layer, showDrawControl, onLayerCli
     axios.post(`${BASE_URL}/delete-geom`, { id: deletedId });
   };
 
-  const { map } = useLeaflet();
-  const layerRef = useRef();
-  const drawControlRef = useRef();
-
-  useEffect(() => {
-    if(!showDrawControl) {
-      map.removeControl(drawControlRef.current)
-    } else {
-      map.addControl(drawControlRef.current)
-    }
-    
-  }, [map, showDrawControl]);
-  
-
-  const handleMounted = (ctl) => {
-    drawControlRef.current = ctl;
-  }
-
-
-
   return (
-    <FeatureGroup ref={layerRef} onClick={() => onLayerClicked(item)} >
+    <FeatureGroup>
       <EditControl
         position="topright"
         onCreated={controlCreate}
         onEdited={handleEdit}
         onDeleted={handleDelete}
-        onMounted={handleMounted}
         draw={{
           circlemarker: false,
         }}
-        
+        edit={{
+          edit: false,
+          remove: false,
+        }}
       />
-      <Shape item={item}/>
+      {renderGeo(geoData)}
     </FeatureGroup>
-  )
+  );
 }

@@ -1,9 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Form, Input, Button, Select } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
+import {ShapeContext} from "../../../../context/ShapeContext";
+import L from "leaflet";
+import "leaflet.pm"
+import "leaflet.pm/dist/leaflet.pm.css";
+// import {useLeaflet} from "react-leaflet"
 
 const { Option, OptGroup } = Select;
 
@@ -24,10 +29,36 @@ const tailLayout = {
 
 const types = ["Line", "Polygon", "Marker"];
 
-const AddForm = () => {
+const AddForm = ({map}) => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
+  const { shapeItem } = useContext(ShapeContext)
   const [form] = Form.useForm();
+  var geoID = null;
+  var layerItem = null;
+  
+
+  if(shapeItem && shapeItem.properties) {
+    geoID = shapeItem.properties.geoID ? shapeItem.properties.geoID : null;
+  }
+
+
+  const onEdit = () => {
+    const mymap = map.current.leafletElement
+    layerItem = new L.GeoJSON(shapeItem, {
+      pointToLayer: (feature, latlng) => {
+        if(feature.properties.radius) {
+          return new L.Circle(latlng, feature.properties.radius)
+        } else {
+          return new L.Marker(latlng)
+        }
+      }
+    }).addTo(mymap)
+    layerItem.pm.enable();
+    mymap.on("draw:edited", (e) => {
+      console.log(e.target.toGeoJSON())
+    })
+  }
 
   useEffect(() => {
     const { type = "Line" } = geom;
@@ -140,6 +171,9 @@ const AddForm = () => {
         <Button type="primary" htmlType="submit">
           Create
         </Button>
+        {geoID && <Button type="primary" onClick={onEdit}>
+          Edit
+        </Button>}
       </Form.Item>
     </Form>
   );

@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Sidebar, Tab } from "react-leaflet-sidetabs";
 import { FiHome, FiChevronLeft, FiSearch, FiSettings } from "react-icons/fi";
 import { BsGeoAlt } from "react-icons/bs";
 import LayerTree from "../LayerTree";
 import AddForm from "./components/CreateGeoForm";
+import {ShapeContext} from "../../context/ShapeContext"
 
-const MapSidebar = () => {
+const MapSidebar = ({map}) => {
+  const {shapeItem} = useContext(ShapeContext)
+
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
   const onClose = () => setCollapsed(true);
+
+  useEffect(() => {
+    setSelected(shapeItem ? "geom" : "maps")
+  }, [shapeItem])
+
 
   const onOpen = (tab) => {
     setCollapsed(false);
@@ -46,7 +54,7 @@ const MapSidebar = () => {
           </Tab> */}
 
       <Tab id="geom" header="Create GeoData" icon={<BsGeoAlt />}>
-        <AddForm />
+        <AddForm map={map}/>
       </Tab>
 
       <Tab
