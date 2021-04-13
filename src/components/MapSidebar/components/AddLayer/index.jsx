@@ -10,8 +10,6 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-
-
 export default function LayerMap() {
   const [options, setOptions] = useState(([]));
   const dispatch = useDispatch()
