@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import axios from "axios";
-import { Form, Input, Select, Button } from 'antd';
+import { Form, Input, Select, Button, message } from 'antd';
+import { useDispatch } from "react-redux";
+import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 
 const { Option } = Select;
 const tailLayout = {
@@ -11,8 +13,9 @@ const tailLayout = {
 
 
 export default function LayerMap() {
-
   const [options, setOptions] = useState(([]));
+  const dispatch = useDispatch()
+  const [form] = Form.useForm();
 
   const onClick = () => {
     axios.get(`${BASE_URL}/maps`).then((res) => {
@@ -27,7 +30,9 @@ export default function LayerMap() {
   const onFinish = (values) => {
     const data = { mapID: values.Map, layerName: values.name }
     axios.post(`${BASE_URL}/layer`, data).then((res) => {
-      alert(res.data.msg)
+      dispatch(fetchLayerTree())
+      form.resetFields()
+      message.success("Add Layer Successfully!")
     })
   };
 
@@ -35,17 +40,14 @@ export default function LayerMap() {
     console.log('Failed:', errorInfo);
   };
 
-
-
   return (
-
     <Form
       name="addLayer"
       layout="vertical"
+      form={form}
       initialValues={{ remember: true }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
-
     >
       <Form.Item name="Map" label="Select map" rules={[{ required: true }]}>
         <Select
@@ -62,8 +64,6 @@ export default function LayerMap() {
         </Select>
       </Form.Item>
 
-
-
       <Form.Item
         name="name"
         label='Layer name'
@@ -75,7 +75,7 @@ export default function LayerMap() {
 
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit">
-          Save
+          Add
         </Button>
       </Form.Item>
     </Form >

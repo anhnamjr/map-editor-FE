@@ -1,52 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import axios from "axios";
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import { useDispatch } from "react-redux";
+import { fetchLayerTree } from "../../../../actions/fetchLayerTree"
 
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 24 },
 };
+
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
 
 export default function AddMap() {
-
-  // const [name, setName] = useState['']
-
-  // useEffect(() => {
-  //   const timeOutId = setTimeout(() => {
-  //     console.log(name)
-  //     const req = { mapName: name }
-  //     axios.post(`${BASE_URL}/checkMapName`, req).then((res) => {
-  //       console.log(res)
-  //     })
-  //   }, 300);
-  //   return () => clearTimeout(timeOutId);
-  // }, [name]);
-
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const onFinish = (values) => {
     const data = { mapName: values.mapName }
+    setLoading(true)
     axios.post(`${BASE_URL}/map`, data).then((res) => {
-      alert(res.data.msg)
+      setLoading(false)
+      dispatch(fetchLayerTree)
+      form.resetFields();
+      message.success(res.data.msg)
     })
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    message.danger(errorInfo)
   };
-
-
-
 
 
   return (
 
     <Form
-      // {...layout}
+      form={form}
       name="addMap"
       initialValues={{ remember: true }}
       onFinish={onFinish}
@@ -65,8 +58,8 @@ export default function AddMap() {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          Save
+        <Button type="primary" htmlType="submit" loading={loading}>
+          Add
         </Button>
       </Form.Item>
     </Form>

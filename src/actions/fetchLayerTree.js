@@ -2,16 +2,16 @@ import axios from "axios";
 import { FETCH_LAYER_TREE } from "../constants/actions";
 import { BASE_URL } from "../constants/endpoint";
 
-export const fetchLayerTree = (userId) => {
+export const fetchLayerTree = (/*userId*/) => async (dispatch) => {
   // TODO
-  const result = axios
+  const result = await axios
     .get(`${BASE_URL}/maps`, {
-      userId,
+      // userId,
     })
     .then((res) => res.data.maps);
 
-  return {
+  dispatch({
     type: FETCH_LAYER_TREE,
     payload: result,
-  };
+  })
 };
