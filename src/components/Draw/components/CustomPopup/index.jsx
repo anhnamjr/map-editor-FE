@@ -9,7 +9,7 @@ import "./style.scss";
 
 const { TabPane } = Tabs;
 
-const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
+const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
   const handleChange = ({ target }) => {
     const value = target.value;
     onChangeAttr({
@@ -18,9 +18,24 @@ const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  }
+
   return (
     <Popup>
       <Tabs defaultActiveKey="1">
+      <TabPane
+          tab={
+            <span>
+              <AndroidOutlined />
+              Info
+            </span>
+          }
+          key="1"
+        >
+          <AttributeTab item={item}/>
+        </TabPane>
         <TabPane
           tab={
             <span>
@@ -28,9 +43,9 @@ const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
               Attribute
             </span>
           }
-          key="1"
+          key="2"
         >
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <Form.Row>
               <Form.Label htmlFor="stroke">Stroke:</Form.Label>
               <Form.Input
@@ -77,19 +92,13 @@ const CustomPopup = ({ type = "Polygon", shapeProps, onChangeAttr }) => {
                 </Form.Row>
               </>
             )}
+            <Form.Feature>
+              <Form.Button type="submit">Save</Form.Button>
+              <Form.Button type="button">Cancel</Form.Button>
+            </Form.Feature>
           </Form>
         </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <AndroidOutlined />
-              Info
-            </span>
-          }
-          key="2"
-        >
-          <AttributeTab />
-        </TabPane>
+        
       </Tabs>
     </Popup>
   );

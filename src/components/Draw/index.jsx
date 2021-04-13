@@ -1,6 +1,6 @@
 import React from "react";
 import { FeatureGroup } from "react-leaflet";
-import Shape from "./components/Shape";
+import Shape from "./components/Shape"
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
 import { STORE_GEOM_COOR } from "../../constants/actions";
@@ -102,10 +102,11 @@ export default function Draw({ geoData }) {
     console.log(e.layer.toGeoJSON().geometry);
   };
 
+
   const renderGeo = (geoData) => {
     if (geoData.features) {
       return geoData.features.map((item, index) => {
-        return <Shape item={item} key={index} />;
+        return <Shape item={item} key={index} />
       });
     }
   };

@@ -21,6 +21,8 @@ export default function MapLayerControl({mapRef}) {
           case "District": 
             setDistrictGeom(res.data)
             break
+          default:
+            return
         }
       })
     });
@@ -32,6 +34,8 @@ export default function MapLayerControl({mapRef}) {
           return
         case "District": 
           setDistrictGeom(null)
+          return
+        default:
           return
       }
     });

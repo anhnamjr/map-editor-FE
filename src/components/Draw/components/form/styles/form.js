@@ -23,3 +23,28 @@ export const Input = styled.input`
   width: 100%;
   max-width: 220px;
 `;
+
+export const Feature = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const Button = styled.button`
+  margin-top: 10px;
+  max-width: 90px;
+  width: 100%;
+  background-color: ${({type}) => (type === "submit" ? "#34495e" : "#eee")};
+  border: 0;
+  color: ${({type}) => (type === "submit" ? "#fff" : "#000")};
+  outline: none;
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 5px;
+  transition: background-color 0.5s;
+  padding: 5px 0;
+
+  &:hover {
+    background-color: ${({type}) => (type === "submit" ? "#2980b9" : "#f7f7f7")};
+  }
+`;
+

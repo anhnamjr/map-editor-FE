@@ -3,7 +3,6 @@ import { Form, Input, Button, Select } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
-import ColorPicker from "rc-color-picker";
 import "rc-color-picker/assets/index.css";
 
 const { Option, OptGroup } = Select;
