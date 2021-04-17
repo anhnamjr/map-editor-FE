@@ -8,14 +8,14 @@ export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties })
   const { setShapeItem } = useContext(ShapeContext)
 
-  const onClickShape = (e) => {
+  const onClickShape = () => {
     setShapeItem(item)
   }
 
   if (item.geometry.type === "LineString") {
     return (
       <Polyline
-        id={item.properties.geoID}
+        onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates)}
         color={shapeProps.color}
         weight={shapeProps.weight}
@@ -57,8 +57,11 @@ export default function Shape({ item }) {
     if (item.properties.radius) {
       return (
         <Circle
-          id={item.properties.geoID}
-          center={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}
+          onClick={onClickShape}
+          center={[
+            item.geometry.coordinates[1],
+            item.geometry.coordinates[0],
+          ]}
           radius={item.properties.radius}
           color={shapeProps.color}
           weight={shapeProps.weight}
@@ -71,12 +74,14 @@ export default function Shape({ item }) {
     } else {
       return (
         <Marker
-          id={item.properties.geoID}
+          onClick={onClickShape}
           position={[
             item.geometry.coordinates[1],
             item.geometry.coordinates[0],
           ]}
-        />
+        >
+          <CustomPopup item={item} type="Marker" shapeProps={shapeProps} onChangeAttr={setShapeProps} showProps={false} />
+        </Marker>
       );
     }
   }

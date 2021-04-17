@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { Form, Input, Button, Select } from "antd";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
@@ -51,6 +51,13 @@ const AddForm = ({ map }) => {
           return new L.Marker(latlng);
         }
       },
+      style: (feature) => {
+        return {
+          fillColor: feature.properties.fill,
+          fillOpacity: feature.properties.fillOpacity,
+          color: feature.properties.color,
+        }
+      }
     }).addTo(mymap);
     layerItem.pm.enable();
   };
@@ -58,17 +65,20 @@ const AddForm = ({ map }) => {
   const onSave = (e) => {
     window.confirm("Are you sure to delete a entry?")
     // API call here
+    console.log(layerItem.toGeoJSON());
     layerItem.pm.disable();
     layerItem.remove()
   };
 
   useEffect(() => {
-    const { type = "Line" } = geom;
     form.setFieldsValue({
-      geom: JSON.stringify(geom),
-      categoryID: type,
+      geom: JSON.stringify(shapeItem ? shapeItem.geometry : ""),
+      category: shapeItem ? shapeItem.geometry.type : "",
+      layer: (shapeItem && shapeItem.properties) ? shapeItem.properties.layerID : "",
+      geoName: (shapeItem && shapeItem.properties) ? shapeItem.properties.geoName : "",
+      description: (shapeItem && shapeItem.properties) ? shapeItem.properties.description : ""
     });
-  }, [geom, form]);
+  }, [shapeItem, form]);
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -113,7 +123,7 @@ const AddForm = ({ map }) => {
     >
       <Form.Item
         label="Layer"
-        name="layerID"
+        name="layer"
         rules={[
           {
             required: true,
@@ -151,7 +161,7 @@ const AddForm = ({ map }) => {
 
       <Form.Item
         label="Type"
-        name="categoryID"
+        name="category"
         rules={[
           {
             required: true,
@@ -176,7 +186,7 @@ const AddForm = ({ map }) => {
         </Button> */}
         {geoID && (
           <>
-            <Button type="primary" onClick={onEdit}>
+            <Button type="primary" style={{marginRight: "10px"}} onClick={onEdit}>
               Edit
             </Button>
             <Button type="primary" onClick={onSave}>
