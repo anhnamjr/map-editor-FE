@@ -3,10 +3,15 @@ import "./style.css";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux"
+import { userSignIn } from "../../actions/user"
 
 export default function SignIn() {
+  const dispatch = useDispatch()
+
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    dispatch(userSignIn(values))
   };
 
   return (
@@ -49,15 +54,6 @@ export default function SignIn() {
             placeholder="Password"
           />
         </Form.Item>
-        {/* <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
-        </Form.Item> */}
 
         <Form.Item>
           <Button

@@ -5,3 +5,7 @@ export const UPDATE_LAYER_DATA = "UPDATE_LAYER_DATA";
 export const STORE_GEOM_COOR = "STORE_GEOM_COOR";
 export const STORE_GEOM_DATA = "STORE_GEOM_DATA";
 export const CHANGE_MAP_CENTER = "CHANGE_MAP_CENTER";
+
+// user
+export const SET_USER = "SET_USER";
+

@@ -4,14 +4,8 @@ import { Form, Input, Button } from "antd";
 import axios from "axios";
 import { BASE_URL } from "../../constants/endpoint";
 import { Link } from "react-router-dom";
-
-// const formItemLayout = {
-//   labelCol: { span: 6 },
-//   wrapperCol: { span: 18 },
-// };
-// const tailFormItemLayout = {
-//   wrapperCol: { offset: 8, span: 16 },
-// };
+import { useDispatch } from "react-redux"
+import { userSignUp } from "../../actions/user"
 
 export default function SignUp() {
   const [form] = Form.useForm();
@@ -84,6 +78,10 @@ export default function SignUp() {
             required: true,
             message: "Please input your password!",
           },
+          {
+            min: 6,
+            message: "Password must be 6 characters or more"
+          }
         ]}
         hasFeedback
       >
@@ -99,6 +97,10 @@ export default function SignUp() {
           {
             required: true,
             message: "Please confirm your password!",
+          },
+          {
+            min: 6,
+            message: "Password must be 6 characters or more"
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
