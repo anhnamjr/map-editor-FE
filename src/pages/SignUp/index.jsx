@@ -2,7 +2,7 @@ import React from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
-import { BASE_URL } from "../../constants/endpoint";
+import { AUTH_URL } from "../../constants/endpoint";
 import { Link } from "react-router-dom";
 
 // const formItemLayout = {
@@ -24,7 +24,7 @@ export default function SignUp() {
       email: values.email,
     };
     console.log(data);
-    axios.post(`${BASE_URL}/register`, data).then((res) => {
+    axios.post(`${AUTH_URL}/sign-up`, data).then((res) => {
       console.log(res);
     });
   };

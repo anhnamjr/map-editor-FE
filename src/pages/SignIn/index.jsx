@@ -3,10 +3,14 @@ import "./style.css";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
+import { AUTH_URL } from "../../constants/endpoint";
 export default function SignIn() {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    axios.post(`${AUTH_URL}/sign-in`, values).then((res) => {
+      console.log(res);
+    });
   };
 
   return (
