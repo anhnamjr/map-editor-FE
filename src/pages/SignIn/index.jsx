@@ -2,16 +2,25 @@ import React from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux"
-import { userSignIn } from "../../actions/user"
+import { Link, Redirect, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { AUTH_URL } from "../../constants/endpoint";
 
 export default function SignIn() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    dispatch(userSignIn(values))
+    axios
+      .post(`${AUTH_URL}/sign-in`, values)
+      .then((res) => {
+        const { token } = res.data;
+        localStorage.setItem("token", token);
+        history.push("/");
+        console.log("Redirect");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

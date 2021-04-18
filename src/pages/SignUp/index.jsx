@@ -2,12 +2,14 @@ import React from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
-import { BASE_URL } from "../../constants/endpoint";
+import { BASE_URL, AUTH_URL } from "../../constants/endpoint";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux"
-import { userSignUp } from "../../actions/user"
+import { useDispatch } from "react-redux";
+import { userSignUp } from "../../actions/user";
+import { useHistory } from "react-router-dom";
 
 export default function SignUp() {
+  const history = useHistory();
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -17,9 +19,8 @@ export default function SignUp() {
       password: values.password,
       email: values.email,
     };
-    console.log(data);
-    axios.post(`${BASE_URL}/register`, data).then((res) => {
-      console.log(res);
+    axios.post(`${AUTH_URL}/sign-up`, data).then((res) => {
+      history.push("/");
     });
   };
 
@@ -80,8 +81,8 @@ export default function SignUp() {
           },
           {
             min: 6,
-            message: "Password must be 6 characters or more"
-          }
+            message: "Password must be 6 characters or more",
+          },
         ]}
         hasFeedback
       >
@@ -100,7 +101,7 @@ export default function SignUp() {
           },
           {
             min: 6,
-            message: "Password must be 6 characters or more"
+            message: "Password must be 6 characters or more",
           },
           ({ getFieldValue }) => ({
             validator(_, value) {

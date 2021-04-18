@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "geojson-area": "^0.2.1",
     "geojson-length": "^0.1.1",
+    "jsonwebtoken": "^8.5.1",
     "leaflet": "1.5.1",
     "leaflet-draw": "^1.0.4",
     "leaflet.pm": "^2.2.0",

@@ -1,17 +1,18 @@
-import { SET_USER } from '../constants/actions';
+import { SET_USER } from "../constants/actions";
 
 const initState = {
-    user: {}
-}
+  user: {},
+};
 
-export const treeReducer = (state=initState, action) => {
-    switch(action.type) {
-        case SET_USER:
-            return {
-                ...state,
-                user: action.payload
-            }
+export const userReducer = (state = initState, action) => {
+  switch (action.type) {
+    case SET_USER:
+      return {
+        ...state,
+        user: action.payload,
+      };
 
-        default: return {...state}
-    }
-}
+    default:
+      return { ...state };
+  }
+};
