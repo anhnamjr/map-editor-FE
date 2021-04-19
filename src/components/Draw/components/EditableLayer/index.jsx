@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect, useRef } from "react";
 import { FeatureGroup, useLeaflet } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch } from "react-redux";
@@ -7,22 +7,14 @@ import { reverseCoor } from "../../../../utils";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import Shape from "../Shape";
-import { ShapeContext } from "../../../../context/ShapeContext";
 
-
-export default function EditableLayer({ geoData }) {
-  const { setShapeItem } = useContext(ShapeContext);
+export default function EditableLayer({
+  item,
+  layer,
+  showDrawControl,
+  onLayerClicked,
+}) {
   const dispatch = useDispatch();
-  const {map} = useLeaflet()
-
-  const renderGeo = (geoData) => {
-    if (geoData.features) {
-      return geoData.features.map((item, index) => (
-        <Shape item={item} key={index} />
-      ));
-    }
-  };
-
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
     geom = {
@@ -35,10 +27,6 @@ export default function EditableLayer({ geoData }) {
         properties: { ...geom.properties, radius: e.layer._mRadius },
       };
     }
-    e.layer.on("click", (e) => {
-      setShapeItem(geom);
-      map.off("click")
-    });
     dispatch({ type: STORE_GEOM_COOR, payload: geom });
   };
 

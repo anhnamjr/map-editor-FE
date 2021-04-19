@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
-import { BASE_URL, AUTH_URL } from "../../constants/endpoint";
+import { AUTH_URL } from "../../constants/endpoint";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userSignUp } from "../../actions/user";
@@ -27,7 +27,7 @@ export default function SignUp() {
       email: values.email,
     };
     axios.post(`${AUTH_URL}/sign-up`, data).then((res) => {
-      history.push("/");
+      history.push("/signin");
     });
   };
 
