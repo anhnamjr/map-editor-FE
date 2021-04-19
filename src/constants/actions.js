@@ -9,3 +9,4 @@ export const CHANGE_MAP_CENTER = "CHANGE_MAP_CENTER";
 // user
 export const SET_USER = "SET_USER";
 
+export const STORE_SHAPE_REF = "STORE_SHAPE_REF";

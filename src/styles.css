@@ -23,6 +23,17 @@ main,
   font-size: 2em;
 }
 
+.ant-modal-mask {
+  z-index: 2001;
+}
+
+.ant-modal-wrap {
+  z-index: 2002;
+}
+
 .ant-select-dropdown {
+  z-index: 2001;
+}
+.ant-dropdown {
   z-index: 2001;
 }

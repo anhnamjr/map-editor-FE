@@ -7,7 +7,6 @@ const PI = 3.1416
 
 
 export default function AttributeTab({ item }) {
-  console.log(item)
   const type = item.geometry.type
   const calculate = () => {
     if (type === "Polygon" || type === "MultiPolygon") {
@@ -36,12 +35,23 @@ export default function AttributeTab({ item }) {
     }
   }
 
+  const attribute = () => {
+    return (
+      <>
+        <tr>
+          <td>Geo name:</td>
+          <td>{item.properties.geoName}</td>
+        </tr>
+      </>
+    )
+  }
+
 
   return (
     <div style={{ width: "100%" }}>
       <table>
         <tbody>
-          {/* {calculate()} */}
+          {attribute()}
           {calculate()}
         </tbody>
       </table>

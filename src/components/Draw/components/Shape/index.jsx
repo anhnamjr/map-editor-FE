@@ -1,32 +1,52 @@
-import React, { useState, useContext } from "react";
-import { Polygon, Polyline, Marker, Circle } from "react-leaflet";
+import React, { useState, useRef } from "react";
+import { Polygon, Polyline, Marker, Circle, useLeaflet } from "react-leaflet";
 import { reverseCoor, reverseCoorMultiPolygon } from "../../../../utils";
 import CustomPopup from "../CustomPopup";
-import { ShapeContext } from "../../../../context/ShapeContext"
+import { useDispatch } from "react-redux";
+import {
+  STORE_GEOM_COOR,
+  STORE_SHAPE_REF,
+} from "../../../../constants/actions";
 
 export default function Shape({ item }) {
-  const [shapeProps, setShapeProps] = useState({ ...item.properties })
-  const { setShapeItem } = useContext(ShapeContext)
+  const [shapeProps, setShapeProps] = useState({ ...item.properties });
+  const dispatch = useDispatch();
+  const shapeRef = useRef();
+  const { map } = useLeaflet();
 
-  const onClickShape = (e) => {
-    setShapeItem(item)
-  }
+  const onClickShape = () => {
+    console.log(shapeRef.current);
+    // map.removeLayer(shapeRef.current.leafletElement)
+    // shapeRef.current.leafletElement.pm.enable()
+    dispatch({ type: STORE_GEOM_COOR, payload: item });
+    // dispatch({
+    //   type: STORE_SHAPE_REF,
+    //   payload: shapeRef.current.leafletElement.pm,
+    // });
+  };
 
   if (item.geometry.type === "LineString") {
     return (
       <Polyline
-        id={item.properties.geoID}
+        ref={shapeRef}
+        onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates)}
         color={shapeProps.color}
         weight={shapeProps.weight}
       >
-        <CustomPopup item={item} type="Polyline" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+        <CustomPopup
+          item={item}
+          type="Polyline"
+          shapeProps={shapeProps}
+          onChangeAttr={setShapeProps}
+        />
       </Polyline>
     );
   }
   if (item.geometry.type === "Polygon") {
     return (
       <Polygon
+        ref={shapeRef}
         onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates[0])}
         color={shapeProps.color || "#0f0f0f"}
@@ -34,13 +54,19 @@ export default function Shape({ item }) {
         fillColor={shapeProps.fill || "red"}
         fillOpacity={shapeProps.fillOpacity || 0.3}
       >
-        <CustomPopup item={item} type="Polygon" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+        <CustomPopup
+          item={item}
+          type="Polygon"
+          shapeProps={shapeProps}
+          onChangeAttr={setShapeProps}
+        />
       </Polygon>
     );
   }
   if (item.geometry.type === "MultiPolygon") {
     return (
       <Polygon
+        ref={shapeRef}
         key={item.properties.geoID}
         id={item.properties.geoID}
         positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
@@ -49,7 +75,12 @@ export default function Shape({ item }) {
         fillColor={shapeProps.fill}
         fillOpacity={shapeProps.fillOpacity}
       >
-        <CustomPopup item={item} type="Polygon" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+        <CustomPopup
+          item={item}
+          type="Polygon"
+          shapeProps={shapeProps}
+          onChangeAttr={setShapeProps}
+        />
       </Polygon>
     );
   }
@@ -57,7 +88,8 @@ export default function Shape({ item }) {
     if (item.properties.radius) {
       return (
         <Circle
-          id={item.properties.geoID}
+          ref={shapeRef}
+          onClick={onClickShape}
           center={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}
           radius={item.properties.radius}
           color={shapeProps.color}
@@ -65,18 +97,32 @@ export default function Shape({ item }) {
           fillColor={shapeProps.fill}
           fillOpacity={shapeProps.fillOpacity}
         >
-          <CustomPopup item={item} type="Circle" shapeProps={shapeProps} onChangeAttr={setShapeProps} />
+          <CustomPopup
+            item={item}
+            type="Circle"
+            shapeProps={shapeProps}
+            onChangeAttr={setShapeProps}
+          />
         </Circle>
       );
     } else {
       return (
         <Marker
-          id={item.properties.geoID}
+          ref={shapeRef}
+          onClick={onClickShape}
           position={[
             item.geometry.coordinates[1],
             item.geometry.coordinates[0],
           ]}
-        />
+        >
+          <CustomPopup
+            item={item}
+            type="Marker"
+            shapeProps={shapeProps}
+            onChangeAttr={setShapeProps}
+            showProps={false}
+          />
+        </Marker>
       );
     }
   }

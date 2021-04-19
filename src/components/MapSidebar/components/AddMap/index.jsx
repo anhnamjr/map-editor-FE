@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
-import axios from "axios";
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { Form, Input, Button, message } from 'antd';
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree"
@@ -23,9 +23,9 @@ export default function AddMap() {
   const onFinish = (values) => {
     const data = { mapName: values.mapName }
     setLoading(true)
-    axios.post(`${BASE_URL}/map`, data).then((res) => {
+    AXIOS_INSTANCE.post(`${BASE_URL}/map`, data).then((res) => {
       setLoading(false)
-      dispatch(fetchLayerTree)
+      dispatch(fetchLayerTree())
       form.resetFields();
       message.success(res.data.msg)
     })

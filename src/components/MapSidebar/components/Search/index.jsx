@@ -3,7 +3,7 @@ import { Input, AutoComplete } from 'antd'
 import { useDispatch } from "react-redux"
 import { BASE_URL } from "../../../../constants/endpoint"
 import { searchGeom } from "../../../../actions/searchGeom"
-import axios from "axios"
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 const { Search } = Input;
 
 const SearchForm = () => {
@@ -40,7 +40,7 @@ const SearchForm = () => {
   const onSearch = async (searchText) => {
     // const { data } = await setTimeout(() => axios.get(`${BASE_URL}/search?input=${searchText}`), 500)
     if (searchText) {
-      const { data } = await axios.get(`${BASE_URL}/search?input=${searchText}`)
+      const { data } = await AXIOS_INSTANCE.get(`${BASE_URL}/search?input=${searchText}`)
       setOptions(searchResult(data))
     } else {
       setOptions([])

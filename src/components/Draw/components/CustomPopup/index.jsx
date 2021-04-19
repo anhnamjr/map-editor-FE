@@ -9,7 +9,7 @@ import "./style.scss";
 
 const { TabPane } = Tabs;
 
-const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
+const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr, showProps = true }) => {
   const handleChange = ({ target }) => {
     const value = target.value;
     onChangeAttr({
@@ -37,7 +37,8 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
         >
           <AttributeTab item={item} />
         </TabPane>
-        <TabPane
+        {showProps && (
+          <TabPane
           tab={
             <span>
               <AppleOutlined />
@@ -100,6 +101,7 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr }) => {
           </Form>
         </TabPane>
 
+        )}
       </Tabs>
     </Popup>
   );

@@ -8,22 +8,23 @@ import SearchForm from "./components/Search";
 import { Tabs } from 'antd';
 import AddMap from './components/AddMap';
 import AddLayer from './components/AddLayer';
-import { ShapeContext } from "../../context/ShapeContext"
+import { useSelector } from "react-redux";
 
 
 const { TabPane } = Tabs;
 
 const MapSidebar = ({ map }) => {
-  const { shapeItem } = useContext(ShapeContext)
+  // const { shapeItem } = useContext(ShapeContext)
 
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
+  const { geom = null } = useSelector((state) => state.storeGeom);
 
   const onClose = () => setCollapsed(true);
 
   useEffect(() => {
-    setSelected(shapeItem ? "geom" : "maps")
-  }, [shapeItem])
+    setSelected(geom.geometry ? "geom" : "maps")
+  }, [geom])
 
 
   const onOpen = (tab) => {

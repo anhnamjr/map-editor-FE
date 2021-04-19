@@ -4,6 +4,7 @@ import { layerReducer } from "./layer";
 import { storeGeom } from "./geom";
 import { mapReducer } from "./map";
 import { userReducer } from "./user";
+import { storeShapeRef } from "./shapeRef"
 
 export const rootReducer = combineReducers({
   treeReducer,
@@ -11,4 +12,5 @@ export const rootReducer = combineReducers({
   storeGeom,
   mapReducer,
   userReducer,
+  storeShapeRef
 });

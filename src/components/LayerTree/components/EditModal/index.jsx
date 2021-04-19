@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Select, Modal, Input, message } from "antd";
-import axios from "axios";
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
 import { useDispatch } from "react-redux"
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
@@ -41,7 +41,7 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
     setLoading(true)
     if (currentNode.children) {
       // edit map
-      axios.post(`${BASE_URL}/edit-map`, {
+      AXIOS_INSTANCE.post(`${BASE_URL}/edit-map`, {
         mapID: nodeData.key,
         mapName: values.name
       }).then(res => {
@@ -51,7 +51,7 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
       })
     } else {
       // edit layer
-      axios.post(`${BASE_URL}/edit-layer`, {
+      AXIOS_INSTANCE.post(`${BASE_URL}/edit-layer`, {
         layerID: nodeData.key,
         layerName: values.name,
         mapID: values.Map,
@@ -111,7 +111,7 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
           <Button type="primary" htmlType="submit" style={{ marginRight: 10 }} onClick={handleEdit} loading={loading}>
             Save
             </Button>
-          <Button type="primary" htmlType="submit" danger onClick={handleCancel}>
+          <Button type="primary" danger onClick={handleCancel}>
             Close
             </Button>
         </Form.Item>

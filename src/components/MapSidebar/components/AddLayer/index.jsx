@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
-import axios from "axios";
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { Form, Input, Select, Button, message } from 'antd';
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
@@ -16,7 +16,7 @@ export default function LayerMap() {
   const [form] = Form.useForm();
 
   const onClick = () => {
-    axios.get(`${BASE_URL}/maps`).then((res) => {
+    AXIOS_INSTANCE.get(`${BASE_URL}/maps`).then((res) => {
       let optionArr = [];
       res.data.maps.forEach((item) => {
         optionArr.push(item);
@@ -27,7 +27,7 @@ export default function LayerMap() {
 
   const onFinish = (values) => {
     const data = { mapID: values.Map, layerName: values.name }
-    axios.post(`${BASE_URL}/layer`, data).then((res) => {
+    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
       dispatch(fetchLayerTree())
       form.resetFields()
       message.success("Add Layer Successfully!")

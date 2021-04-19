@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LayersControl, TileLayer, GeoJSON, FeatureGroup } from "react-leaflet";
-import axios from "axios"
+import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
+
 import { BASE_URL } from "../../constants/endpoint";
 
 
@@ -13,7 +14,7 @@ export default function MapLayerControl({ mapRef }) {
   useEffect(() => {
     const map = mapRef.current.leafletElement;
     map.on("overlayadd", (e) => {
-      axios.get(`${BASE_URL}/default-layer?name=${e.name.toLowerCase()}`).then(res => {
+      AXIOS_INSTANCE.get(`${BASE_URL}/default-layer?name=${e.name.toLowerCase()}`).then(res => {
         switch (e.name) {
           case "Province":
             setProvinceGeom(res.data)

@@ -1,14 +1,12 @@
 import React, { useEffect, useContext } from "react";
 import { Form, Input, Button, Select } from "antd";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
-import { ShapeContext } from "../../../../context/ShapeContext";
 import L from "leaflet";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
-// import {useLeaflet} from "react-leaflet"
 
 const { Option, OptGroup } = Select;
 
@@ -32,41 +30,52 @@ const types = ["Line", "Polygon", "Marker"];
 const AddForm = ({ map }) => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
-  const { shapeItem } = useContext(ShapeContext);
+  const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
   const [form] = Form.useForm();
   var geoID = null;
   var layerItem = null;
 
-  if (shapeItem && shapeItem.properties) {
-    geoID = shapeItem.properties.geoID ? shapeItem.properties.geoID : null;
+  if (geom && geom.properties) {
+    geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
   const onEdit = () => {
-    const mymap = map.current.leafletElement;
-    layerItem = new L.GeoJSON(shapeItem, {
-      pointToLayer: (feature, latlng) => {
-        if (feature.properties.radius) {
-          return new L.Circle(latlng, feature.properties.radius);
-        } else {
-          return new L.Marker(latlng);
-        }
-      },
-    }).addTo(mymap);
-    layerItem.pm.enable();
+    // const mymap = map.current.leafletElement;
+    // layerItem = new L.GeoJSON(geom, {
+    //   pointToLayer: (feature, latlng) => {
+    //     if (feature.properties.radius) {
+    //       return new L.Circle(latlng, feature.properties.radius);
+    //     } else {
+    //       return new L.Marker(latlng);
+    //     }
+    //   },
+    //   style: (feature) => {
+    //     return {
+    //       fillColor: feature.properties.fill,
+    //       fillOpacity: feature.properties.fillOpacity,
+    //       color: feature.properties.color,
+    //     }
+    //   }
+    // }).addTo(mymap);
+    // layerItem.pm.enable();
+    shapeRef.enable();
   };
 
   const onSave = (e) => {
-    window.confirm("Are you sure to delete a entry?")
+    window.confirm("Are you sure to delete a entry?");
     // API call here
-    layerItem.pm.disable();
-    layerItem.remove()
+    // console.log(layerItem.toGeoJSON());
+    shapeRef.disable();
+    // layerItem.remove()
   };
 
   useEffect(() => {
-    const { type = "Line" } = geom;
     form.setFieldsValue({
-      geom: JSON.stringify(geom),
-      categoryID: type,
+      geom: JSON.stringify(geom ? geom.geometry : ""),
+      category: geom && geom.geometry ? geom.geometry.type : "",
+      layer: geom && geom.properties ? geom.properties.layerID : "",
+      geoName: geom && geom.properties ? geom.properties.geoName : "",
+      description: geom && geom.properties ? geom.properties.description : "",
     });
   }, [geom, form]);
 
@@ -79,15 +88,13 @@ const AddForm = ({ map }) => {
     };
 
     if (newGeom.type === "Point" && newGeom.properties.radius) {
-      params.radius = newGeom.properties.radius
+      params.radius = newGeom.properties.radius;
     }
 
-    axios
-      .post(`${BASE_URL}/create-geom`, params)
-      .then((res) => {
-        alert(res.data.msg)
-        // form.resetFields()
-      });
+    AXIOS_INSTANCE.post(`${BASE_URL}/create-geom`, params).then((res) => {
+      alert(res.data.msg);
+      // form.resetFields()
+    });
     form.resetFields();
   };
 
@@ -113,7 +120,7 @@ const AddForm = ({ map }) => {
     >
       <Form.Item
         label="Layer"
-        name="layerID"
+        name="layer"
         rules={[
           {
             required: true,
@@ -151,7 +158,7 @@ const AddForm = ({ map }) => {
 
       <Form.Item
         label="Type"
-        name="categoryID"
+        name="category"
         rules={[
           {
             required: true,
@@ -174,16 +181,17 @@ const AddForm = ({ map }) => {
         {/* <Button type="primary" htmlType="submit">
           Create
         </Button> */}
-        {geoID && (
+        <Button type="primary" style={{ marginRight: "10px" }} onClick={onEdit}>
+          Edit
+        </Button>
+        <Button type="primary" onClick={onSave}>
+          Save
+        </Button>
+        {/* {geoID && (
           <>
-            <Button type="primary" onClick={onEdit}>
-              Edit
-            </Button>
-            <Button type="primary" onClick={onSave}>
-              Save
-            </Button>
+           
           </>
-        )}
+        )} */}
       </Form.Item>
     </Form>
   );

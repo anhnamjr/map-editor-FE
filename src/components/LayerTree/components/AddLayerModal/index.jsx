@@ -3,7 +3,8 @@ import { Button, Form, Select, Modal, Input, message } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 import { BASE_URL } from "../../../../constants/endpoint";
-import axios from "axios";
+import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
+
 
 const AddLayerModal = ({ showAddLayerModal, setShowAddLayerModal, currentNode }) => {
   const dispatch = useDispatch()
@@ -11,7 +12,7 @@ const AddLayerModal = ({ showAddLayerModal, setShowAddLayerModal, currentNode })
 
   const handleAddLayer = (values) => {
     const data = { mapID: currentNode.key, layerName: values.name }
-    axios.post(`${BASE_URL}/layer`, data).then((res) => {
+    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
       dispatch(fetchLayerTree())
       form.resetFields()
       message.success("Add Layer Successfully!")
