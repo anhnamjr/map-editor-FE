@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
@@ -11,6 +11,13 @@ import { useHistory } from "react-router-dom";
 export default function SignUp() {
   const history = useHistory();
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token") || "";
+    if (token) {
+      history.push("/");
+    }
+  }, []);
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);

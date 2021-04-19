@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
@@ -10,6 +10,13 @@ import { AUTH_URL } from "../../constants/endpoint";
 export default function SignIn() {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token") || "";
+    if (token) {
+      history.push("/");
+    }
+  }, []);
 
   const onFinish = (values) => {
     axios
