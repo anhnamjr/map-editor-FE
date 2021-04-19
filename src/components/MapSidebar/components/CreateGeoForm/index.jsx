@@ -4,11 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
-import { ShapeContext } from "../../../../context/ShapeContext";
 import L from "leaflet";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
-// import {useLeaflet} from "react-leaflet"
 
 const { Option, OptGroup } = Select;
 
@@ -32,53 +30,54 @@ const types = ["Line", "Polygon", "Marker"];
 const AddForm = ({ map }) => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
-  const { shapeItem } = useContext(ShapeContext);
+  const { shapeRef = null} = useSelector(state => state.storeShapeRef)
   const [form] = Form.useForm();
   var geoID = null;
   var layerItem = null;
 
-  if (shapeItem && shapeItem.properties) {
-    geoID = shapeItem.properties.geoID ? shapeItem.properties.geoID : null;
+  if (geom && geom.properties) {
+    geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
   const onEdit = () => {
-    const mymap = map.current.leafletElement;
-    layerItem = new L.GeoJSON(shapeItem, {
-      pointToLayer: (feature, latlng) => {
-        if (feature.properties.radius) {
-          return new L.Circle(latlng, feature.properties.radius);
-        } else {
-          return new L.Marker(latlng);
-        }
-      },
-      style: (feature) => {
-        return {
-          fillColor: feature.properties.fill,
-          fillOpacity: feature.properties.fillOpacity,
-          color: feature.properties.color,
-        }
-      }
-    }).addTo(mymap);
-    layerItem.pm.enable();
+    // const mymap = map.current.leafletElement;
+    // layerItem = new L.GeoJSON(geom, {
+    //   pointToLayer: (feature, latlng) => {
+    //     if (feature.properties.radius) {
+    //       return new L.Circle(latlng, feature.properties.radius);
+    //     } else {
+    //       return new L.Marker(latlng);
+    //     }
+    //   },
+    //   style: (feature) => {
+    //     return {
+    //       fillColor: feature.properties.fill,
+    //       fillOpacity: feature.properties.fillOpacity,
+    //       color: feature.properties.color,
+    //     }
+    //   }
+    // }).addTo(mymap);
+    // layerItem.pm.enable();
+    shapeRef.pm.enable()
   };
 
   const onSave = (e) => {
     window.confirm("Are you sure to delete a entry?")
     // API call here
-    console.log(layerItem.toGeoJSON());
-    layerItem.pm.disable();
-    layerItem.remove()
+    // console.log(layerItem.toGeoJSON());
+    shapeRef.pm.disable();
+    // layerItem.remove()
   };
 
   useEffect(() => {
     form.setFieldsValue({
-      geom: JSON.stringify(shapeItem ? shapeItem.geometry : ""),
-      category: shapeItem ? shapeItem.geometry.type : "",
-      layer: (shapeItem && shapeItem.properties) ? shapeItem.properties.layerID : "",
-      geoName: (shapeItem && shapeItem.properties) ? shapeItem.properties.geoName : "",
-      description: (shapeItem && shapeItem.properties) ? shapeItem.properties.description : ""
+      geom: JSON.stringify(geom ? geom.geometry : ""),
+      category: (geom && geom.geometry) ? geom.geometry.type : "",
+      layer: (geom && geom.properties) ? geom.properties.layerID : "",
+      geoName: (geom && geom.properties) ? geom.properties.geoName : "",
+      description: (geom && geom.properties) ? geom.properties.description : ""
     });
-  }, [shapeItem, form]);
+  }, [geom, form]);
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -184,16 +183,17 @@ const AddForm = ({ map }) => {
         {/* <Button type="primary" htmlType="submit">
           Create
         </Button> */}
-        {geoID && (
-          <>
-            <Button type="primary" style={{marginRight: "10px"}} onClick={onEdit}>
+         <Button type="primary" style={{marginRight: "10px"}} onClick={onEdit}>
               Edit
             </Button>
             <Button type="primary" onClick={onSave}>
               Save
             </Button>
+        {/* {geoID && (
+          <>
+           
           </>
-        )}
+        )} */}
       </Form.Item>
     </Form>
   );

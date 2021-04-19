@@ -6,23 +6,20 @@ import MapSidebar from "../../components/MapSidebar";
 import { useSelector } from "react-redux";
 import MapLayerControl from "../../components/MapLayerControl";
 import Draw from "../../components/Draw";
-import { ShapeContext } from "../../context/ShapeContext"
 
 const Maps = () => {
   const [geoData, setGeoData] = useState({});
-  const [shapeItem, setShapeItem] = useState(null);
   const data = useSelector((state) => state.layerReducer.layerData);
   const mapRef = useRef()
-  // const map = useRef()
 
-  const { center } = useSelector((state) => state.mapReducer)
+  // const { center } = useSelector((state) => state.mapReducer)
 
   useEffect(() => {
     setGeoData(data);
   }, [data]);
 
   return (
-    <ShapeContext.Provider value={{ shapeItem, setShapeItem }}>
+    <>
       <Map className="mapStyle" doubleClickZoom={false} zoom={13} center={[10.7646598, 106.6855794]} ref={mapRef}>
         <MapLayerControl mapRef={mapRef} />
         <ZoomControl position="topright" />
@@ -33,7 +30,7 @@ const Maps = () => {
         />
       </Map>
       <MapSidebar map={mapRef} />
-    </ShapeContext.Provider>
+    </>
   );
 };
 

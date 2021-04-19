@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CHANGE_MAP_CENTER, UPDATE_LAYER_DATA } from "../constants/actions";
 import { BASE_URL } from "../constants/endpoint";
-import { useDispatch } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 export const searchGeom = (geoID) => async (dispatch) => {
   // TODO

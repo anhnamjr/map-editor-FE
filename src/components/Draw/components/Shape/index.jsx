@@ -1,20 +1,28 @@
-import React, { useState, useContext } from "react";
-import { Polygon, Polyline, Marker, Circle } from "react-leaflet";
+import React, { useState, useRef } from "react";
+import { Polygon, Polyline, Marker, Circle, useLeaflet } from "react-leaflet";
 import { reverseCoor, reverseCoorMultiPolygon } from "../../../../utils";
 import CustomPopup from "../CustomPopup";
-import { ShapeContext } from "../../../../context/ShapeContext"
+import { useDispatch } from "react-redux";
+import {STORE_GEOM_COOR, STORE_SHAPE_REF} from "../../../../constants/actions"
 
 export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties })
-  const { setShapeItem } = useContext(ShapeContext)
+  const dispatch = useDispatch();
+  const shapeRef = useRef()
+  const { map } = useLeaflet()
 
   const onClickShape = () => {
-    setShapeItem(item)
+    // console.log(shapeRef.current)
+    // map.removeLayer(shapeRef.current.leafletElement)
+    // shapeRef.current.leafletElement.pm.enable()
+    dispatch({ type: STORE_GEOM_COOR, payload: item });
+    dispatch({ type: STORE_SHAPE_REF, payload: shapeRef.current.leafletElement })
   }
 
   if (item.geometry.type === "LineString") {
     return (
       <Polyline
+        ref={shapeRef}
         onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates)}
         color={shapeProps.color}
@@ -27,6 +35,7 @@ export default function Shape({ item }) {
   if (item.geometry.type === "Polygon") {
     return (
       <Polygon
+        ref={shapeRef}
         onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates[0])}
         color={shapeProps.color || "#0f0f0f"}
@@ -41,6 +50,7 @@ export default function Shape({ item }) {
   if (item.geometry.type === "MultiPolygon") {
     return (
       <Polygon
+        ref={shapeRef}
         key={item.properties.geoID}
         id={item.properties.geoID}
         positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
@@ -57,6 +67,7 @@ export default function Shape({ item }) {
     if (item.properties.radius) {
       return (
         <Circle
+          ref={shapeRef}
           onClick={onClickShape}
           center={[
             item.geometry.coordinates[1],
@@ -74,6 +85,7 @@ export default function Shape({ item }) {
     } else {
       return (
         <Marker
+          ref={shapeRef}
           onClick={onClickShape}
           position={[
             item.geometry.coordinates[1],

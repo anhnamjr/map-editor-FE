@@ -1,12 +1,11 @@
 import { STORE_GEOM_COOR, STORE_GEOM_DATA } from "../constants/actions";
 
 const initState = {
-  geom: "",
-  layerID: "",
-  geoName: "",
-  categoryID: "",
-  description: "",
-  color: "",
+  geom: {
+    type: "Feature", 
+    geometry: null,
+    properties: null
+  }
 };
 
 export const storeGeom = (state = initState, action) => {
