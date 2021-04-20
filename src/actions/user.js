@@ -4,16 +4,12 @@ import { AUTH_URL } from "../constants/endpoint";
 
 export const userSignIn = (user) => async (dispatch) => {
   // TODO
-  const result = await axios.post(`${AUTH_URL}/sign-in`, user).then((res) => {
-    console.log(res.data);
-  });
+  await axios.post(`${AUTH_URL}/sign-in`, user)
 };
 
 export const userSignUp = (user) => async (dispatch) => {
   // TODO
-  const result = await axios.post(`${AUTH_URL}/sign-up`, user).then((res) => {
-    console.log(res.data);
-  });
+  await axios.post(`${AUTH_URL}/sign-up`, user)
 };
 
 export const setUser = (user) => (dispatch) => {

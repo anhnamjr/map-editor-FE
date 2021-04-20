@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { FeatureGroup, useLeaflet } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { STORE_GEOM_COOR, STORE_SHAPE_REF } from "../../../../constants/actions";
 import { reverseCoor } from "../../../../utils";
 import axios from "axios"
@@ -12,9 +12,22 @@ import Shape from "../Shape";
 export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
   const { map } = useLeaflet();
+  const temp = useSelector((state) => state.storeShapeRef)
+
+  // const featureGroupRef = useRef()
+
+  // useEffect(() => {
+  //   featureGroupRef.current.leafletElement.eachLayer((layer) => {
+  //     console.log(layer)
+  //   })
+  // })
+
+  useEffect(() => {
+
+  })
+
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
-    let layer = e.layer;
     geom = {
       type: geom.type,
       coordinates: geom.coordinates,
@@ -29,9 +42,14 @@ export default function EditableLayer({ geoData }) {
       type: "Feature",
       geometry: geom
     }
-    e.layer.on("click", ({ target }) => {
+    e.layer.on("click", () => {
+      // target.pm.enable();
+      // target.on("pm:edit", (e) => {
+      //   console.log("Edit")
+      // })
+      console.log(e)
       dispatch({ type: STORE_GEOM_COOR, payload: shapeItem });
-      dispatch({ type: STORE_SHAPE_REF, payload: target });
+      // dispatch({ type: STORE_SHAPE_REF, payload: 1 });
       map.off("click");
     });
     // dispatch({ type: STORE_GEOM_COOR, payload: geom });

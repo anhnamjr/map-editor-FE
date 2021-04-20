@@ -1,12 +1,12 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
-import L from "leaflet";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
+import { STORE_SHAPE_REF } from "../../../../constants/actions";
 
 const { Option, OptGroup } = Select;
 
@@ -31,6 +31,7 @@ const AddForm = ({ map }) => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
   const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
   var layerItem = null;
@@ -40,6 +41,7 @@ const AddForm = ({ map }) => {
   }
 
   const onEdit = () => {
+    
     // const mymap = map.current.leafletElement;
     // layerItem = new L.GeoJSON(geom, {
     //   pointToLayer: (feature, latlng) => {
@@ -58,47 +60,54 @@ const AddForm = ({ map }) => {
     //   }
     // }).addTo(mymap);
     // layerItem.pm.enable();
-    shapeRef.pm.enable();
+    dispatch({
+      type: STORE_SHAPE_REF,
+      payload: geom.properties.geoID
+    });
   };
 
   const onSave = (e) => {
     // window.confirm("Are you sure to delete a entry?");
     // API call here
     // console.log(shapeRef.toGeoJSON());
-    var editedGeom = shapeRef.toGeoJSON();
+    // var editedGeom = shapeRef.toGeoJSON();
 
-    let radius = null;
-    if (shapeRef instanceof L.Circle) {
-      radius = shapeRef.getRadius();
-    }
-    // console.log(radius)
-    editedGeom.properties = { ...geom.properties }
-    if (radius) {
-      editedGeom.properties.radius = radius;
-    }
-    editedGeom.properties.geoName = e.geoName
-    editedGeom.properties.layerID = e.layer
-    editedGeom.properties.description = e.description
+    // let radius = null;
+    // if (shapeRef instanceof L.Circle) {
+    //   radius = shapeRef.getRadius();
+    // }
+    // // console.log(radius)
+    // editedGeom.properties = { ...geom.properties }
+    // if (radius) {
+    //   editedGeom.properties.radius = radius;
+    // }
+    // editedGeom.properties.geoName = e.geoName
+    // editedGeom.properties.layerID = e.layer
+    // editedGeom.properties.description = e.description
 
-    shapeRef.pm.disable();
-    if (geoID) {
-      AXIOS_INSTANCE.post("/edit-geom", {
-        editedGeom
-      })
-        .then(res => {
-          message.success("Edit successfully!")
-        })
-    } else {
-      AXIOS_INSTANCE.post("/create-geom", {
-        editedGeom
-      })
-        .then(res => {
-          message.success("Edit successfully!")
-          shapeRef.remove()
-        })
-    }
+    dispatch({
+      type: STORE_SHAPE_REF,
+      payload: ""
+    });
 
-    form.resetFields();
+    // if (geoID) {
+    //   AXIOS_INSTANCE.post("/edit-geom", {
+    //     editedGeom
+    //   })
+    //     .then(res => {
+    //       message.success("Edit successfully!")
+    //     })
+    // } else {
+    //   AXIOS_INSTANCE.post("/create-geom", {
+    //     editedGeom
+    //   })
+    //     .then(res => {
+    //       message.success("Edit successfully!")
+    //       shapeRef._layer.remove()
+    //     })
+    // }
+
+    // form.resetFields();
   };
 
   useEffect(() => {

@@ -4,8 +4,8 @@ import { Form, Input, Button } from "antd";
 import axios from "axios";
 import { AUTH_URL } from "../../constants/endpoint";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { userSignUp } from "../../actions/user";
+// import { useDispatch } from "react-redux";
+// import { userSignUp } from "../../actions/user";
 import { useHistory } from "react-router-dom";
 
 export default function SignUp() {

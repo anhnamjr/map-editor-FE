@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
 import {
   FETCH_LAYER_DATA,
-  FETCH_LAYER_TREE,
   CLEAR_LAYER_DATA,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";

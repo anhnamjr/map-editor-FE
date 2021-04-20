@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
-import { Polygon, Polyline, Marker, Circle, useLeaflet } from "react-leaflet";
+import React, { useState, useRef, useEffect } from "react";
+import { Polygon, Polyline, Marker, Circle } from "react-leaflet";
 import { reverseCoor, reverseCoorMultiPolygon } from "../../../../utils";
 import CustomPopup from "../CustomPopup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   STORE_GEOM_COOR,
   STORE_SHAPE_REF,
@@ -12,17 +12,30 @@ export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties });
   const dispatch = useDispatch();
   const shapeRef = useRef();
-  const { map } = useLeaflet();
+  const temp = useSelector((state) => state.storeShapeRef);
+
+  useEffect(() => {
+    if (item.properties.geoID === temp.shapeRef) {
+      const shapeEdit = shapeRef.current.leafletElement
+      shapeEdit.pm.enable();
+      shapeEdit.on("pm:edit", (e) => {
+        let editGeom = { ...e.target.toGeoJSON(), properties: item.properties }
+        console.log(editGeom)
+        dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } })
+      })
+    } else {
+      shapeRef.current.leafletElement.pm.disable();
+    }
+  }, [temp])
 
   const onClickShape = () => {
-    console.log(shapeRef.current);
+    // console.log(shapeRef.current);
     // map.removeLayer(shapeRef.current.leafletElement)
     // shapeRef.current.leafletElement.pm.enable()
     dispatch({ type: STORE_GEOM_COOR, payload: item });
-    dispatch({
-      type: STORE_SHAPE_REF,
-      payload: shapeRef.current.leafletElement,
-    });
+    // shapeRef.current.leafletElement._leafletId = shapeRef.current.leafletElement.toGeoJSON().properties.geoID
+    // console.log(shapeRef.current.leafletElement)
+
   };
 
   if (item.geometry.type === "LineString") {
@@ -52,7 +65,7 @@ export default function Shape({ item }) {
         color={shapeProps.color || "#0f0f0f"}
         weight={shapeProps.weight || 3}
         fillColor={shapeProps.fill || "red"}
-        fillOpacity={shapeProps.fillOpacity || 0.3}
+        fillOpacity={shapeProps.fillOpacity || 0.2}
       >
         <CustomPopup
           item={item}
