@@ -66,14 +66,20 @@ const AddForm = ({ map }) => {
     // API call here
     // console.log(shapeRef.toGeoJSON());
     var editedGeom = shapeRef.toGeoJSON();
-    let radius = shapeRef.getRadius();
+
+    let radius = null;
+    if (shapeRef instanceof L.Circle) {
+      radius = shapeRef.getRadius();
+    }
     // console.log(radius)
     editedGeom.properties = { ...geom.properties }
     if (radius) {
       editedGeom.properties.radius = radius;
     }
+    editedGeom.properties.geoName = e.geoName
+    editedGeom.properties.layerID = e.layer
+    editedGeom.properties.description = e.description
 
-    console.log("e", editedGeom)
     shapeRef.pm.disable();
     if (geoID) {
       AXIOS_INSTANCE.post("/edit-geom", {
@@ -83,9 +89,16 @@ const AddForm = ({ map }) => {
           message.success("Edit successfully!")
         })
     } else {
-
+      AXIOS_INSTANCE.post("/create-geom", {
+        editedGeom
+      })
+        .then(res => {
+          message.success("Edit successfully!")
+          shapeRef.remove()
+        })
     }
-    // layerItem.remove()
+
+    form.resetFields();
   };
 
   useEffect(() => {
@@ -134,7 +147,7 @@ const AddForm = ({ map }) => {
         description: "",
       }}
       style={{ marginTop: 20 }}
-      onFinish={onFinish}
+      onFinish={onSave}
       onFinishFailed={onFinishFailed}
     >
       <Form.Item
@@ -203,7 +216,7 @@ const AddForm = ({ map }) => {
         <Button type="primary" style={{ marginRight: "10px" }} onClick={onEdit}>
           Edit
         </Button>
-        <Button type="primary" onClick={onSave}>
+        <Button type="primary" htmlType="submit">
           Save
         </Button>
         {/* {geoID && (
