@@ -19,10 +19,10 @@ export default function Shape({ item }) {
     // map.removeLayer(shapeRef.current.leafletElement)
     // shapeRef.current.leafletElement.pm.enable()
     dispatch({ type: STORE_GEOM_COOR, payload: item });
-    // dispatch({
-    //   type: STORE_SHAPE_REF,
-    //   payload: shapeRef.current.leafletElement.pm,
-    // });
+    dispatch({
+      type: STORE_SHAPE_REF,
+      payload: shapeRef.current.leafletElement,
+    });
   };
 
   if (item.geometry.type === "LineString") {

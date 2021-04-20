@@ -5,17 +5,18 @@ import { BsGeoAlt } from "react-icons/bs";
 import LayerTree from "../LayerTree";
 import AddForm from "./components/CreateGeoForm";
 import SearchForm from "./components/Search";
-import { Tabs } from 'antd';
+import { Tabs, Button } from 'antd';
 import AddMap from './components/AddMap';
 import AddLayer from './components/AddLayer';
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom"
 
 
 const { TabPane } = Tabs;
 
 const MapSidebar = ({ map }) => {
   // const { shapeItem } = useContext(ShapeContext)
-
+  const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
   const { geom = null } = useSelector((state) => state.storeGeom);
@@ -31,6 +32,12 @@ const MapSidebar = ({ map }) => {
     setCollapsed(false);
     setSelected(tab);
   };
+
+  const handleLogout = () => {
+    localStorage.setItem("token", "");
+    history.push("/signin");
+  }
+
   return (
     <Sidebar
       id="sidebar"
@@ -82,7 +89,7 @@ const MapSidebar = ({ map }) => {
         anchor="bottom"
         icon={<FiSettings />}
       >
-        <p>We don't want privacy so much as privacy settings!</p>
+        <Button onClick={handleLogout}>Log out</Button>
       </Tab>
     </Sidebar>
   );

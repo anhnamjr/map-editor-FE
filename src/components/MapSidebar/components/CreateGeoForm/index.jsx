@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { Form, Input, Button, Select } from "antd";
+import { Form, Input, Button, Select, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
@@ -58,14 +58,33 @@ const AddForm = ({ map }) => {
     //   }
     // }).addTo(mymap);
     // layerItem.pm.enable();
-    shapeRef.enable();
+    shapeRef.pm.enable();
   };
 
   const onSave = (e) => {
-    window.confirm("Are you sure to delete a entry?");
+    // window.confirm("Are you sure to delete a entry?");
     // API call here
-    // console.log(layerItem.toGeoJSON());
-    shapeRef.disable();
+    // console.log(shapeRef.toGeoJSON());
+    var editedGeom = shapeRef.toGeoJSON();
+    let radius = shapeRef.getRadius();
+    // console.log(radius)
+    editedGeom.properties = { ...geom.properties }
+    if (radius) {
+      editedGeom.properties.radius = radius;
+    }
+
+    console.log("e", editedGeom)
+    shapeRef.pm.disable();
+    if (geoID) {
+      AXIOS_INSTANCE.post("/edit-geom", {
+        editedGeom
+      })
+        .then(res => {
+          message.success("Edit successfully!")
+        })
+    } else {
+
+    }
     // layerItem.remove()
   };
 

@@ -11,7 +11,7 @@ import Shape from "../Shape";
 
 export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
-  const {map} = useLeaflet();
+  const { map } = useLeaflet();
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
     let layer = e.layer;
@@ -29,9 +29,9 @@ export default function EditableLayer({ geoData }) {
       type: "Feature",
       geometry: geom
     }
-    e.layer.on("click", (e) => {
+    e.layer.on("click", ({ target }) => {
       dispatch({ type: STORE_GEOM_COOR, payload: shapeItem });
-      // dispatch({ type: STORE_SHAPE_REF, payload: layer });
+      dispatch({ type: STORE_SHAPE_REF, payload: target });
       map.off("click");
     });
     // dispatch({ type: STORE_GEOM_COOR, payload: geom });
@@ -47,7 +47,7 @@ export default function EditableLayer({ geoData }) {
 
   const handleEdit = (e) => {
     const editedId = Object.entries(e.layers._layers);
-    console.log(editedId); // convert job -> arr
+    // console.log(editedId); // convert job -> arr
     const editedGeom = editedId.map((item) => {
       //circle
       if (item[1]._mRadius)
@@ -102,7 +102,7 @@ export default function EditableLayer({ geoData }) {
         },
       };
     });
-    console.log(editedGeom);
+    // console.log(editedGeom);
 
     axios.post(`${BASE_URL}/edit-geom`, editedGeom);
   };
@@ -111,7 +111,7 @@ export default function EditableLayer({ geoData }) {
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
     );
-    console.log(deletedId);
+    // console.log(deletedId);
     axios.post(`${BASE_URL}/delete-geom`, { id: deletedId });
   };
 
