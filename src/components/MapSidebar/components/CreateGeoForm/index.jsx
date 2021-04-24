@@ -36,30 +36,13 @@ const AddForm = ({ map }) => {
   var geoID = null;
   var layerItem = null;
 
+  console.log("Add form")
+
   if (geom && geom.properties) {
     geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
   const onEdit = () => {
-    
-    // const mymap = map.current.leafletElement;
-    // layerItem = new L.GeoJSON(geom, {
-    //   pointToLayer: (feature, latlng) => {
-    //     if (feature.properties.radius) {
-    //       return new L.Circle(latlng, feature.properties.radius);
-    //     } else {
-    //       return new L.Marker(latlng);
-    //     }
-    //   },
-    //   style: (feature) => {
-    //     return {
-    //       fillColor: feature.properties.fill,
-    //       fillOpacity: feature.properties.fillOpacity,
-    //       color: feature.properties.color,
-    //     }
-    //   }
-    // }).addTo(mymap);
-    // layerItem.pm.enable();
     dispatch({
       type: STORE_SHAPE_REF,
       payload: geom.properties.geoID
@@ -67,24 +50,6 @@ const AddForm = ({ map }) => {
   };
 
   const onSave = (e) => {
-    // window.confirm("Are you sure to delete a entry?");
-    // API call here
-    // console.log(shapeRef.toGeoJSON());
-    // var editedGeom = shapeRef.toGeoJSON();
-
-    // let radius = null;
-    // if (shapeRef instanceof L.Circle) {
-    //   radius = shapeRef.getRadius();
-    // }
-    // // console.log(radius)
-    // editedGeom.properties = { ...geom.properties }
-    // if (radius) {
-    //   editedGeom.properties.radius = radius;
-    // }
-    // editedGeom.properties.geoName = e.geoName
-    // editedGeom.properties.layerID = e.layer
-    // editedGeom.properties.description = e.description
-
     dispatch({
       type: STORE_SHAPE_REF,
       payload: ""
