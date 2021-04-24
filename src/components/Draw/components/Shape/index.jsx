@@ -10,6 +10,7 @@ import {
 
 export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties });
+  console.log(shapeProps)
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);

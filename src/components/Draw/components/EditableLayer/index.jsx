@@ -7,6 +7,7 @@ import { reverseCoor } from "../../../../utils";
 import axios from "axios"
 import { BASE_URL } from "../../../../constants/endpoint";
 import Shape from "../Shape";
+import { AddToUnsave } from "../../../../actions/unSave"
 
 
 export default function EditableLayer({ geoData }) {
@@ -22,26 +23,43 @@ export default function EditableLayer({ geoData }) {
   //   })
   // })
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  })
+  // })
 
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
+    console.log(geom)
     geom = {
       type: geom.type,
       coordinates: geom.coordinates,
     };
-    if (e.layer._mRadius) {
-      geom = {
-        ...geom,
-        properties: { ...geom.properties, radius: e.layer._mRadius },
-      };
-    }
     let shapeItem = {
       type: "Feature",
-      geometry: geom
+      geometry: geom,
+      properties: {
+        geoID: Math.random(),
+        // layerID: "",
+        geoName: "rooooo naaa",
+        color: "#40a9ff",
+        dashArray: 1,
+        dayModify: null,
+        description: "77777777",
+        fill: "#40a9ff",
+        fillOpacity: 0.3,
+        properties: null,
+        radius: 0,
+        weight: 3,
+      }
     }
+    if (e.layer._mRadius) {
+      shapeItem.properties = {
+        ...shapeItem.properties, radius: e.layer._mRadius
+      };
+    }
+    dispatch(AddToUnsave(shapeItem))
+    e.layer.remove()
+    console.log(shapeItem)
     e.layer.on("click", () => {
       // target.pm.enable();
       // target.on("pm:edit", (e) => {
@@ -149,6 +167,7 @@ export default function EditableLayer({ geoData }) {
         }}
       />
       {renderGeo(geoData)}
+      {/* {unsaveData && renderGeo()} */}
     </FeatureGroup>
   );
 }

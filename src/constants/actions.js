@@ -8,5 +8,10 @@ export const CHANGE_MAP_CENTER = "CHANGE_MAP_CENTER";
 
 // user
 export const SET_USER = "SET_USER";
-
 export const STORE_SHAPE_REF = "STORE_SHAPE_REF";
+
+// unsave geom action
+export const ADD_TO_UNSAVE = "ADD_TO_UNSAVE";
+export const REMOVE_FROM_UNSAVE = "REMOVE_FROM_UNSAVE";
+export const SHOW_UNSAVE = "SHOW_UNSAVE";
+export const HIDE_UNSAVE = "HIDE_UNSAVE";
