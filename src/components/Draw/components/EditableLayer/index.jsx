@@ -13,7 +13,7 @@ export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
   const { map } = useLeaflet();
   const temp = useSelector((state) => state.storeShapeRef)
-
+  console.log("editable")
   // const featureGroupRef = useRef()
 
   // useEffect(() => {

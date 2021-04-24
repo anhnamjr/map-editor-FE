@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Space } from 'antd';
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const tailLayout = {
@@ -26,12 +27,13 @@ export default function LayerMap() {
   }
 
   const onFinish = (values) => {
-    const data = { mapID: values.Map, layerName: values.name }
-    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
-      dispatch(fetchLayerTree())
-      form.resetFields()
-      message.success("Add Layer Successfully!")
-    })
+    // const data = { mapID: values.Map, layerName: values.name }
+    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
+    //   dispatch(fetchLayerTree())
+    //   form.resetFields()
+    //   message.success("Add Layer Successfully!")
+    // })
+    console.log(values)
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -70,6 +72,39 @@ export default function LayerMap() {
       >
         <Input placeholder="Layer name" />
       </Form.Item>
+
+      <Form.List name="columns">
+        {(fields, {add, remove}) => (
+          <>
+            {fields.map(({key, name, fieldKey, ...restField}) => (
+              <Space key={key} style={{display: 'flex', marginBottom: 8}} align="baseline">
+                <Form.Item
+                  {...restField} 
+                  name={[name, 'attribute']}
+                  fieldKey={[fieldKey, 'attribute']}
+                  rules={[{ required: true, message: 'Missing attribute name' }]}
+                >
+                  <Input placeholder="Attribute name" />
+                </Form.Item>
+                <Form.Item
+                  {...restField} 
+                  name={[name, 'datatype']}
+                  fieldKey={[fieldKey, 'datatype']}
+                  rules={[{ required: true, message: 'Missing datatype' }]}
+                >
+                  <Input placeholder="Datatype" />
+                </Form.Item>
+                <MinusCircleOutlined onClick={() => remove(name)} />
+              </Space>
+            ))}
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                Add field
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
 
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit">

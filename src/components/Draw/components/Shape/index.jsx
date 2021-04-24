@@ -13,7 +13,7 @@ export default function Shape({ item }) {
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
-
+  console.log("shape")
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
       const shapeEdit = shapeRef.current.leafletElement
