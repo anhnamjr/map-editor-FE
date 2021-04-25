@@ -32,8 +32,12 @@ main,
 }
 
 .ant-select-dropdown {
-  z-index: 2001;
+  z-index: 2003;
 }
 .ant-dropdown {
-  z-index: 2001;
+  z-index: 2003;
+}
+
+.ant-popconfirm {
+  z-index: 4000;
 }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 
@@ -11,8 +11,9 @@ const tailLayout = {
 };
 
 export default function LayerMap() {
-  const [options, setOptions] = useState(([]));
-  const dispatch = useDispatch()
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const onClick = () => {
@@ -20,22 +21,29 @@ export default function LayerMap() {
       let optionArr = [];
       res.data.maps.forEach((item) => {
         optionArr.push(item);
-      })
-      setOptions(optionArr)
-    })
-  }
+      });
+      setOptions(optionArr);
+    });
+  };
 
   const onFinish = (values) => {
-    const data = { mapID: values.Map, layerName: values.name }
-    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
-      dispatch(fetchLayerTree())
-      form.resetFields()
-      message.success("Add Layer Successfully!")
-    })
+    setLoading(true);
+    const data = { mapID: values.Map, layerName: values.name };
+    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
+      .then((res) => {
+        dispatch(fetchLayerTree());
+        setLoading(false);
+        form.resetFields();
+        message.success("Add Layer Successfully!");
+      })
+      .catch((err) => {
+        setLoading(false);
+        message.error(err.response.data.msg);
+      });
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -54,29 +62,31 @@ export default function LayerMap() {
           onClick={onClick}
           allowClear
         >
-          {
-            options && options.map((item) => {
-              return <Option value={item.key} key={item.key}> {item.title}</Option>
-            })
-          }
+          {options &&
+            options.map((item) => {
+              return (
+                <Option value={item.key} key={item.key}>
+                  {" "}
+                  {item.title}
+                </Option>
+              );
+            })}
         </Select>
       </Form.Item>
 
       <Form.Item
         name="name"
-        label='Layer name'
-
-        rules={[{ required: true, message: 'Enter new layer name' }]}
+        label="Layer name"
+        rules={[{ required: true, message: "Enter new layer name" }]}
       >
         <Input placeholder="Layer name" />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
           Add
         </Button>
       </Form.Item>
-    </Form >
-
-  )
+    </Form>
+  );
 }
