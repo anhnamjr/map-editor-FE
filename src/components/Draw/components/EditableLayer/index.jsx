@@ -2,20 +2,24 @@ import React from "react";
 import { FeatureGroup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import axios from "axios"
+import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import Shape from "../Shape";
-import { AddToUnsave } from "../../../../actions/unSave"
+import { AddToUnsave } from "../../../../actions/unSave";
+import { TOGGLE_UNSAVE } from "../../../../constants/actions";
 
 export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
-  const { unSaveGeom } = useSelector((state) => state.unSaveReducer, shallowEqual)
+  const { unSaveGeom, showUnsave } = useSelector(
+    (state) => state.unSaveReducer,
+    shallowEqual
+  );
 
-  console.log("EditLayer")
+  console.log("EditLayer");
 
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
-    console.log(geom)
+    console.log(geom);
     geom = {
       type: geom.type,
       coordinates: geom.coordinates,
@@ -36,15 +40,17 @@ export default function EditableLayer({ geoData }) {
         properties: null,
         radius: 0,
         weight: 3,
-      }
-    }
+      },
+    };
     if (e.layer._mRadius) {
       shapeItem.properties = {
-        ...shapeItem.properties, radius: e.layer._mRadius
+        ...shapeItem.properties,
+        radius: e.layer._mRadius,
       };
     }
-    dispatch(AddToUnsave(shapeItem))
-    e.layer.remove()
+    dispatch(AddToUnsave(shapeItem));
+    dispatch({ type: TOGGLE_UNSAVE, payload: true });
+    e.layer.remove();
   };
 
   const renderGeo = (geoData) => {
@@ -54,14 +60,11 @@ export default function EditableLayer({ geoData }) {
       ));
     }
   };
-  const renderUnsave = unsave => {
+  const renderUnsave = (unsave) => {
     if (unsave && unsave.length !== 0) {
-      return unsave.map((item, index) => (
-        <Shape item={item} key={index} />
-      ));
+      return unsave.map((item, index) => <Shape item={item} key={index} />);
     }
-  }
-
+  };
 
   // const handleEdit = (e) => {
   //   const editedId = Object.entries(e.layers._layers);
@@ -149,7 +152,7 @@ export default function EditableLayer({ geoData }) {
         }}
       />
       {renderGeo(geoData)}
-      {unSaveGeom.length !== 0 && renderUnsave(unSaveGeom)}
+      {unSaveGeom.length !== 0 && showUnsave && renderUnsave(unSaveGeom)}
     </FeatureGroup>
   );
 }

@@ -5,6 +5,9 @@ import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
 import {
   FETCH_LAYER_DATA,
   CLEAR_LAYER_DATA,
+  SHOW_UNSAVE,
+  HIDE_UNSAVE,
+  TOGGLE_UNSAVE,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
@@ -25,6 +28,8 @@ const LayerTree = () => {
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state.treeReducer.layerTree) || null;
+  const { showUnsave, unSaveGeom } =
+    useSelector((state) => state.unSaveReducer) || false;
 
   const openEditModal = (nodeData) => {
     setCurrentNode({ ...nodeData });
@@ -40,20 +45,20 @@ const LayerTree = () => {
   const handleDelete = (nodeData) => {
     if (nodeData.children) {
       // delete map
-      AXIOS_INSTANCE
-        .post(`${BASE_URL}/delete-map`, { mapID: nodeData.key })
-        .then((res) => {
-          dispatch(fetchLayerTree());
-          message.success("Delete Successfully");
-        });
+      AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
+        mapID: nodeData.key,
+      }).then((res) => {
+        dispatch(fetchLayerTree());
+        message.success("Delete Successfully");
+      });
     } else {
       // delete layer
-      AXIOS_INSTANCE
-        .post(`${BASE_URL}/delete-layer`, { layerID: nodeData.key })
-        .then((res) => {
-          dispatch(fetchLayerTree());
-          message.success("Delete Successfully");
-        });
+      AXIOS_INSTANCE.post(`${BASE_URL}/delete-layer`, {
+        layerID: nodeData.key,
+      }).then((res) => {
+        dispatch(fetchLayerTree());
+        message.success("Delete Successfully");
+      });
     }
   };
 
@@ -72,17 +77,24 @@ const LayerTree = () => {
 
   const onCheck = (checkedKeys) => {
     setCheckedKeys(checkedKeys);
-    AXIOS_INSTANCE
-      .get(`${BASE_URL}/data?layerId=${checkedKeys.join(",")}`)
-      .then((res) => {
-        dispatch({ type: FETCH_LAYER_DATA, payload: res.data });
-      });
+    AXIOS_INSTANCE.get(
+      `${BASE_URL}/data?layerId=${checkedKeys.join(",")}`
+    ).then((res) => {
+      dispatch({ type: FETCH_LAYER_DATA, payload: res.data });
+    });
   };
 
   const handleClearTree = () => {
     dispatch({ type: CLEAR_LAYER_DATA });
     setCheckedKeys([]);
     setSelectedKeys([]);
+  };
+
+  const toggleUnsave = () => {
+    dispatch({
+      type: TOGGLE_UNSAVE,
+      payload: !showUnsave,
+    });
   };
 
   const renderTreeItem = (nodeData) => {
@@ -111,9 +123,21 @@ const LayerTree = () => {
 
   return (
     <>
-      <Button onClick={handleClearTree} style={{ marginBottom: 20 }}>
-        Clear All Layers
-      </Button>
+      <div
+        style={{
+          marginBottom: 20,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gridGap: 10,
+        }}
+      >
+        <Button onClick={handleClearTree}>Clear All Layers</Button>
+        {unSaveGeom.length !== 0 && (
+          <Button type="primary" onClick={toggleUnsave}>
+            {showUnsave ? "Hide" : "Show"} Unsave
+          </Button>
+        )}
+      </div>
       <EditModal
         showEditModal={showEditModal}
         setShowEditModal={setShowEditModal}

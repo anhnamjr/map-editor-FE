@@ -14,5 +14,4 @@ export const STORE_SHAPE_REF = "STORE_SHAPE_REF";
 // unsave geom action
 export const ADD_TO_UNSAVE = "ADD_TO_UNSAVE";
 export const REMOVE_FROM_UNSAVE = "REMOVE_FROM_UNSAVE";
-export const SHOW_UNSAVE = "SHOW_UNSAVE";
-export const HIDE_UNSAVE = "HIDE_UNSAVE";
+export const TOGGLE_UNSAVE = "TOGGLE_UNSAVE";
