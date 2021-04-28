@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Tree, Button, Dropdown, Menu, message } from "antd";
+import { Tree, Button, Dropdown, Menu, message, Popconfirm } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
-import {
-  FETCH_LAYER_DATA,
-  CLEAR_LAYER_DATA,
-} from "../../constants/actions";
+import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree } from "../../actions/fetchLayerTree";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -40,20 +38,20 @@ const LayerTree = () => {
   const handleDelete = (nodeData) => {
     if (nodeData.children) {
       // delete map
-      AXIOS_INSTANCE
-        .post(`${BASE_URL}/delete-map`, { mapID: nodeData.key })
-        .then((res) => {
-          dispatch(fetchLayerTree());
-          message.success("Delete Successfully");
-        });
+      AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
+        mapID: nodeData.key,
+      }).then((res) => {
+        dispatch(fetchLayerTree());
+        message.success("Delete Successfully");
+      });
     } else {
       // delete layer
-      AXIOS_INSTANCE
-        .post(`${BASE_URL}/delete-layer`, { layerID: nodeData.key })
-        .then((res) => {
-          dispatch(fetchLayerTree());
-          message.success("Delete Successfully");
-        });
+      AXIOS_INSTANCE.post(`${BASE_URL}/delete-layer`, {
+        layerID: nodeData.key,
+      }).then((res) => {
+        dispatch(fetchLayerTree());
+        message.success("Delete Successfully");
+      });
     }
   };
 
@@ -72,11 +70,11 @@ const LayerTree = () => {
 
   const onCheck = (checkedKeys) => {
     setCheckedKeys(checkedKeys);
-    AXIOS_INSTANCE
-      .get(`${BASE_URL}/data?layerId=${checkedKeys.join(",")}`)
-      .then((res) => {
-        dispatch({ type: FETCH_LAYER_DATA, payload: res.data });
-      });
+    AXIOS_INSTANCE.get(
+      `${BASE_URL}/data?layerId=${checkedKeys.join(",")}`
+    ).then((res) => {
+      dispatch({ type: FETCH_LAYER_DATA, payload: res.data });
+    });
   };
 
   const handleClearTree = () => {
@@ -97,8 +95,20 @@ const LayerTree = () => {
           Edit
         </Menu.Item>
         {/* {!nodeData.children && <Menu.Item key="2" onClick={() => handleChangeMap(nodeData)}>Move</Menu.Item>} */}
-        <Menu.Item key="3" onClick={() => handleDelete(nodeData)}>
-          Delete
+        <Menu.Item key="3" /*onClick={() => handleDelete(nodeData)}*/>
+          <Popconfirm
+            placement="right"
+            title={`Are you sure to delete this ${
+              nodeData.children ? "map" : "layer"
+            }?`}
+            icon={<QuestionCircleOutlined />}
+            onConfirm={() => handleDelete(nodeData)}
+            okText="Yes"
+            cancelText="No"
+            style={{ color: "red", zIndex: 4000 }}
+          >
+            Delete
+          </Popconfirm>
         </Menu.Item>
       </Menu>
     );
