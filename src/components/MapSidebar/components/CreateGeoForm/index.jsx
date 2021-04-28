@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, message } from "antd";
+import { Form, Input, Button, Select } from "antd";
+import InputColor from "../../../InputColor"
 import { useSelector, useDispatch } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
-import { STORE_SHAPE_REF } from "../../../../constants/actions";
+import { SET_FILL_COLOR, STORE_SHAPE_REF, SET_EDIT, SET_NOT_EDIT, SET_COLOR } from "../../../../constants/actions";
 
 const { Option, OptGroup } = Select;
 
@@ -27,87 +28,35 @@ const tailLayout = {
 
 const types = ["Line", "Polygon", "Marker"];
 
-const AddForm = ({ map }) => {
+const AddForm = () => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
-  const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
+  const color = useSelector((state) => state.colorReducer);
+  console.log(color)
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
-  var layerItem = null;
 
   if (geom && geom.properties) {
     geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
   const onEdit = () => {
-    
-    // const mymap = map.current.leafletElement;
-    // layerItem = new L.GeoJSON(geom, {
-    //   pointToLayer: (feature, latlng) => {
-    //     if (feature.properties.radius) {
-    //       return new L.Circle(latlng, feature.properties.radius);
-    //     } else {
-    //       return new L.Marker(latlng);
-    //     }
-    //   },
-    //   style: (feature) => {
-    //     return {
-    //       fillColor: feature.properties.fill,
-    //       fillOpacity: feature.properties.fillOpacity,
-    //       color: feature.properties.color,
-    //     }
-    //   }
-    // }).addTo(mymap);
-    // layerItem.pm.enable();
     dispatch({
-      type: STORE_SHAPE_REF,
-      payload: geom.properties.geoID
+      type: SET_EDIT
     });
   };
 
-  const onSave = (e) => {
-    // window.confirm("Are you sure to delete a entry?");
-    // API call here
-    // console.log(shapeRef.toGeoJSON());
-    // var editedGeom = shapeRef.toGeoJSON();
-
-    // let radius = null;
-    // if (shapeRef instanceof L.Circle) {
-    //   radius = shapeRef.getRadius();
-    // }
-    // // console.log(radius)
-    // editedGeom.properties = { ...geom.properties }
-    // if (radius) {
-    //   editedGeom.properties.radius = radius;
-    // }
-    // editedGeom.properties.geoName = e.geoName
-    // editedGeom.properties.layerID = e.layer
-    // editedGeom.properties.description = e.description
-
+  const onSave = (values) => {
     dispatch({
       type: STORE_SHAPE_REF,
       payload: ""
     });
-
-    // if (geoID) {
-    //   AXIOS_INSTANCE.post("/edit-geom", {
-    //     editedGeom
-    //   })
-    //     .then(res => {
-    //       message.success("Edit successfully!")
-    //     })
-    // } else {
-    //   AXIOS_INSTANCE.post("/create-geom", {
-    //     editedGeom
-    //   })
-    //     .then(res => {
-    //       message.success("Edit successfully!")
-    //       shapeRef._layer.remove()
-    //     })
-    // }
-
-    // form.resetFields();
+    dispatch({
+      type: SET_NOT_EDIT
+    })
+    console.log(values)
+    form.resetFields()
   };
 
   useEffect(() => {
@@ -117,8 +66,10 @@ const AddForm = ({ map }) => {
       layer: geom && geom.properties ? geom.properties.layerID : "",
       geoName: geom && geom.properties ? geom.properties.geoName : "",
       description: geom && geom.properties ? geom.properties.description : "",
+      fill: color.fill || "#333",
+      color: color.color || "#333"
     });
-  }, [geom, form]);
+  }, [geom, form, color]);
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -142,6 +93,14 @@ const AddForm = ({ map }) => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  const onChangeFillColor = (color) => {
+    dispatch({ type: SET_FILL_COLOR, payload: color.color })
+  }
+
+  const onChangeColor = (color) => {
+    dispatch({ type: SET_COLOR, payload: color.color })
+  }
 
   return (
     <Form
@@ -216,6 +175,13 @@ const AddForm = ({ map }) => {
 
       <Form.Item label="Geom" name="geom">
         <Input.TextArea disabled />
+      </Form.Item>.
+
+      <Form.Item label="Fill Color" name="fill">
+        <InputColor color={color.fill} onChange={onChangeFillColor} />
+      </Form.Item>
+      <Form.Item label="Color" name="color">
+        <InputColor color={color.color} onChange={onChangeColor} />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
