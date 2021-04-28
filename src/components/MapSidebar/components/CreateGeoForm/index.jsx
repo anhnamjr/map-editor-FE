@@ -7,6 +7,7 @@ import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
 import { STORE_SHAPE_REF } from "../../../../constants/actions";
+import { FaLocationArrow } from "react-icons/fa";
 
 const { Option, OptGroup } = Select;
 
@@ -27,16 +28,15 @@ const tailLayout = {
 
 const types = ["Line", "Polygon", "Marker"];
 
-const AddForm = ({ map }) => {
+const AddForm = () => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
-  const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
+  const { currentEditLayer } = useSelector((state) => state.treeReducer) || "";
+  // const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
-  var layerItem = null;
 
-  console.log("Add form")
 
   if (geom && geom.properties) {
     geoID = geom.properties.geoID ? geom.properties.geoID : null;
@@ -79,11 +79,15 @@ const AddForm = ({ map }) => {
     form.setFieldsValue({
       geom: JSON.stringify(geom ? geom.geometry : ""),
       category: geom && geom.geometry ? geom.geometry.type : "",
-      layer: geom && geom.properties ? geom.properties.layerID : "",
+      layer: geom && geom.properties && geom.properties.layerID ? geom.properties.layerID : currentEditLayer,
       geoName: geom && geom.properties ? geom.properties.geoName : "",
       description: geom && geom.properties ? geom.properties.description : "",
     });
-  }, [geom, form]);
+  }, [geom, form, currentEditLayer]);
+
+  const onCreateGeom = () => {
+
+  }
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -120,7 +124,7 @@ const AddForm = ({ map }) => {
         color: "#333",
         description: "",
       }}
-      style={{ marginTop: 20 }}
+      style={{ marginTop: 20, marginRight: 10 }}
       onFinish={onSave}
       onFinishFailed={onFinishFailed}
     >
@@ -183,22 +187,24 @@ const AddForm = ({ map }) => {
         <Input.TextArea disabled />
       </Form.Item>
 
-      <Form.Item {...tailLayout}>
-        {/* <Button type="primary" htmlType="submit">
-          Create
-        </Button> */}
-        <Button type="primary" style={{ marginRight: "10px" }} onClick={onEdit}>
-          Edit
-        </Button>
+      {/* <Form.Item> */}
+      <div style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column"
+      }}>
+        <Button style={{ marginBottom: "10px" }} type="primary" onClick={onEdit}>
+          <FaLocationArrow style={{ marginRight: "10px" }} /> Edit Coordinates
+            </Button>
         <Button type="primary" htmlType="submit">
-          Save
+          {
+            geom && geom.properties && typeof geom.properties.geoID === "string"
+              ? "Save" : "Create"}
         </Button>
-        {/* {geoID && (
-          <>
-           
-          </>
-        )} */}
-      </Form.Item>
+      </div>
+      {/* </Form.Item> */}
     </Form>
   );
 };

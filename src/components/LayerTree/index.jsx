@@ -5,14 +5,14 @@ import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
 import {
   FETCH_LAYER_DATA,
   CLEAR_LAYER_DATA,
-  SHOW_UNSAVE,
-  HIDE_UNSAVE,
   TOGGLE_UNSAVE,
+  SET_CURRENT_EDIT_LAYER,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree } from "../../actions/fetchLayerTree";
+import "./style.scss"
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -28,6 +28,7 @@ const LayerTree = () => {
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state.treeReducer.layerTree) || null;
+  const { currentEditLayer } = useSelector((state) => state.treeReducer) || "";
   const { showUnsave, unSaveGeom } =
     useSelector((state) => state.unSaveReducer) || false;
 
@@ -116,7 +117,16 @@ const LayerTree = () => {
     );
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
-        <div className="site-dropdown-context-menu">{nodeData.title}</div>
+        <div
+          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""}`}
+          onClick={() => {
+            if (!nodeData.children) {
+              setCheckedKeys([...checkedKeys, nodeData.key])
+              onCheck([...checkedKeys, nodeData.key])
+              dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key })
+            }
+          }}
+        >{nodeData.title}</div>
       </Dropdown>
     );
   };
@@ -132,11 +142,9 @@ const LayerTree = () => {
         }}
       >
         <Button onClick={handleClearTree}>Clear All Layers</Button>
-        {unSaveGeom.length !== 0 && (
-          <Button type="primary" onClick={toggleUnsave}>
-            {showUnsave ? "Hide" : "Show"} Unsave
-          </Button>
-        )}
+        <Button type="primary" onClick={toggleUnsave} disabled={unSaveGeom.length === 0}>
+          {showUnsave ? "Hide" : "Show"} Unsave
+        </Button>
       </div>
       <EditModal
         showEditModal={showEditModal}

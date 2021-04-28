@@ -19,7 +19,7 @@ export const PrivateRoute = (props) => {
       const decodeToken = jwt.decode(token);
       dispatch(setUser(decodeToken.user));
     }
-  }, []);
+  }, [history]);
 
   return <>{props.children}</>;
 };

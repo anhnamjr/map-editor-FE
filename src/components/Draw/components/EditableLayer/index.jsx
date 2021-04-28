@@ -15,8 +15,6 @@ export default function EditableLayer({ geoData }) {
     shallowEqual
   );
 
-  console.log("EditLayer");
-
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
     console.log(geom);

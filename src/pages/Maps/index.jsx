@@ -10,7 +10,6 @@ import PrintControlDefault from "react-leaflet-easyprint";
 const PrintControl = withLeaflet(PrintControlDefault);
 
 const Maps = () => {
-  console.log("Map")
   const [geoData, setGeoData] = useState({});
   const data = useSelector((state) => state.layerReducer.layerData);
   const mapRef = useRef();

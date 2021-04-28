@@ -22,7 +22,6 @@ export default function Shape({ item }) {
       shapeEdit.pm.enable();
       shapeEdit.on("pm:edit", (e) => {
         let editGeom = { ...e.target.toGeoJSON(), properties: item.properties }
-        console.log(editGeom)
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } })
       })
     } else {

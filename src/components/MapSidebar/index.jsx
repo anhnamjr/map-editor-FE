@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, Tab } from "react-leaflet-sidetabs";
 import { FiHome, FiChevronLeft, FiSearch, FiSettings } from "react-icons/fi";
 import { BsGeoAlt } from "react-icons/bs";
@@ -47,7 +47,7 @@ const MapSidebar = ({ map }) => {
       selected={selected}
       onOpen={onOpen}
       onClose={onClose}
-      style={{ zIndex: 401 }}
+      style={{ zIndex: 401, padding: 10 }}
     >
       <Tab id="maps" header="Maps" icon={<FiHome />}>
         <Tabs defaultActiveKey="1" >
@@ -58,7 +58,7 @@ const MapSidebar = ({ map }) => {
           <TabPane tab="Add Map" key="2">
             <AddMap />
           </TabPane>
-          <TabPane tab="Add Layer" key="3">
+          <TabPane tab="Add Layer" key="3" style={{ paddingRight: 20 }}>
             <AddLayer />
           </TabPane>
 

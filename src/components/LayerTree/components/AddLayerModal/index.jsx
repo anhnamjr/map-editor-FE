@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Button, Form, Select, Modal, Input, message } from "antd";
+import React from "react";
+import { Button, Form, Modal, Input, message } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 import { BASE_URL } from "../../../../constants/endpoint";
