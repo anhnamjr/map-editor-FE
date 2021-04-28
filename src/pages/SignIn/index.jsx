@@ -12,7 +12,7 @@ export default function SignIn() {
   const history = useHistory();
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || "";
+    const token = localStorage.getItem("token");
     if (token) {
       history.push("/");
     }
@@ -22,10 +22,10 @@ export default function SignIn() {
     axios
       .post(`${AUTH_URL}/sign-in`, values)
       .then((res) => {
+        console.log(res.data)
         const { token } = res.data;
         localStorage.setItem("token", token);
         history.push("/");
-        console.log("Redirect");
       })
       .catch((err) => console.log(err));
   };

@@ -11,13 +11,18 @@ export const PrivateRoute = (props) => {
   doAxiosRequestIntercept();
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || "";
+    const token = localStorage.getItem("token");
     if (!token) {
       history.push("/signin");
     } else {
-      // set user to store
       const decodeToken = jwt.decode(token);
-      dispatch(setUser(decodeToken.user));
+      if (decodeToken.exp < Date.now() / 1000) {
+        localStorage.removeItem("token")
+        history.push("/signin");
+      } else {
+        // set user to store
+        dispatch(setUser(decodeToken.user));
+      }
     }
   }, []);
 

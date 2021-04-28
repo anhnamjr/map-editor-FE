@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tree, Button, Dropdown, Menu, message, Popconfirm } from "antd";
+import { Tree, Button, Dropdown, Menu, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
 import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA } from "../../constants/actions";
@@ -7,7 +7,6 @@ import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree } from "../../actions/fetchLayerTree";
-import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -96,19 +95,7 @@ const LayerTree = () => {
         </Menu.Item>
         {/* {!nodeData.children && <Menu.Item key="2" onClick={() => handleChangeMap(nodeData)}>Move</Menu.Item>} */}
         <Menu.Item key="3" /*onClick={() => handleDelete(nodeData)}*/>
-          <Popconfirm
-            placement="right"
-            title={`Are you sure to delete this ${
-              nodeData.children ? "map" : "layer"
-            }?`}
-            icon={<QuestionCircleOutlined />}
-            onConfirm={() => handleDelete(nodeData)}
-            okText="Yes"
-            cancelText="No"
-            style={{ color: "red", zIndex: 4000 }}
-          >
-            Delete
-          </Popconfirm>
+          Delete
         </Menu.Item>
       </Menu>
     );

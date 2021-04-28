@@ -34,7 +34,7 @@ const MapSidebar = ({ map }) => {
   };
 
   const handleLogout = () => {
-    localStorage.setItem("token", "");
+    localStorage.removeItem("token");
     history.push("/signin");
   }
 
