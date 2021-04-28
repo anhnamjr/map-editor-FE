@@ -3,37 +3,22 @@ import "antd/dist/antd.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { Map, TileLayer, ZoomControl, withLeaflet } from "react-leaflet";
 import MapSidebar from "../../components/MapSidebar";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import MapLayerControl from "../../components/MapLayerControl";
 import Draw from "../../components/Draw";
 import PrintControlDefault from "react-leaflet-easyprint";
-import { SHOW_UNSAVE } from "../../constants/actions"
 
 const PrintControl = withLeaflet(PrintControlDefault);
 
 const Maps = () => {
   const [geoData, setGeoData] = useState({});
   const data = useSelector((state) => state.layerReducer.layerData);
-  const { unSaveGeom, showUnsave } = useSelector((state) => state.unSaveReducer)
   const mapRef = useRef();
   const printControlRef = useRef();
-  const dispatch = useDispatch()
-
-  // const { center } = useSelector((state) => state.mapReducer)
 
   useEffect(() => {
-    if (unSaveGeom.length !== 0) {
-      dispatch({ type: SHOW_UNSAVE, payload: null })
-    }
-    let newFeatures = [...unSaveGeom]
-    if (data.features) {
-      newFeatures = [...newFeatures, ...data.features]
-    }
-    setGeoData({
-      ...data,
-      features: newFeatures
-    });
-  }, [data, unSaveGeom]);
+    setGeoData(data);
+  }, [data]);
 
   return (
     <>

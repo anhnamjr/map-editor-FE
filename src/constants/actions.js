@@ -5,6 +5,7 @@ export const UPDATE_LAYER_DATA = "UPDATE_LAYER_DATA";
 export const STORE_GEOM_COOR = "STORE_GEOM_COOR";
 export const STORE_GEOM_DATA = "STORE_GEOM_DATA";
 export const CHANGE_MAP_CENTER = "CHANGE_MAP_CENTER";
+export const SET_CURRENT_EDIT_LAYER = "SET_CURRENT_EDIT_LAYER";
 
 // user
 export const SET_USER = "SET_USER";
@@ -13,5 +14,4 @@ export const STORE_SHAPE_REF = "STORE_SHAPE_REF";
 // unsave geom action
 export const ADD_TO_UNSAVE = "ADD_TO_UNSAVE";
 export const REMOVE_FROM_UNSAVE = "REMOVE_FROM_UNSAVE";
-export const SHOW_UNSAVE = "SHOW_UNSAVE";
-export const HIDE_UNSAVE = "HIDE_UNSAVE";
+export const TOGGLE_UNSAVE = "TOGGLE_UNSAVE";

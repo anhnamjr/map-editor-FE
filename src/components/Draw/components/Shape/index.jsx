@@ -5,23 +5,20 @@ import CustomPopup from "../CustomPopup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   STORE_GEOM_COOR,
-  STORE_SHAPE_REF,
+  // STORE_SHAPE_REF,
 } from "../../../../constants/actions";
 
 export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties });
-  console.log(shapeProps)
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
-
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
       const shapeEdit = shapeRef.current.leafletElement
       shapeEdit.pm.enable();
       shapeEdit.on("pm:edit", (e) => {
         let editGeom = { ...e.target.toGeoJSON(), properties: item.properties }
-        console.log(editGeom)
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } })
       })
     } else {

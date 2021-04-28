@@ -1,7 +1,7 @@
 // import axios from "axios";
 import { AXIOS_INSTANCE } from "../config/requestInterceptor";
 
-import { CHANGE_MAP_CENTER, UPDATE_LAYER_DATA } from "../constants/actions";
+import {  UPDATE_LAYER_DATA } from "../constants/actions";
 import { BASE_URL } from "../constants/endpoint";
 // import { useDispatch } from "react-redux"
 

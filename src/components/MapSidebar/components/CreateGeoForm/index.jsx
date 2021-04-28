@@ -7,6 +7,7 @@ import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
 import { STORE_SHAPE_REF } from "../../../../constants/actions";
+import { FaLocationArrow } from "react-icons/fa";
 
 const { Option, OptGroup } = Select;
 
@@ -18,48 +19,24 @@ const layout = {
     span: 19,
   },
 };
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
 
 const types = ["Line", "Polygon", "Marker"];
 
-const AddForm = ({ map }) => {
+const AddForm = () => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const { geom = null } = useSelector((state) => state.storeGeom);
-  const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
+  const { currentEditLayer } = useSelector((state) => state.treeReducer) || "";
+  // const { shapeRef = null } = useSelector((state) => state.storeShapeRef);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
-  var layerItem = null;
+
 
   if (geom && geom.properties) {
     geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
   const onEdit = () => {
-    
-    // const mymap = map.current.leafletElement;
-    // layerItem = new L.GeoJSON(geom, {
-    //   pointToLayer: (feature, latlng) => {
-    //     if (feature.properties.radius) {
-    //       return new L.Circle(latlng, feature.properties.radius);
-    //     } else {
-    //       return new L.Marker(latlng);
-    //     }
-    //   },
-    //   style: (feature) => {
-    //     return {
-    //       fillColor: feature.properties.fill,
-    //       fillOpacity: feature.properties.fillOpacity,
-    //       color: feature.properties.color,
-    //     }
-    //   }
-    // }).addTo(mymap);
-    // layerItem.pm.enable();
     dispatch({
       type: STORE_SHAPE_REF,
       payload: geom.properties.geoID
@@ -67,24 +44,6 @@ const AddForm = ({ map }) => {
   };
 
   const onSave = (e) => {
-    // window.confirm("Are you sure to delete a entry?");
-    // API call here
-    // console.log(shapeRef.toGeoJSON());
-    // var editedGeom = shapeRef.toGeoJSON();
-
-    // let radius = null;
-    // if (shapeRef instanceof L.Circle) {
-    //   radius = shapeRef.getRadius();
-    // }
-    // // console.log(radius)
-    // editedGeom.properties = { ...geom.properties }
-    // if (radius) {
-    //   editedGeom.properties.radius = radius;
-    // }
-    // editedGeom.properties.geoName = e.geoName
-    // editedGeom.properties.layerID = e.layer
-    // editedGeom.properties.description = e.description
-
     dispatch({
       type: STORE_SHAPE_REF,
       payload: ""
@@ -114,11 +73,15 @@ const AddForm = ({ map }) => {
     form.setFieldsValue({
       geom: JSON.stringify(geom ? geom.geometry : ""),
       category: geom && geom.geometry ? geom.geometry.type : "",
-      layer: geom && geom.properties ? geom.properties.layerID : "",
+      layer: geom && geom.properties && geom.properties.layerID ? geom.properties.layerID : currentEditLayer,
       geoName: geom && geom.properties ? geom.properties.geoName : "",
       description: geom && geom.properties ? geom.properties.description : "",
     });
-  }, [geom, form]);
+  }, [geom, form, currentEditLayer]);
+
+  const onCreateGeom = () => {
+
+  }
 
   const onFinish = (values) => {
     let newGeom = JSON.parse(values.geom);
@@ -155,7 +118,7 @@ const AddForm = ({ map }) => {
         color: "#333",
         description: "",
       }}
-      style={{ marginTop: 20 }}
+      style={{ marginTop: 20, marginRight: 10 }}
       onFinish={onSave}
       onFinishFailed={onFinishFailed}
     >
@@ -218,22 +181,24 @@ const AddForm = ({ map }) => {
         <Input.TextArea disabled />
       </Form.Item>
 
-      <Form.Item {...tailLayout}>
-        {/* <Button type="primary" htmlType="submit">
-          Create
-        </Button> */}
-        <Button type="primary" style={{ marginRight: "10px" }} onClick={onEdit}>
-          Edit
-        </Button>
+      {/* <Form.Item> */}
+      <div style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column"
+      }}>
+        <Button style={{ marginBottom: "10px" }} type="primary" onClick={onEdit}>
+          <FaLocationArrow style={{ marginRight: "10px" }} /> Edit Coordinates
+            </Button>
         <Button type="primary" htmlType="submit">
-          Save
+          {
+            geom && geom.properties && typeof geom.properties.geoID === "string"
+              ? "Save" : "Create"}
         </Button>
-        {/* {geoID && (
-          <>
-           
-          </>
-        )} */}
-      </Form.Item>
+      </div>
+      {/* </Form.Item> */}
     </Form>
   );
 };

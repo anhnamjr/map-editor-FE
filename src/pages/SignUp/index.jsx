@@ -17,7 +17,7 @@ export default function SignUp() {
     if (token) {
       history.push("/");
     }
-  }, []);
+  }, [history]);
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
