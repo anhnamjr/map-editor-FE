@@ -17,7 +17,6 @@ export default function EditableLayer({ geoData }) {
 
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
-    console.log(geom);
     geom = {
       type: geom.type,
       coordinates: geom.coordinates,
@@ -28,7 +27,7 @@ export default function EditableLayer({ geoData }) {
       properties: {
         geoID: Math.random(),
         // layerID: "",
-        geoName: "rooooo naaa",
+        geoName: "New",
         color: "#40a9ff",
         dashArray: 1,
         dayModify: null,
@@ -151,6 +150,6 @@ export default function EditableLayer({ geoData }) {
       />
       {renderGeo(geoData)}
       {unSaveGeom.length !== 0 && showUnsave && renderUnsave(unSaveGeom)}
-    </FeatureGroup >
+    </FeatureGroup>
   );
 }

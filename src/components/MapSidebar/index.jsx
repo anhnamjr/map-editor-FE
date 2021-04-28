@@ -52,7 +52,7 @@ const MapSidebar = ({ map }) => {
       <Tab id="maps" header="Maps" icon={<FiHome />}>
         <Tabs defaultActiveKey="1" >
           <TabPane tab="Your Maps" key="1">
-            <h2></h2>
+            <h2>Your maps</h2>
             <LayerTree />
           </TabPane>
           <TabPane tab="Add Map" key="2">

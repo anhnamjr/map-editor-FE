@@ -19,12 +19,6 @@ const layout = {
     span: 19,
   },
 };
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
 
 const types = ["Line", "Polygon", "Marker"];
 

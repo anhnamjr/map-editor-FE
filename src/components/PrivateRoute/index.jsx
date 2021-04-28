@@ -24,7 +24,7 @@ export const PrivateRoute = (props) => {
         dispatch(setUser(decodeToken.user));
       }
     }
-  }, [history]);
+  }, [history, dispatch]);
 
   return <>{props.children}</>;
 };

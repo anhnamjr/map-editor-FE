@@ -5,18 +5,14 @@ import CustomPopup from "../CustomPopup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   STORE_GEOM_COOR,
-  STORE_SHAPE_REF,
+  // STORE_SHAPE_REF,
 } from "../../../../constants/actions";
 
 export default function Shape({ item }) {
   const [shapeProps, setShapeProps] = useState({ ...item.properties });
-  console.log(shapeProps)
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
-
-  console.log("Shape")
-
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
       const shapeEdit = shapeRef.current.leafletElement

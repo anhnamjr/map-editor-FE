@@ -2,13 +2,11 @@ import React, { useEffect } from "react";
 import "./style.css";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link, Redirect, useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 import { AUTH_URL } from "../../constants/endpoint";
 
 export default function SignIn() {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   useEffect(() => {
@@ -16,13 +14,12 @@ export default function SignIn() {
     if (token) {
       history.push("/");
     }
-  }, []);
+  }, [history]);
 
   const onFinish = (values) => {
     axios
       .post(`${AUTH_URL}/sign-in`, values)
       .then((res) => {
-        console.log(res.data)
         const { token } = res.data;
         localStorage.setItem("token", token);
         history.push("/");
