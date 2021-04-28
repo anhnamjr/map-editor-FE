@@ -15,13 +15,14 @@ export default function Shape({ item }) {
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
 
+  console.log("Shape")
+
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
       const shapeEdit = shapeRef.current.leafletElement
       shapeEdit.pm.enable();
       shapeEdit.on("pm:edit", (e) => {
         let editGeom = { ...e.target.toGeoJSON(), properties: item.properties }
-        console.log(editGeom)
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } })
       })
     } else {

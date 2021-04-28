@@ -1,7 +1,8 @@
-import { FETCH_LAYER_TREE } from '../constants/actions';
+import { FETCH_LAYER_TREE, SET_CURRENT_EDIT_LAYER } from '../constants/actions';
 
 const initState = {
-    layerTree: []
+    layerTree: [],
+    currentEditLayer: ""
 }
 
 export const treeReducer = (state=initState, action) => {
@@ -10,6 +11,12 @@ export const treeReducer = (state=initState, action) => {
             return {
                 ...state,
                 layerTree: action.payload
+            }
+
+        case SET_CURRENT_EDIT_LAYER: 
+            return {
+                ...state,
+                currentEditLayer: action.payload
             }
 
         default: return {...state}

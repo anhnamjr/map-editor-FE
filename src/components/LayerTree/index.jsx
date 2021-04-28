@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Tree, Button, Dropdown, Menu, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
-import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA } from "../../constants/actions";
+import {
+  FETCH_LAYER_DATA,
+  CLEAR_LAYER_DATA,
+  TOGGLE_UNSAVE,
+  SET_CURRENT_EDIT_LAYER,
+} from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree } from "../../actions/fetchLayerTree";
+import "./style.scss"
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -22,6 +28,9 @@ const LayerTree = () => {
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state.treeReducer.layerTree) || null;
+  const { currentEditLayer } = useSelector((state) => state.treeReducer) || "";
+  const { showUnsave, unSaveGeom } =
+    useSelector((state) => state.unSaveReducer) || false;
 
   const openEditModal = (nodeData) => {
     setCurrentNode({ ...nodeData });
@@ -35,22 +44,26 @@ const LayerTree = () => {
   };
 
   const handleDelete = (nodeData) => {
-    if (nodeData.children) {
-      // delete map
-      AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
-        mapID: nodeData.key,
-      }).then((res) => {
-        dispatch(fetchLayerTree());
-        message.success("Delete Successfully");
-      });
-    } else {
-      // delete layer
-      AXIOS_INSTANCE.post(`${BASE_URL}/delete-layer`, {
-        layerID: nodeData.key,
-      }).then((res) => {
-        dispatch(fetchLayerTree());
-        message.success("Delete Successfully");
-      });
+    const userConfirm =
+      window.confirm(`Are you sure to delete this ${nodeData.children ? "map" : "layer"}`)
+    if (userConfirm) {
+      if (nodeData.children) {
+        // delete map
+        AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
+          mapID: nodeData.key,
+        }).then((res) => {
+          dispatch(fetchLayerTree());
+          message.success("Delete Successfully");
+        });
+      } else {
+        // delete layer
+        AXIOS_INSTANCE.post(`${BASE_URL}/delete-layer`, {
+          layerID: nodeData.key,
+        }).then((res) => {
+          dispatch(fetchLayerTree());
+          message.success("Delete Successfully");
+        });
+      }
     }
   };
 
@@ -82,6 +95,13 @@ const LayerTree = () => {
     setSelectedKeys([]);
   };
 
+  const toggleUnsave = () => {
+    dispatch({
+      type: TOGGLE_UNSAVE,
+      payload: !showUnsave,
+    });
+  };
+
   const renderTreeItem = (nodeData) => {
     const menu = (
       <Menu style={{ width: 150, zIndex: 10000 }}>
@@ -94,23 +114,42 @@ const LayerTree = () => {
           Edit
         </Menu.Item>
         {/* {!nodeData.children && <Menu.Item key="2" onClick={() => handleChangeMap(nodeData)}>Move</Menu.Item>} */}
-        <Menu.Item key="3" /*onClick={() => handleDelete(nodeData)}*/>
+        <Menu.Item key="3" onClick={() => handleDelete(nodeData)}>
           Delete
         </Menu.Item>
       </Menu>
     );
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
-        <div className="site-dropdown-context-menu">{nodeData.title}</div>
+        <div
+          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""}`}
+          onClick={() => {
+            if (!nodeData.children) {
+              setCheckedKeys([...checkedKeys, nodeData.key])
+              onCheck([...checkedKeys, nodeData.key])
+              dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key })
+            }
+          }}
+        >{nodeData.title}</div>
       </Dropdown>
     );
   };
 
   return (
     <>
-      <Button onClick={handleClearTree} style={{ marginBottom: 20 }}>
-        Clear All Layers
-      </Button>
+      <div
+        style={{
+          marginBottom: 20,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gridGap: 10,
+        }}
+      >
+        <Button onClick={handleClearTree}>Clear All Layers</Button>
+        <Button type="primary" onClick={toggleUnsave} disabled={unSaveGeom.length === 0}>
+          {showUnsave ? "Hide" : "Show"} Unsave
+        </Button>
+      </div>
       <EditModal
         showEditModal={showEditModal}
         setShowEditModal={setShowEditModal}
