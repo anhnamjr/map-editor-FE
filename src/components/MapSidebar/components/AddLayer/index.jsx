@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { Form, Input, Select, Button, message, Space } from 'antd';
+import { Form, Input, Select, Button, Row, message, Col } from 'antd';
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -28,7 +28,7 @@ export default function LayerMap() {
 
   const onFinish = (values) => {
     // const data = { mapID: values.Map, layerName: values.name }
-    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data).then((res) => {
+    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, values).then((res) => {
     //   dispatch(fetchLayerTree())
     //   form.resetFields()
     //   message.success("Add Layer Successfully!")
@@ -74,28 +74,38 @@ export default function LayerMap() {
       </Form.Item>
 
       <Form.List name="columns">
-        {(fields, {add, remove}) => (
+        {(fields, { add, remove }) => (
           <>
-            {fields.map(({key, name, fieldKey, ...restField}) => (
-              <Space key={key} style={{display: 'flex', marginBottom: 8}} align="baseline">
-                <Form.Item
-                  {...restField} 
-                  name={[name, 'attribute']}
-                  fieldKey={[fieldKey, 'attribute']}
-                  rules={[{ required: true, message: 'Missing attribute name' }]}
-                >
-                  <Input placeholder="Attribute name" />
-                </Form.Item>
-                <Form.Item
-                  {...restField} 
-                  name={[name, 'datatype']}
-                  fieldKey={[fieldKey, 'datatype']}
-                  rules={[{ required: true, message: 'Missing datatype' }]}
-                >
-                  <Input placeholder="Datatype" />
-                </Form.Item>
-                <MinusCircleOutlined onClick={() => remove(name)} />
-              </Space>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Row key={key} style={{ display: 'flex', marginBottom: 8, width: "100%" }} align="baseline">
+                <Col span={10}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'attribute']}
+                    fieldKey={[fieldKey, 'attribute']}
+                    rules={[{ required: true, message: 'Missing attribute name' }]}
+                  >
+                    <Input placeholder="Attribute name" />
+                  </Form.Item>
+                </Col>
+                <Col span={10} offset={1}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'datatype']}
+                    fieldKey={[fieldKey, 'datatype']}
+                    rules={[{ required: true, message: 'Missing datatype' }]}
+                  >
+                    <Select placeholder="datatype" >
+                      <Option value="numberic">
+                        Number
+                    </Option>
+                      <Option value="text">String</Option>
+                    </Select>
+                  </Form.Item></Col>
+                <Col span={2} offset={1}>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Col>
+              </Row>
             ))}
             <Form.Item>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
