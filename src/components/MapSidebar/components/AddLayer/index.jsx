@@ -35,17 +35,17 @@ export default function LayerMap() {
       layerName: values.name,
       columns: values.columns,
     };
-    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
-    //   .then((res) => {
-    //     dispatch(fetchLayerTree());
-    //     setLoading(false);
-    //     form.resetFields();
-    //     message.success("Add Layer Successfully!");
-    //   })
-    //   .catch((err) => {
-    //     setLoading(false);
-    //     message.error(err.response.data.msg);
-    //   });
+    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
+      .then((res) => {
+        dispatch(fetchLayerTree());
+        setLoading(false);
+        form.resetFields();
+        message.success("Add Layer Successfully!");
+      })
+      .catch((err) => {
+        setLoading(false);
+        message.error(err.response.data.msg);
+      });
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -117,7 +117,7 @@ export default function LayerMap() {
                     rules={[{ required: true, message: "Missing datatype" }]}
                   >
                     <Select placeholder="datatype">
-                      <Option value="numberic">Number</Option>
+                      <Option value="numeric">Number</Option>
                       <Option value="text">String</Option>
                     </Select>
                   </Form.Item>

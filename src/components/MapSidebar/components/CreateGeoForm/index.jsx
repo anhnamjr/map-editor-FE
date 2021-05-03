@@ -95,7 +95,7 @@ const AddForm = () => {
       params.radius = newGeom.properties.radius;
     }
 
-    AXIOS_INSTANCE.post(`${BASE_URL}/create-geom`, params).then((res) => {
+    AXIOS_INSTANCE.post(`${BASE_URL}/geom`, params).then((res) => {
       alert(res.data.msg);
       // form.resetFields()
     });
