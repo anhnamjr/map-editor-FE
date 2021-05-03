@@ -1,39 +1,58 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Polygon, Polyline, Marker, Circle } from "react-leaflet";
 import { reverseCoor, reverseCoorMultiPolygon } from "../../../../utils";
-import CustomPopup from "../CustomPopup";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  SET_FULL_COLOR,
   STORE_GEOM_COOR,
-  // STORE_SHAPE_REF,
+  STORE_SHAPE_REF,
 } from "../../../../constants/actions";
 
 export default function Shape({ item }) {
-  const [shapeProps, setShapeProps] = useState({ ...item.properties });
+  const initialState = {
+    color: item.properties.color,
+    fill: item.properties.fill,
+    fillOpacity: item.properties.fillOpacity,
+    weight: item.properties.weight,
+  };
+
+  const [color, setColor] = useState(initialState);
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
+  const newColor = useSelector((state) => state.colorReducer);
+  const isEditting = useSelector((state) => state.storeGeom.isEditting);
+
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
-      const shapeEdit = shapeRef.current.leafletElement
-      shapeEdit.pm.enable();
-      shapeEdit.on("pm:edit", (e) => {
-        let editGeom = { ...e.target.toGeoJSON(), properties: item.properties }
-        dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } })
-      })
+      if (isEditting) {
+        const shapeEdit = shapeRef.current.leafletElement;
+        shapeEdit.pm.enable();
+        shapeEdit.on("pm:edit", (e) => {
+          let editGeom = {
+            ...e.target.toGeoJSON(),
+            properties: item.properties,
+          };
+          dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
+        });
+      }
     } else {
       shapeRef.current.leafletElement.pm.disable();
     }
-  }, [temp])
+  }, [temp, isEditting]);
+
+  useEffect(() => {
+    if (item.properties.geoID === temp.shapeRef) {
+      setColor(newColor);
+    }
+  }, [newColor]);
 
   const onClickShape = () => {
-    // console.log(shapeRef.current);
-    // map.removeLayer(shapeRef.current.leafletElement)
-    // shapeRef.current.leafletElement.pm.enable()
-    dispatch({ type: STORE_GEOM_COOR, payload: item });
-    // shapeRef.current.leafletElement._leafletId = shapeRef.current.leafletElement.toGeoJSON().properties.geoID
-    // console.log(shapeRef.current.leafletElement)
-
+    if (!isEditting) {
+      dispatch({ type: STORE_GEOM_COOR, payload: item });
+      dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
+      dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
+    }
   };
 
   if (item.geometry.type === "LineString") {
@@ -42,16 +61,9 @@ export default function Shape({ item }) {
         ref={shapeRef}
         onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates)}
-        color={shapeProps.color}
-        weight={shapeProps.weight}
-      >
-        <CustomPopup
-          item={item}
-          type="Polyline"
-          shapeProps={shapeProps}
-          onChangeAttr={setShapeProps}
-        />
-      </Polyline>
+        color={color.color}
+        weight={color.weight}
+      />
     );
   }
   if (item.geometry.type === "Polygon") {
@@ -60,18 +72,11 @@ export default function Shape({ item }) {
         ref={shapeRef}
         onClick={onClickShape}
         positions={reverseCoor(item.geometry.coordinates[0])}
-        color={shapeProps.color || "#0f0f0f"}
-        weight={shapeProps.weight || 3}
-        fillColor={shapeProps.fill || "red"}
-        fillOpacity={shapeProps.fillOpacity || 0.2}
-      >
-        <CustomPopup
-          item={item}
-          type="Polygon"
-          shapeProps={shapeProps}
-          onChangeAttr={setShapeProps}
-        />
-      </Polygon>
+        color={color.color}
+        weight={color.weight}
+        fillColor={color.fill}
+        fillOpacity={color.fillOpacity}
+      />
     );
   }
   if (item.geometry.type === "MultiPolygon") {
@@ -81,18 +86,11 @@ export default function Shape({ item }) {
         key={item.properties.geoID}
         id={item.properties.geoID}
         positions={reverseCoorMultiPolygon(item.geometry.coordinates)}
-        color={shapeProps.color}
-        weight={shapeProps.weight}
-        fillColor={shapeProps.fill}
-        fillOpacity={shapeProps.fillOpacity}
-      >
-        <CustomPopup
-          item={item}
-          type="Polygon"
-          shapeProps={shapeProps}
-          onChangeAttr={setShapeProps}
-        />
-      </Polygon>
+        color={color.color}
+        weight={color.weight}
+        fillColor={color.fill}
+        fillOpacity={color.fillOpacity}
+      />
     );
   }
   if (item.geometry.type === "Point") {
@@ -103,18 +101,11 @@ export default function Shape({ item }) {
           onClick={onClickShape}
           center={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}
           radius={item.properties.radius}
-          color={shapeProps.color}
-          weight={shapeProps.weight}
-          fillColor={shapeProps.fill}
-          fillOpacity={shapeProps.fillOpacity}
-        >
-          <CustomPopup
-            item={item}
-            type="Circle"
-            shapeProps={shapeProps}
-            onChangeAttr={setShapeProps}
-          />
-        </Circle>
+          color={color.color}
+          weight={color.weight}
+          fillColor={color.fill}
+          fillOpacity={color.fillOpacity}
+        />
       );
     } else {
       return (
@@ -125,15 +116,7 @@ export default function Shape({ item }) {
             item.geometry.coordinates[1],
             item.geometry.coordinates[0],
           ]}
-        >
-          <CustomPopup
-            item={item}
-            type="Marker"
-            shapeProps={shapeProps}
-            onChangeAttr={setShapeProps}
-            showProps={false}
-          />
-        </Marker>
+        />
       );
     }
   }

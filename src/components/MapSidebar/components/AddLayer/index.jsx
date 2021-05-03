@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { Form, Input, Select, Button, message } from "antd";
+import { Form, Input, Select, Button, Row, message, Col } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const tailLayout = {
@@ -27,19 +28,24 @@ export default function LayerMap() {
   };
 
   const onFinish = (values) => {
+    console.log(values);
     setLoading(true);
-    const data = { mapID: values.Map, layerName: values.name };
-    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
-      .then((res) => {
-        dispatch(fetchLayerTree());
-        setLoading(false);
-        form.resetFields();
-        message.success("Add Layer Successfully!");
-      })
-      .catch((err) => {
-        setLoading(false);
-        message.error(err.response.data.msg);
-      });
+    const data = {
+      mapID: values.Map,
+      layerName: values.name,
+      columns: values.columns,
+    };
+    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
+    //   .then((res) => {
+    //     dispatch(fetchLayerTree());
+    //     setLoading(false);
+    //     form.resetFields();
+    //     message.success("Add Layer Successfully!");
+    //   })
+    //   .catch((err) => {
+    //     setLoading(false);
+    //     message.error(err.response.data.msg);
+    //   });
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -81,6 +87,59 @@ export default function LayerMap() {
       >
         <Input placeholder="Layer name" />
       </Form.Item>
+
+      <Form.List name="columns">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Row
+                key={key}
+                style={{ display: "flex", marginBottom: 8, width: "100%" }}
+                align="baseline"
+              >
+                <Col span={12}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "attribute"]}
+                    fieldKey={[fieldKey, "attribute"]}
+                    rules={[
+                      { required: true, message: "Missing attribute name" },
+                    ]}
+                  >
+                    <Input placeholder="Attribute name" />
+                  </Form.Item>
+                </Col>
+                <Col span={8} offset={1}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "datatype"]}
+                    fieldKey={[fieldKey, "datatype"]}
+                    rules={[{ required: true, message: "Missing datatype" }]}
+                  >
+                    <Select placeholder="datatype">
+                      <Option value="numberic">Number</Option>
+                      <Option value="text">String</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={2} offset={1}>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Col>
+              </Row>
+            ))}
+            <Form.Item>
+              <Button
+                type="dashed"
+                onClick={() => add()}
+                block
+                icon={<PlusOutlined />}
+              >
+                Add field
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
 
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit" loading={loading}>
