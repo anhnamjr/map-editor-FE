@@ -35,17 +35,18 @@ export default function LayerMap() {
       layerName: values.name,
       columns: values.columns,
     };
-    // AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
-    //   .then((res) => {
-    //     dispatch(fetchLayerTree());
-    //     setLoading(false);
-    //     form.resetFields();
-    //     message.success("Add Layer Successfully!");
-    //   })
-    //   .catch((err) => {
-    //     setLoading(false);
-    //     message.error(err.response.data.msg);
-    //   });
+    AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
+      .then((res) => {
+        dispatch(fetchLayerTree());
+        setLoading(false);
+        form.resetFields();
+        message.success("Add Layer Successfully!");
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        // message.error(err.response.data.msg);
+      });
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -100,8 +101,8 @@ export default function LayerMap() {
                 <Col span={12}>
                   <Form.Item
                     {...restField}
-                    name={[name, "attribute"]}
-                    fieldKey={[fieldKey, "attribute"]}
+                    name={[name, "name"]}
+                    fieldKey={[fieldKey, "name"]}
                     rules={[
                       { required: true, message: "Missing attribute name" },
                     ]}
