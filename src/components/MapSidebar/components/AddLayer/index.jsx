@@ -44,7 +44,8 @@ export default function LayerMap() {
       })
       .catch((err) => {
         setLoading(false);
-        message.error(err.response.data.msg);
+        console.log(err);
+        // message.error(err.response.data.msg);
       });
   };
 
@@ -100,8 +101,8 @@ export default function LayerMap() {
                 <Col span={12}>
                   <Form.Item
                     {...restField}
-                    name={[name, "attribute"]}
-                    fieldKey={[fieldKey, "attribute"]}
+                    name={[name, "name"]}
+                    fieldKey={[fieldKey, "name"]}
                     rules={[
                       { required: true, message: "Missing attribute name" },
                     ]}
