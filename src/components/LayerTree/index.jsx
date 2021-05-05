@@ -11,7 +11,7 @@ import {
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
-import { fetchLayerTree } from "../../actions/fetchLayerTree";
+import { fetchLayerTree, fetchLayerCols } from "../../actions/fetchLayerTree";
 import "./style.scss"
 
 const LayerTree = () => {
@@ -95,6 +95,15 @@ const LayerTree = () => {
     setSelectedKeys([]);
   };
 
+  const handleClickLayer = (nodeData) => {
+    if (!nodeData.children) {
+      setCheckedKeys([...checkedKeys, nodeData.key])
+      onCheck([...checkedKeys, nodeData.key])
+      dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key })
+      dispatch(fetchLayerCols(nodeData.key));
+    }
+  }
+
   const toggleUnsave = () => {
     dispatch({
       type: TOGGLE_UNSAVE,
@@ -123,13 +132,7 @@ const LayerTree = () => {
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
         <div
           className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""}`}
-          onClick={() => {
-            if (!nodeData.children) {
-              setCheckedKeys([...checkedKeys, nodeData.key])
-              onCheck([...checkedKeys, nodeData.key])
-              dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key })
-            }
-          }}
+          onClick={() => handleClickLayer(nodeData)}
         >{nodeData.title}</div>
       </Dropdown>
     );
@@ -171,8 +174,6 @@ const LayerTree = () => {
         onCheck={onCheck}
         checkedKeys={checkedKeys}
         titleRender={renderTreeItem}
-        // onClick={(e) => console.log(e)}
-        // onRightClick={e => showModal(e)}
         selectedKeys={selectedKeys}
       />
     </>

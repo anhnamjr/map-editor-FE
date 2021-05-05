@@ -20,7 +20,6 @@ export default function SignUp() {
   }, [history]);
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     const data = {
       username: values.username,
       password: values.password,

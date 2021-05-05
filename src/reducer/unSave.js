@@ -1,6 +1,6 @@
 import {
   ADD_TO_UNSAVE,
-  // REMOVE_FROM_UNSAVE,
+  REMOVE_FROM_UNSAVE,
   TOGGLE_UNSAVE,
 } from "../constants/actions";
 
@@ -22,6 +22,12 @@ export const unSaveReducer = (state = initState, action) => {
         ...state,
         showUnsave: action.payload,
       };
+
+    case REMOVE_FROM_UNSAVE:
+      return {
+        ...state,
+        unSaveGeom: state.unSaveGeom.filter(geom => geom.properties.geoID !== action.payload)
+      }
 
     default:
       return { ...state };

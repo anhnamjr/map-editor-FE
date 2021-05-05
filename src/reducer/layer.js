@@ -2,6 +2,7 @@ import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA, UPDATE_LAYER_DATA } from "../consta
 
 const initState = {
   layerData: {},
+  layerCol: []
 };
 
 export const layerReducer = (state = initState, action) => {
@@ -30,8 +31,8 @@ export const layerReducer = (state = initState, action) => {
         layerData: {
           type: "FeatureCollection",
           features: [action.payload]
+        }
       }
-    }
 
     default:
       return { ...state };

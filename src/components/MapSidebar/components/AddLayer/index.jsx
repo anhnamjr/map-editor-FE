@@ -28,7 +28,6 @@ export default function LayerMap() {
   };
 
   const onFinish = (values) => {
-    console.log(values);
     setLoading(true);
     const data = {
       mapID: values.Map,
@@ -44,12 +43,11 @@ export default function LayerMap() {
       })
       .catch((err) => {
         setLoading(false);
-        message.error(err.response.data.msg);
+        // message.error(err.response.data.msg);
       });
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   return (

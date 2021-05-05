@@ -13,7 +13,6 @@ const Import = () => {
   const handleImport = () => {
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
-    console.log(bodyFormData);
     // AXIOS_INSTANCE.request({
     //   url: `abc.com`,
     //   method: "POST",
@@ -22,7 +21,6 @@ const Import = () => {
   };
 
   const handleChange = (info) => {
-    console.log(info);
   };
 
   return (

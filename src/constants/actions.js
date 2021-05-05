@@ -24,3 +24,4 @@ export const SET_FULL_COLOR = "SET_FULL_COLOR";
 
 export const SET_EDIT = "SET_EDIT";
 export const SET_NOT_EDIT = "SET_NOT_EDIT";
+export const SET_CURRENT_LAYER_COL = "SET_CURRENT_LAYER_COL"
