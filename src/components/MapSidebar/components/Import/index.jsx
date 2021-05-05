@@ -1,42 +1,49 @@
 import React, { useState } from "react";
 import { Upload, message, Button } from "antd";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { PlusOutlined } from "@ant-design/icons"
+import { PlusOutlined } from "@ant-design/icons";
 import { BASE_URL } from "../../../../constants/endpoint";
 
 const Import = () => {
   const [fileList, setFileList] = useState([]);
 
   const beforeUpload = (file) => {
-    console.log(file)
-    setFileList([...fileList, file]);
+    console.log(file);
+    setFileList([
+      ...fileList,
+      {
+        file: file,
+        uid: file.uid,
+        name: file.name,
+      },
+    ]);
   };
 
   const handleImport = () => {
     const bodyFormData = new FormData();
-    fileList.forEach((item => {
-      bodyFormData.append("file", item);
-    }))
+    fileList.forEach((item) => {
+      bodyFormData.append("file", item.file);
+    });
 
     console.log(bodyFormData);
     AXIOS_INSTANCE.request({
       url: `${BASE_URL}/import`,
       method: "POST",
       data: bodyFormData,
-    }).then((res) => { });
+    }).then((res) => {});
   };
 
   const handleChange = (info) => {
-    console.log(info.fileList)
-    let newFileList = []
-    info.fileList.forEach(file1 => {
-      fileList.forEach(file2 => {
-        if (file1.uid === file2.uid) {
-          newFileList.push(file2)
+    console.log(info.fileList);
+    let newFileList = [];
+    info.fileList.forEach((file1) => {
+      fileList.forEach((item) => {
+        if (file1.uid === item.uid) {
+          newFileList.push({ ...item, status: "done" });
         }
-      })
-    })
-    setFileList(newFileList)
+      });
+    });
+    setFileList(newFileList);
   };
 
   const uploadButton = (
