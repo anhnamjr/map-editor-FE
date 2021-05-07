@@ -1,12 +1,17 @@
-import { STORE_GEOM_COOR, STORE_GEOM_DATA, SET_EDIT, SET_NOT_EDIT } from "../constants/actions";
+import {
+  STORE_GEOM_COOR,
+  STORE_GEOM_DATA,
+  SET_EDIT,
+  SET_NOT_EDIT,
+} from "../constants/actions";
 
 const initState = {
   geom: {
     type: "Feature",
     geometry: null,
-    properties: null
+    properties: null,
   },
-  isEditting: false
+  isEditing: false,
 };
 
 export const storeGeom = (state = initState, action) => {
@@ -25,13 +30,13 @@ export const storeGeom = (state = initState, action) => {
     case SET_EDIT:
       return {
         ...state,
-        isEditting: true
-      }
+        isEditing: true,
+      };
     case SET_NOT_EDIT:
       return {
         ...state,
-        isEditting: false
-      }
+        isEditing: false,
+      };
     default:
       return { ...state };
   }
