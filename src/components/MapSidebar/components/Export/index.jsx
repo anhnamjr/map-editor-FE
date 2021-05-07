@@ -15,7 +15,6 @@ const Export = () => {
 
   const handleExport = () => {
     // AXIOS_INSTANCE.
-    console.log(selected);
   };
 
   return (

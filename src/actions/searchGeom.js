@@ -8,7 +8,6 @@ import { BASE_URL } from "../constants/endpoint";
 export const searchGeom = (geoID) => async (dispatch) => {
   // TODO
   const { data } = await AXIOS_INSTANCE.get(`${BASE_URL}/single-shape?geoID=${geoID}`)
-  // console.log(data)
 
   dispatch({ type: UPDATE_LAYER_DATA, payload: data})
 

@@ -25,7 +25,6 @@ export default function SignIn() {
         localStorage.setItem("token", token);
         history.push("/");
       })
-      .catch((err) => console.log(err));
   };
 
   return (

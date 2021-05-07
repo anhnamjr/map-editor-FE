@@ -1,7 +1,17 @@
-import { FETCH_LAYER_DATA, CLEAR_LAYER_DATA, UPDATE_LAYER_DATA } from "../constants/actions";
+import {
+  FETCH_LAYER_DATA,
+  CLEAR_LAYER_DATA,
+  UPDATE_LAYER_DATA,
+  ADD_LAYER_DATA,
+  REVERSE_BACKUP_GEOM,
+  SET_BACKUP_GEOM,
+} from "../constants/actions";
+import { findIndex } from "lodash";
 
 const initState = {
   layerData: {},
+  layerCol: [],
+  backupGeom: "",
 };
 
 export const layerReducer = (state = initState, action) => {
@@ -18,21 +28,44 @@ export const layerReducer = (state = initState, action) => {
         layerData: [],
       };
 
-    case UPDATE_LAYER_DATA:
-      return state.layerData.type ? {
+    case ADD_LAYER_DATA:
+      return state.layerData.type
+        ? {
+            ...state,
+            layerData: {
+              ...state.layerData,
+              features: [...state.layerData.features, action.payload],
+            },
+          }
+        : {
+            ...state,
+            layerData: {
+              type: "FeatureCollection",
+              features: [action.payload],
+            },
+          };
+    case UPDATE_LAYER_DATA: {
+      const layerData = state.layerData;
+      const { geom } = action.payload;
+      const idx = findIndex(layerData.features, {
+        properties: { geoID: geom.properties.geoID },
+      });
+      layerData.features[idx].geometry = geom.geometry;
+      return {
         ...state,
-        layerData: {
-          ...state.layerData,
-          features: [...state.layerData.features, action.payload]
-        },
-      } : {
-        ...state,
-        layerData: {
-          type: "FeatureCollection",
-          features: [action.payload]
-      }
+        layerData: layerData,
+      };
     }
-
+    case SET_BACKUP_GEOM:
+      return {
+        ...state,
+        backupGeom: action.payload,
+      };
+    case REVERSE_BACKUP_GEOM:
+      return {
+        ...state,
+        backupGeom: "",
+      };
     default:
       return { ...state };
   }

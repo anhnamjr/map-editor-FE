@@ -66,7 +66,6 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
   }
 
   const handleOk = (e) => {
-    console.log(e)
     setShowEditModal(false);
   };
 
