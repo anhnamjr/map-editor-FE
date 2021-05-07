@@ -2,20 +2,29 @@ import React, { useState } from "react";
 import { Select, Button } from "antd";
 import { useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
+import { BASE_URL } from "../../../../constants/endpoint";
 
 const { Option, OptGroup } = Select;
 
 const Export = () => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const [selected, setSelected] = useState(null);
+  const [exportLinks, setExportLinks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (val) => {
     setSelected(val);
   };
 
   const handleExport = () => {
-    // AXIOS_INSTANCE.
-    console.log(selected);
+    setLoading(true);
+    AXIOS_INSTANCE.request({
+      url: `${BASE_URL}/export/geojson?layerID=${selected}`,
+      method: "GET",
+    }).then((res) => {
+      setExportLinks(res.data);
+      setLoading(false);
+    });
   };
 
   return (
@@ -39,6 +48,11 @@ const Export = () => {
           Export
         </Button>
       </div>
+      {exportLinks && (
+        <a href={exportLinks.data} download>
+          {exportLinks.data}
+        </a>
+      )}
     </div>
   );
 };

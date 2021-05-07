@@ -29,9 +29,9 @@ const Import = () => {
     fileList.forEach((item) => {
       bodyFormData.append("file", item.file);
     });
-    bodyFormData.append("mapID", map);
+    // bodyFormData.append("body", JSON.stringify(map));
     AXIOS_INSTANCE.request({
-      url: `${BASE_URL}/import/geojson`,
+      url: `${BASE_URL}/import/geojson?mapID=${map}`,
       method: "POST",
       data: bodyFormData,
     }).then((res) => {});
