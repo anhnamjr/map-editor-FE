@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { Upload, message, Button } from "antd";
+import { Upload, message, Button, Select } from "antd";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { PlusOutlined } from "@ant-design/icons";
 import { BASE_URL } from "../../../../constants/endpoint";
+import { useSelector } from "react-redux";
+
+const { Option } = Select;
 
 const Import = () => {
   const [fileList, setFileList] = useState([]);
+  const [map, setMap] = useState(null);
+  const mapList = useSelector((state) => state.treeReducer.layerTree);
 
   const beforeUpload = (file) => {
     console.log(file);
@@ -24,10 +29,9 @@ const Import = () => {
     fileList.forEach((item) => {
       bodyFormData.append("file", item.file);
     });
-
-    console.log(bodyFormData);
+    bodyFormData.append("mapID", map);
     AXIOS_INSTANCE.request({
-      url: `${BASE_URL}/import`,
+      url: `${BASE_URL}/import/geojson`,
       method: "POST",
       data: bodyFormData,
     }).then((res) => {});
@@ -53,6 +57,11 @@ const Import = () => {
     </div>
   );
 
+  const handleClick = (value) => {
+    console.log(value);
+    setMap(value);
+  };
+
   return (
     <div
       style={{
@@ -63,6 +72,24 @@ const Import = () => {
         alignItems: "center",
       }}
     >
+      <h3>Select map to import layer</h3>
+      <Select
+        placeholder="Select a option and change input text above"
+        onChange={handleClick}
+        value={map}
+        style={{ width: "80%", margin: "10px auto" }}
+        allowClear
+      >
+        {mapList &&
+          mapList.map((item) => {
+            return (
+              <Option value={item.key} key={item.key}>
+                {" "}
+                {item.title}
+              </Option>
+            );
+          })}
+      </Select>
       <Upload
         name="file"
         // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
