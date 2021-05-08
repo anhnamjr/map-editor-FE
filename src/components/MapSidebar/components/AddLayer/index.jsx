@@ -28,7 +28,6 @@ export default function LayerMap() {
   };
 
   const onFinish = (values) => {
-    console.log(values);
     setLoading(true);
     const data = {
       mapID: values.Map,
@@ -49,9 +48,7 @@ export default function LayerMap() {
       });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+  const onFinishFailed = (errorInfo) => {};
 
   return (
     <Form

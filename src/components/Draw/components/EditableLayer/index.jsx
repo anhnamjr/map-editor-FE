@@ -65,7 +65,6 @@ export default function EditableLayer({ geoData }) {
 
   // const handleEdit = (e) => {
   //   const editedId = Object.entries(e.layers._layers);
-  //   // console.log(editedId); // convert job -> arr
   //   const editedGeom = editedId.map((item) => {
   //     //circle
   //     if (item[1]._mRadius)
@@ -120,8 +119,6 @@ export default function EditableLayer({ geoData }) {
   //       },
   //     };
   //   });
-  //   // console.log(editedGeom);
-
   //   axios.post(`${BASE_URL}/edit-geom`, editedGeom);
   // };
 
@@ -129,7 +126,6 @@ export default function EditableLayer({ geoData }) {
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
     );
-    // console.log(deletedId);
     axios.post(`${BASE_URL}/delete-geom`, { id: deletedId });
   };
 

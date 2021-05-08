@@ -17,8 +17,6 @@ const CustomPopup = ({ type = "Polygon", item, shapeProps, onChangeAttr, showPro
       [target.name]: value,
     });
   };
-  // console.log(item)
-
   const handleSubmit = (e) => {
     e.preventDefault();
   }

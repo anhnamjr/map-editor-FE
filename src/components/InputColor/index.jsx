@@ -6,8 +6,7 @@ import Panel from "rc-color-picker/lib/Panel";
 import "antd/dist/antd.css";
 import "./styles.css";
 
-export default function InputColor({ color, onChange }) {
-
+export default function InputColor({ color, onChange, isEditing }) {
   const [internalColor, setInternalColor] = useState(color);
 
   const handleChangePanel = (color) => {
@@ -19,8 +18,8 @@ export default function InputColor({ color, onChange }) {
   };
 
   useEffect(() => {
-    setInternalColor(color)
-  }, [color])
+    setInternalColor(color);
+  }, [color]);
 
   const handleChangeInput = (e) => {
     setInternalColor(e.target.value);
@@ -28,7 +27,7 @@ export default function InputColor({ color, onChange }) {
     if (onChange) {
       onChange(e.target.value);
     }
-  }
+  };
 
   const overlay = (
     <div>
@@ -47,7 +46,7 @@ export default function InputColor({ color, onChange }) {
         value={internalColor || ""}
         onChange={handleChangeInput}
         suffix={
-          <Dropdown trigger={["click"]} overlay={overlay}>
+          <Dropdown disabled={isEditing} trigger={["click"]} overlay={overlay}>
             <Button style={{ background: internalColor }}> </Button>
           </Dropdown>
         }

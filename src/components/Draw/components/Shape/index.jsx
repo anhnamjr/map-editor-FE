@@ -21,25 +21,23 @@ export default function Shape({ item }) {
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
   const newColor = useSelector((state) => state.colorReducer);
-  const isEditting = useSelector((state) => state.storeGeom.isEditting);
+  const isEditing = useSelector((state) => state.storeGeom.isEditing);
 
   useEffect(() => {
-    if (item.properties.geoID === temp.shapeRef) {
-      if (isEditting) {
-        const shapeEdit = shapeRef.current.leafletElement;
-        shapeEdit.pm.enable();
-        shapeEdit.on("pm:edit", (e) => {
-          let editGeom = {
-            ...e.target.toGeoJSON(),
-            properties: item.properties,
-          };
-          dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
-        });
-      }
+    if (item.properties.geoID === temp.shapeRef && isEditing) {
+      const shapeEdit = shapeRef.current.leafletElement;
+      shapeEdit.pm.enable();
+      shapeEdit.on("pm:edit", (e) => {
+        let editGeom = {
+          ...e.target.toGeoJSON(),
+          properties: item.properties,
+        };
+        dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
+      });
     } else {
       shapeRef.current.leafletElement.pm.disable();
     }
-  }, [temp, isEditting]);
+  }, [temp, isEditing]);
 
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
@@ -48,10 +46,10 @@ export default function Shape({ item }) {
   }, [newColor]);
 
   const onClickShape = () => {
-    if (!isEditting) {
-      dispatch({ type: STORE_GEOM_COOR, payload: item });
-      dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
+    if (!isEditing) {
       dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
+      dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
+      dispatch({ type: STORE_GEOM_COOR, payload: item });
     }
   };
 
@@ -94,7 +92,7 @@ export default function Shape({ item }) {
     );
   }
   if (item.geometry.type === "Point") {
-    if (item.properties.radius) {
+    if (item.properties.radius !== -1) {
       return (
         <Circle
           ref={shapeRef}

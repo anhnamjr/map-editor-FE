@@ -49,7 +49,7 @@ const Export = () => {
         </Button>
       </div>
       {exportLinks && (
-        <a href={exportLinks.data} download>
+        <a href={`${exportLinks.data}`} download>
           {exportLinks.data}
         </a>
       )}
