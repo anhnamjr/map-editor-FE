@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, InputNumber } from "antd";
+import { Form, Input, Button, Select, InputNumber, Tooltip } from "antd";
 import InputColor from "../../../InputColor";
 import { useSelector, useDispatch } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
@@ -8,6 +8,7 @@ import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
 import { FaLocationArrow } from "react-icons/fa";
+import { DeleteFilled, CheckOutlined } from "@ant-design/icons"
 import {
   SET_FILL_COLOR,
   STORE_SHAPE_REF,
@@ -201,21 +202,30 @@ const AddForm = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexDirection: "column",
         }}
       >
         <Button
-          style={{ marginBottom: "10px" }}
           type="primary"
           onClick={onEdit}
         >
-          <FaLocationArrow style={{ marginRight: "10px" }} /> Edit Coordinates
+          <FaLocationArrow />
         </Button>
-        <Button type="primary" htmlType="submit">
-          {geom && geom.properties && typeof geom.properties.geoID === "string"
-            ? "Save"
-            : "Create"}
-        </Button>
+        <Tooltip title={geom && geom.properties && typeof geom.properties.geoID === "string"
+          ? "Save"
+          : "Create"}>
+          <Button type="primary" htmlType="submit">
+            <CheckOutlined />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <Button
+            type="primary"
+            onClick={onEdit}
+            danger
+          >
+            <DeleteFilled />
+          </Button>
+        </Tooltip>
       </div>
       {/* </Form.Item> */}
     </Form>
