@@ -12,7 +12,7 @@ import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree, fetchLayerCols } from "../../actions/fetchLayerTree";
-import "./style.scss"
+import "./style.scss";
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -44,12 +44,13 @@ const LayerTree = () => {
   };
 
   const handleDelete = (nodeData) => {
-    const userConfirm =
-      window.confirm(`Are you sure to delete this ${nodeData.children ? "map" : "layer"}`)
+    const userConfirm = window.confirm(
+      `Are you sure to delete this ${nodeData.children ? "map" : "layer"}`
+    );
     if (userConfirm) {
       if (nodeData.children) {
         // delete map
-        AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
+        AXIOS_INSTANCE.delete(`${BASE_URL}/map`, {
           mapID: nodeData.key,
         }).then((res) => {
           dispatch(fetchLayerTree());
@@ -97,12 +98,12 @@ const LayerTree = () => {
 
   const handleClickLayer = (nodeData) => {
     if (!nodeData.children) {
-      setCheckedKeys([...checkedKeys, nodeData.key])
-      onCheck([...checkedKeys, nodeData.key])
-      dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key })
+      setCheckedKeys([...checkedKeys, nodeData.key]);
+      onCheck([...checkedKeys, nodeData.key]);
+      dispatch({ type: SET_CURRENT_EDIT_LAYER, payload: nodeData.key });
       dispatch(fetchLayerCols(nodeData.key));
     }
-  }
+  };
 
   const toggleUnsave = () => {
     dispatch({
@@ -114,11 +115,11 @@ const LayerTree = () => {
   const renderTreeItem = (nodeData) => {
     const menu = (
       <Menu style={{ width: 150, zIndex: 10000 }}>
-        {nodeData.children && (
+        {/* {nodeData.children && (
           <Menu.Item key="1" onClick={() => openAddLayerModal(nodeData)}>
             Add Layer
           </Menu.Item>
-        )}
+        )} */}
         <Menu.Item key="2" onClick={() => openEditModal(nodeData)}>
           Edit
         </Menu.Item>
@@ -131,9 +132,13 @@ const LayerTree = () => {
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
         <div
-          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""}`}
+          className={`site-dropdown-context-menu ${
+            currentEditLayer === nodeData.key ? "active" : ""
+          }`}
           onClick={() => handleClickLayer(nodeData)}
-        >{nodeData.title}</div>
+        >
+          {nodeData.title}
+        </div>
       </Dropdown>
     );
   };
@@ -149,7 +154,11 @@ const LayerTree = () => {
         }}
       >
         <Button onClick={handleClearTree}>Clear All Layers</Button>
-        <Button type="primary" onClick={toggleUnsave} disabled={unSaveGeom.length === 0}>
+        <Button
+          type="primary"
+          onClick={toggleUnsave}
+          disabled={unSaveGeom.length === 0}
+        >
           {showUnsave ? "Hide" : "Show"} Unsave
         </Button>
       </div>

@@ -11,6 +11,7 @@ const Import = () => {
   const [fileList, setFileList] = useState([]);
   const [map, setMap] = useState(null);
   const mapList = useSelector((state) => state.treeReducer.layerTree);
+  const [loading, setLoading] = useState(false);
 
   const beforeUpload = (file) => {
     console.log(file);
@@ -25,6 +26,7 @@ const Import = () => {
   };
 
   const handleImport = () => {
+    setLoading(true);
     const bodyFormData = new FormData();
     fileList.forEach((item) => {
       bodyFormData.append("file", item.file);
@@ -34,11 +36,14 @@ const Import = () => {
       url: `${BASE_URL}/import/geojson?mapID=${map}`,
       method: "POST",
       data: bodyFormData,
-    }).then((res) => {});
+    }).then((res) => {
+      setLoading(false);
+      setMap(null);
+      setFileList([]);
+    });
   };
 
   const handleChange = (info) => {
-    console.log(info.fileList);
     let newFileList = [];
     info.fileList.forEach((file1) => {
       fileList.forEach((item) => {
@@ -67,17 +72,17 @@ const Import = () => {
       style={{
         display: "flex",
         justifyContent: "space-between",
-        marginTop: 10,
+        // marginTop: 10,
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "flex-start",
       }}
     >
       <h3>Select map to import layer</h3>
       <Select
-        placeholder="Select a option and change input text above"
+        placeholder="Select a map"
         onChange={handleClick}
         value={map}
-        style={{ width: "80%", margin: "10px auto" }}
+        style={{ width: "100%", margin: "10px auto" }}
         allowClear
       >
         {mapList &&
@@ -100,14 +105,17 @@ const Import = () => {
       >
         {uploadButton}
       </Upload>
-      <Button
-        type="primary"
-        disabled={fileList.length === 0}
-        style={{ marginTop: 20 }}
-        onClick={handleImport}
-      >
-        Import
-      </Button>
+      <div style={{ textAlign: "center", width: "100%" }}>
+        <Button
+          type="primary"
+          disabled={fileList.length === 0 || map === null}
+          style={{ marginTop: 20 }}
+          onClick={handleImport}
+          loading={loading}
+        >
+          Import
+        </Button>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -8,7 +8,7 @@ import {
   Empty,
   Typography,
   message,
-  Tooltip
+  Tooltip,
 } from "antd";
 import InputColor from "../../../InputColor";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +18,7 @@ import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
 import { FaLocationArrow } from "react-icons/fa";
-import { DeleteFilled, CheckOutlined } from "@ant-design/icons"
+import { DeleteFilled, CheckOutlined } from "@ant-design/icons";
 import { omit, get } from "lodash";
 import {
   SET_FILL_COLOR,
@@ -33,7 +33,7 @@ import {
   ADD_LAYER_DATA,
   RESET_GEOM_DATA,
   UPDATE_UNSAVE_LAYER_DATA,
-  DELETE_GEOM
+  DELETE_GEOM,
 } from "../../../../constants/actions";
 import "./styles.scss";
 
@@ -58,6 +58,8 @@ const tailLayout = {
 const types = ["Line", "Polygon", "Marker"];
 
 const AddForm = () => {
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const currentLayerId = useSelector(
     (state) => state.treeReducer.currentEditLayer
@@ -97,29 +99,34 @@ const AddForm = () => {
   };
 
   const handleDelete = () => {
+    setDeleteLoading(true);
     if (typeof geom.properties.geoID !== "number") {
-      AXIOS_INSTANCE.delete(`${BASE_URL}/geom?geoID=${geom.properties.geoID}&layerID=${currentLayerId}`).then(
-        (res) => {
-          message.success(res.data.msg)
-          dispatch({
-            type: DELETE_GEOM,
-            payload: geom.properties.geoID
-          });
-        })
+      AXIOS_INSTANCE.delete(
+        `${BASE_URL}/geom?geoID=${geom.properties.geoID}&layerID=${currentLayerId}`
+      ).then((res) => {
+        setDeleteLoading(false);
+        message.success(res.data.msg);
+        dispatch({
+          type: DELETE_GEOM,
+          payload: geom.properties.geoID,
+        });
+      });
     } else {
       dispatch({
         type: REMOVE_FROM_UNSAVE,
-        payload: geom.properties.geoID
+        payload: geom.properties.geoID,
       });
+      setDeleteLoading(false);
     }
-  }
+  };
 
   const onSave = (values) => {
-
+    setSaveLoading(true);
     if (typeof geom.properties.geoID === "number") {
       const newValues = { ...values, radius: geom.properties.radius };
-      AXIOS_INSTANCE.post(`${BASE_URL}/geom`, { properties: newValues, }).then(
+      AXIOS_INSTANCE.post(`${BASE_URL}/geom`, { properties: newValues }).then(
         (res) => {
+          setSaveLoading(false);
           message.success(res.data.msg);
           form.resetFields();
           dispatch({
@@ -142,7 +149,7 @@ const AddForm = () => {
     } else {
       let properties = {
         ...values,
-        radius: geom.properties.radius
+        radius: geom.properties.radius,
       };
       properties = omit(properties, ["layerID", "geometry"]);
       const newValues = {
@@ -153,6 +160,7 @@ const AddForm = () => {
       };
 
       AXIOS_INSTANCE.put(`${BASE_URL}/geom`, newValues).then((res) => {
+        setSaveLoading(false);
         message.success(res.data.msg);
         form.resetFields();
         dispatch({
@@ -308,10 +316,16 @@ const AddForm = () => {
             >
               <FaLocationArrow />
             </Button>
-            <Tooltip title={geom && geom.properties && typeof geom.properties.geoID === "string"
-              ? "Save"
-              : "Create"}>
-              <Button type="primary" htmlType="submit">
+            <Tooltip
+              title={
+                geom &&
+                geom.properties &&
+                typeof geom.properties.geoID === "string"
+                  ? "Save"
+                  : "Create"
+              }
+            >
+              <Button type="primary" htmlType="submit" loading={saveLoading}>
                 <CheckOutlined />
               </Button>
             </Tooltip>
@@ -320,6 +334,7 @@ const AddForm = () => {
                 type="primary"
                 onClick={handleDelete}
                 danger
+                loading={deleteLoading}
               >
                 <DeleteFilled />
               </Button>
