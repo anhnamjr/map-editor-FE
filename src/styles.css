@@ -45,3 +45,8 @@ main,
 .geom {
   padding-right: 20px;
 }
+
+
+.ant-upload-list-item-actions a {
+  display: none;
+}

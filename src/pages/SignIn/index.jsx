@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.scss";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
@@ -8,6 +8,7 @@ import { AUTH_URL } from "../../constants/endpoint";
 // import { ReactComponent as SigninIllus } from "/image/signin.svg";
 
 export default function SignIn() {
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -18,13 +19,13 @@ export default function SignIn() {
   }, [history]);
 
   const onFinish = (values) => {
-    axios
-      .post(`${AUTH_URL}/sign-in`, values)
-      .then((res) => {
-        const { token } = res.data;
-        localStorage.setItem("token", token);
-        history.push("/");
-      })
+    setLoading(true);
+    axios.post(`${AUTH_URL}/sign-in`, values).then((res) => {
+      setLoading(false);
+      const { token } = res.data;
+      localStorage.setItem("token", token);
+      history.push("/");
+    });
   };
 
   return (
@@ -75,6 +76,7 @@ export default function SignIn() {
               type="primary"
               htmlType="submit"
               className="login-form-button"
+              loading={loading}
             >
               Log in
             </Button>

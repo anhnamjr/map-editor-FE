@@ -41,8 +41,12 @@ const Export = () => {
 
   return (
     <div>
-      <h3>Select a layer to export</h3>
-      <Select style={{ width: "100%", marginTop: 10 }} onChange={handleChange}>
+      <h3>Select layer to export</h3>
+      <Select
+        mode="multiple"
+        style={{ width: "100%", marginTop: 10 }}
+        onChange={handleChange}
+      >
         {mapList &&
           mapList.map((item) => (
             <OptGroup key={item.key} label={item.title}>
