@@ -16,13 +16,17 @@ const Maps = () => {
   const mapRef = useRef();
   const printControlRef = useRef();
 
+  const handleMapDrag = (e) => {
+    console.log(e.target.getBounds());
+  }
+
   useEffect(() => {
     setGeoData(data);
   }, [data]);
 
   return (
     <>
-      <Map className="mapStyle" doubleClickZoom={false} zoom={13} center={[10.7646598, 106.6855794]} ref={mapRef}>
+      <Map className="mapStyle" doubleClickZoom={false} zoom={13} center={[10.7646598, 106.6855794]} ref={mapRef} onMoveEnd={handleMapDrag}>
         <MapLayerControl mapRef={mapRef} />
         <ZoomControl position="topright" />
         <Draw geoData={geoData} />

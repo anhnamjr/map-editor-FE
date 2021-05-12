@@ -92,7 +92,7 @@ export default function Shape({ item }) {
     );
   }
   if (item.geometry.type === "Point") {
-    if (item.properties.radius !== -1) {
+    if (item.properties.radius && item.properties.radius !== -1) {
       return (
         <Circle
           ref={shapeRef}
