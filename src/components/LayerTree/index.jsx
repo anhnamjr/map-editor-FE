@@ -49,17 +49,13 @@ const LayerTree = () => {
     if (userConfirm) {
       if (nodeData.children) {
         // delete map
-        AXIOS_INSTANCE.post(`${BASE_URL}/delete-map`, {
-          mapID: nodeData.key,
-        }).then((res) => {
+        AXIOS_INSTANCE.delete(`${BASE_URL}/map?mapID=${nodeData.key}`).then((res) => {
           dispatch(fetchLayerTree());
           message.success("Delete Successfully");
         });
       } else {
         // delete layer
-        AXIOS_INSTANCE.post(`${BASE_URL}/delete-layer`, {
-          layerID: nodeData.key,
-        }).then((res) => {
+        AXIOS_INSTANCE.delete(`${BASE_URL}/layer?layerID=${nodeData.key}`).then((res) => {
           dispatch(fetchLayerTree());
           message.success("Delete Successfully");
         });

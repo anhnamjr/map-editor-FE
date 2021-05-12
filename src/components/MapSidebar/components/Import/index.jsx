@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, message, Button, Select } from "antd";
+import { Upload, message, Button, Select, Input } from "antd";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { PlusOutlined } from "@ant-design/icons";
 import { BASE_URL } from "../../../../constants/endpoint";
@@ -10,6 +10,7 @@ const { Option } = Select;
 const Import = () => {
   const [fileList, setFileList] = useState([]);
   const [map, setMap] = useState(null);
+  const [layerName, setLayerName] = useState(null);
   const mapList = useSelector((state) => state.treeReducer.layerTree);
 
   const beforeUpload = (file) => {
@@ -31,10 +32,10 @@ const Import = () => {
     });
     // bodyFormData.append("body", JSON.stringify(map));
     AXIOS_INSTANCE.request({
-      url: `${BASE_URL}/import/geojson?mapID=${map}`,
+      url: `${BASE_URL}/import/geojson?mapID=${map}&layerName=${layerName}`,
       method: "POST",
       data: bodyFormData,
-    }).then((res) => {});
+    }).then((res) => { });
   };
 
   const handleChange = (info) => {
@@ -61,6 +62,10 @@ const Import = () => {
     console.log(value);
     setMap(value);
   };
+
+  const handleChangeLayerName = e => {
+    setLayerName(e.target.value)
+  }
 
   return (
     <div
@@ -90,6 +95,11 @@ const Import = () => {
             );
           })}
       </Select>
+      <Input
+        placeholder="Layer name"
+        value={layerName}
+        onChange={handleChangeLayerName}
+      />
       <Upload
         name="file"
         // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
