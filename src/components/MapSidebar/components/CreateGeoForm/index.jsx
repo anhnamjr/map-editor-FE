@@ -250,10 +250,10 @@ const AddForm = () => {
           {layerCols.map((col, idx) => (
             <Form.Item label={col.column_name} key={idx} name={col.column_name}>
               {col.data_type === "numeric" ? (
-                <InputNumber disabled={isEditing} />
+                <InputNumber className="form-item-color" disabled={isEditing} />
               ) : (
-                <Input disabled={isEditing} />
-              )}
+                  <Input disabled={isEditing} />
+                )}
             </Form.Item>
           ))}
 
@@ -319,8 +319,8 @@ const AddForm = () => {
             <Tooltip
               title={
                 geom &&
-                geom.properties &&
-                typeof geom.properties.geoID === "string"
+                  geom.properties &&
+                  typeof geom.properties.geoID === "string"
                   ? "Save"
                   : "Create"
               }
@@ -344,11 +344,11 @@ const AddForm = () => {
       ) : null}
     </Form>
   ) : (
-    <Empty
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={<Text>Vui lòng chọn layer</Text>}
-    />
-  );
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<Text>Vui lòng chọn layer</Text>}
+      />
+    );
 };
 
 export default AddForm;

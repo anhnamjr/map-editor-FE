@@ -42,6 +42,7 @@ const Import = () => {
       setLoading(false);
       setMap(null);
       setFileList([]);
+      message.success("Import successfully!")
     });
   };
 

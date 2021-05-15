@@ -44,3 +44,15 @@ export const toSlug = (str) => {
   // return
   return str;
 }
+
+export const calGeomCenter = coor => {
+  let x=[], y=[]
+  const flatCoor = coor.flat(4)
+  for (let i=0;i<flatCoor.length;i+=2){
+    x.push(flatCoor[i])
+    y.push(flatCoor[i+1])
+  }
+  let meanX = x.reduce((total, num) => total = total + num) / x.length
+  let meanY = y.reduce((total, num) => total = total + num) / y.length
+  return [meanX, meanY]
+}
