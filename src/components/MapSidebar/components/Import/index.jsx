@@ -43,7 +43,13 @@ const Import = () => {
       setMap(null);
       setFileList([]);
       message.success("Import successfully!")
-    });
+    })
+      .catch(err => {
+        setLoading(false);
+        setMap(null);
+        setFileList([]);
+        message.error(err.data.msg)
+      })
   };
 
   const handleChange = (info) => {

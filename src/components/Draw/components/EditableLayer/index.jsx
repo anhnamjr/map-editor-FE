@@ -45,6 +45,9 @@ export default function EditableLayer({ geoData }) {
         radius: e.layer._mRadius,
       };
     }
+    let localUnsave = JSON.parse(localStorage.getItem("unsave")) || [];
+    localUnsave.push(shapeItem)
+    localStorage.setItem("unsave", JSON.stringify(localUnsave))
     dispatch(AddToUnsave(shapeItem));
     dispatch({ type: TOGGLE_UNSAVE, payload: true });
     e.layer.remove();

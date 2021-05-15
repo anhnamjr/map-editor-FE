@@ -7,6 +7,7 @@ import {
   CLEAR_LAYER_DATA,
   TOGGLE_UNSAVE,
   SET_CURRENT_EDIT_LAYER,
+  SET_UNSAVE
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
@@ -70,6 +71,8 @@ const LayerTree = () => {
 
   useEffect(() => {
     dispatch(fetchLayerTree());
+    const localUnsave = JSON.parse(localStorage.getItem("unsave")) || []
+    dispatch({ type: SET_UNSAVE, payload: localUnsave })
   }, [dispatch]);
 
   useEffect(() => {
@@ -132,9 +135,8 @@ const LayerTree = () => {
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
         <div
-          className={`site-dropdown-context-menu ${
-            currentEditLayer === nodeData.key ? "active" : ""
-          }`}
+          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""
+            }`}
           onClick={() => handleClickLayer(nodeData)}
         >
           {nodeData.title}

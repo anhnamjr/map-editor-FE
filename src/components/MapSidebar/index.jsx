@@ -20,9 +20,30 @@ const MapSidebar = ({ map }) => {
   const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
-  const { geom = null } = useSelector((state) => state.storeGeom);
+  const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
+  const { unSaveGeom } = useSelector((state) => state.unSaveReducer)
 
   const onClose = () => setCollapsed(true);
+
+  useEffect(() => {
+    const preventReload = (event) => {
+      const e = event || window.event;
+      e.preventDefault();
+      if (e) {
+        if (unSaveGeom.length !== 0 || isEditing) {
+          console.log(unSaveGeom.length, isEditing)
+          var dialogText = 'Are you sure to leave this page';
+          return e.returnValue = dialogText;
+        }
+      }
+    }
+
+    window.addEventListener('beforeunload', preventReload);
+
+    return () => {
+      window.removeEventListener('beforeunload', preventReload);
+    };
+  }, [unSaveGeom, isEditing])
 
   useEffect(() => {
     setSelected(geom.geometry ? "geom" : "maps");
