@@ -21,29 +21,26 @@ const MapSidebar = ({ map }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
   const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
-  const { unSaveGeom } = useSelector((state) => state.unSaveReducer)
+  const { unSaveGeom } = useSelector((state) => state.unSaveReducer);
 
   const onClose = () => setCollapsed(true);
 
   useEffect(() => {
-    const preventReload = (event) => {
-      const e = event || window.event;
-      e.preventDefault();
-      if (e) {
-        if (unSaveGeom.length !== 0 || isEditing) {
-          console.log(unSaveGeom.length, isEditing)
-          var dialogText = 'Are you sure to leave this page';
-          return e.returnValue = dialogText;
-        }
-      }
-    }
-
-    window.addEventListener('beforeunload', preventReload);
-
-    return () => {
-      window.removeEventListener('beforeunload', preventReload);
+    const confirmationMessage = "Changes you made may not be saved.";
+    const beforeUnloadHandler = (e) => {
+      (e || window.event).returnValue = confirmationMessage;
+      return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
     };
-  }, [unSaveGeom, isEditing])
+
+    if (unSaveGeom.length !== 0 || isEditing) {
+      window.addEventListener("beforeunload", beforeUnloadHandler);
+    } else {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    }
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, [unSaveGeom, isEditing]);
 
   useEffect(() => {
     setSelected(geom.geometry ? "geom" : "maps");
