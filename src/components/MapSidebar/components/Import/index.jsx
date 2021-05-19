@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, message, Button, Select } from "antd";
+import { Upload, Button, Select } from "antd";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { PlusOutlined } from "@ant-design/icons";
 import { BASE_URL } from "../../../../constants/endpoint";
@@ -34,7 +34,7 @@ const Import = () => {
       url: `${BASE_URL}/import/geojson?mapID=${map}`,
       method: "POST",
       data: bodyFormData,
-    }).then((res) => {});
+    }).then((res) => { });
   };
 
   const handleChange = (info) => {

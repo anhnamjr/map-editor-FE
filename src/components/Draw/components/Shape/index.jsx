@@ -6,6 +6,8 @@ import {
   SET_FULL_COLOR,
   STORE_GEOM_COOR,
   STORE_SHAPE_REF,
+  UPDATE_UNSAVE_LAYER_DATA,
+  UPDATE_LAYER_DATA
 } from "../../../../constants/actions";
 
 export default function Shape({ item }) {
@@ -21,10 +23,10 @@ export default function Shape({ item }) {
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
   const newColor = useSelector((state) => state.colorReducer);
-  const isEditing = useSelector((state) => state.storeGeom.isEditing);
+  // const isEditing = useSelector((state) => state.storeGeom.isEditing);
 
   useEffect(() => {
-    if (item.properties.geoID === temp.shapeRef && isEditing) {
+    if (item.properties.geoID === temp.shapeRef) {
       const shapeEdit = shapeRef.current.leafletElement;
       shapeEdit.pm.enable();
       shapeEdit.on("pm:edit", (e) => {
@@ -33,24 +35,39 @@ export default function Shape({ item }) {
           properties: item.properties,
         };
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
+        if (typeof item.properties.geoID === "number") {
+          dispatch({ type: UPDATE_UNSAVE_LAYER_DATA, payload: { geom: editGeom } });
+        } else {
+          dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } })
+        }
       });
     } else {
       shapeRef.current.leafletElement.pm.disable();
     }
-  }, [temp, isEditing]);
+    //eslint-disable-next-line
+  }, [temp]);
 
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
+      let editGeom = {
+        ...item,
+        properties: { ...item.properties, ...newColor },
+      };
+      if (typeof item.properties.geoID === "number") {
+        dispatch({ type: UPDATE_UNSAVE_LAYER_DATA, payload: { geom: editGeom } });
+      } else {
+        dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } })
+      }
       setColor(newColor);
     }
-  }, [newColor]);
+    //eslint-disable-next-line
+  }, [newColor, temp]);
 
   const onClickShape = () => {
-    if (!isEditing) {
-      dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
-      dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
-      dispatch({ type: STORE_GEOM_COOR, payload: item });
-    }
+
+    dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
+    dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
+    dispatch({ type: STORE_GEOM_COOR, payload: item });
   };
 
   if (item.geometry.type === "LineString") {

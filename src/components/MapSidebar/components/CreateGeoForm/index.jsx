@@ -8,7 +8,8 @@ import {
   Empty,
   Typography,
   message,
-  Tooltip
+  Tooltip,
+  Divider
 } from "antd";
 import InputColor from "../../../InputColor";
 import { useSelector, useDispatch } from "react-redux";
@@ -33,7 +34,9 @@ import {
   ADD_LAYER_DATA,
   RESET_GEOM_DATA,
   UPDATE_UNSAVE_LAYER_DATA,
-  DELETE_GEOM
+  DELETE_GEOM,
+  CLEAR_UNSAVE,
+  CLEAR_SHAPE_REF
 } from "../../../../constants/actions";
 import "./styles.scss";
 
@@ -48,13 +51,6 @@ const layout = {
     span: 19,
   },
 };
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
-
 const types = ["Line", "Polygon", "Marker"];
 
 const AddForm = () => {
@@ -62,9 +58,11 @@ const AddForm = () => {
   const currentLayerId = useSelector(
     (state) => state.treeReducer.currentEditLayer
   );
+  const { unSaveGeom } = useSelector((state) => state.unSaveReducer)
   const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
   const layerCols = useSelector((state) => state.treeReducer.currentLayerCol);
   const color = useSelector((state) => state.colorReducer);
+  const { deletedGeomId } = useSelector((state) => state.layerReducer)
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
@@ -98,15 +96,17 @@ const AddForm = () => {
 
   const handleDelete = () => {
     if (typeof geom.properties.geoID !== "number") {
-      AXIOS_INSTANCE.delete(`${BASE_URL}/geom?geoID=${geom.properties.geoID}&layerID=${currentLayerId}`).then(
-        (res) => {
-          message.success(res.data.msg)
-          dispatch({
-            type: DELETE_GEOM,
-            payload: geom.properties.geoID
-          });
-        })
+      dispatch({
+        type: DELETE_GEOM,
+        payload: geom.properties.geoID
+      });
     } else {
+      dispatch({
+        type: RESET_GEOM_DATA
+      });
+      dispatch({
+        type: CLEAR_SHAPE_REF
+      });
       dispatch({
         type: REMOVE_FROM_UNSAVE,
         payload: geom.properties.geoID
@@ -206,87 +206,102 @@ const AddForm = () => {
     dispatch({ type: SET_FILL_OPACITY, payload: value });
   };
 
-  return currentLayerId ? (
-    <Form
-      form={form}
-      {...layout}
-      name="basic"
-      labelAlign="left"
-      initialValues={{
-        remember: true,
-        categoryID: types[0],
-        color: "#333",
-        description: "",
-      }}
-      style={{ marginTop: 20 }}
-      onFinish={onSave}
-      className="geom-form"
-    >
-      <Form.Item label="Layer" name="layerID">
-        <Select disabled style={{ width: "100%" }}>
-          {mapList &&
-            mapList.map((item) => (
-              <OptGroup key={item.key} label={item.title}>
-                {item.children.length !== 0 &&
-                  item.children.map((child) => (
-                    <Option key={child.key} value={child.key}>
-                      {child.title}
-                    </Option>
-                  ))}
-              </OptGroup>
-            ))}
-        </Select>
-      </Form.Item>
-      {geom.geometry ? (
-        <>
-          {layerCols.map((col, idx) => (
-            <Form.Item label={col.column_name} key={idx} name={col.column_name}>
-              {col.data_type === "numeric" ? (
-                <InputNumber disabled={isEditing} />
-              ) : (
-                <Input disabled={isEditing} />
-              )}
-            </Form.Item>
-          ))}
+  const handleSaveLayer = async () => {
+    const data1 = await AXIOS_INSTANCE.post(`${BASE_URL}/geom`, {
+      arrGeom: unSaveGeom
+    })
+    console.log(data1)
 
-          <Form.Item label="Geom" name="geometry">
-            <Input.TextArea disabled />
-          </Form.Item>
-          <Form.Item label="Fill Color" name="fill">
-            <InputColor
-              isEditing={isEditing}
-              color={color.fill}
-              onChange={onChangeFillColor}
-            />
-          </Form.Item>
-          <Form.Item label="Color" name="color">
-            <InputColor
-              isEditing={isEditing}
-              color={color.color}
-              onChange={onChangeColor}
-            />
-          </Form.Item>
-          <Form.Item label="Weight" name="weight">
-            <InputNumber
-              disabled={isEditing}
-              className="form-item-color"
-              min={1}
-              max={5}
-              step={1}
-              onChange={onChangeWeight}
-            />
-          </Form.Item>
-          <Form.Item label="Fill Opacity" name="fillOpacity">
-            <InputNumber
-              disabled={isEditing}
-              className="form-item-color"
-              min={0.1}
-              max={1}
-              step={0.1}
-              onChange={onChangeFillOpacity}
-            />
-          </Form.Item>
-          {/* <Form.Item {...tailLayout}>
+    const data2 = await AXIOS_INSTANCE.delete(`${BASE_URL}/geom?layerID=${currentLayerId}&geoID=${deletedGeomId.join(",")}`);
+
+    console.log(data2)
+  }
+
+  return currentLayerId ? (
+    <>
+      Layer: {currentLayerId}
+      <Button onClick={handleSaveLayer}>Save</Button>
+      <Divider />
+      <Form
+        form={form}
+        {...layout}
+        name="basic"
+        labelAlign="left"
+        initialValues={{
+          remember: true,
+          categoryID: types[0],
+          color: "#333",
+          description: "",
+        }}
+        style={{ marginTop: 20 }}
+        onFinish={onSave}
+        className="geom-form"
+      >
+        <Form.Item label="Layer" name="layerID">
+          <Select disabled style={{ width: "100%" }}>
+            {mapList &&
+              mapList.map((item) => (
+                <OptGroup key={item.key} label={item.title}>
+                  {item.children.length !== 0 &&
+                    item.children.map((child) => (
+                      <Option key={child.key} value={child.key}>
+                        {child.title}
+                      </Option>
+                    ))}
+                </OptGroup>
+              ))}
+          </Select>
+        </Form.Item>
+        {geom.geometry ? (
+          <>
+            {layerCols.map((col, idx) => (
+              <Form.Item label={col.column_name} key={idx} name={col.column_name}>
+                {col.data_type === "numeric" ? (
+                  <InputNumber disabled={isEditing} />
+                ) : (
+                  <Input disabled={isEditing} />
+                )}
+              </Form.Item>
+            ))}
+
+            <Form.Item label="Geom" name="geometry">
+              <Input.TextArea disabled />
+            </Form.Item>
+            <Form.Item label="Fill Color" name="fill">
+              <InputColor
+                isEditing={isEditing}
+                color={color.fill}
+                onChange={onChangeFillColor}
+              />
+            </Form.Item>
+            <Form.Item label="Color" name="color">
+              <InputColor
+                isEditing={isEditing}
+                color={color.color}
+                onChange={onChangeColor}
+              />
+            </Form.Item>
+            <Form.Item label="Weight" name="weight">
+              <InputNumber
+                disabled={isEditing}
+                className="form-item-color"
+                min={1}
+                max={5}
+                step={1}
+                onChange={onChangeWeight}
+              />
+            </Form.Item>
+            <Form.Item label="Fill Opacity" name="fillOpacity">
+              <InputNumber
+                disabled={isEditing}
+                className="form-item-color"
+                min={0.1}
+                max={1}
+                step={0.1}
+                onChange={onChangeFillOpacity}
+              />
+            </Form.Item>
+            {/* <Form.Item {...tailLayout}>
               <Button type="primary" style={{ marginRight: "10px" }} onClick={onEdit}>
                 Edit
         </Button>
@@ -294,40 +309,41 @@ const AddForm = () => {
                 Save
         </Button>
             </Form.Item> */}
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              type="primary"
-              onClick={isEditing ? onSaveCoordinate : onEditCoordinate}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+              }}
             >
-              <FaLocationArrow />
-            </Button>
-            <Tooltip title={geom && geom.properties && typeof geom.properties.geoID === "string"
-              ? "Save"
-              : "Create"}>
-              <Button type="primary" htmlType="submit">
-                <CheckOutlined />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Delete">
               <Button
                 type="primary"
-                onClick={handleDelete}
-                danger
+                onClick={isEditing ? onSaveCoordinate : onEditCoordinate}
               >
-                <DeleteFilled />
+                <FaLocationArrow />
               </Button>
-            </Tooltip>
-          </div>
-        </>
-      ) : null}
-    </Form>
+              <Tooltip title={geom && geom.properties && typeof geom.properties.geoID === "string"
+                ? "Save"
+                : "Create"}>
+                <Button type="primary" htmlType="submit">
+                  <CheckOutlined />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <Button
+                  type="primary"
+                  onClick={handleDelete}
+                  danger
+                >
+                  <DeleteFilled />
+                </Button>
+              </Tooltip>
+            </div>
+          </>
+        ) : null}
+      </Form>
+    </>
   ) : (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}

@@ -1,4 +1,4 @@
-import { STORE_SHAPE_REF } from "../constants/actions"
+import { STORE_SHAPE_REF, CLEAR_SHAPE_REF } from "../constants/actions"
 
 const initState = {
   shapeRef: null
@@ -6,12 +6,17 @@ const initState = {
 
 export const storeShapeRef = (state = initState, action) => {
   switch (action.type) {
-    case STORE_SHAPE_REF: 
+    case STORE_SHAPE_REF:
       return {
         ...state,
         shapeRef: action.payload
       }
+    case CLEAR_SHAPE_REF:
+      return {
+        ...state,
+        shapeRef: null
+      }
     default:
-      return state 
+      return state
   }
 }

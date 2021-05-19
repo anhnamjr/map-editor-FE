@@ -14,12 +14,14 @@ export const REVERSE_BACKUP_GEOM = "REVERSE_BACKUP_GEOM";
 // user
 export const SET_USER = "SET_USER";
 export const STORE_SHAPE_REF = "STORE_SHAPE_REF";
+export const CLEAR_SHAPE_REF = "CLEAR_SHAPE_REF";
 
 // unsave geom action
 export const ADD_TO_UNSAVE = "ADD_TO_UNSAVE";
 export const REMOVE_FROM_UNSAVE = "REMOVE_FROM_UNSAVE";
 export const TOGGLE_UNSAVE = "TOGGLE_UNSAVE";
 export const UPDATE_UNSAVE_LAYER_DATA = "UPDATE_UNSAVE_LAYER_DATA";
+export const CLEAR_UNSAVE = "CLEAR_UNSAVE";
 
 export const SET_COLOR = "SET_COLOR";
 export const SET_FILL_COLOR = "SET_FILL_COLOR";
@@ -32,4 +34,4 @@ export const SET_NOT_EDIT = "SET_NOT_EDIT";
 export const SET_CURRENT_LAYER_COL = "SET_CURRENT_LAYER_COL";
 export const DELETE_GEOM = "DELETE_GEOM";
 
-
+export const UPDATE_SAVED_LAYER_DATA = "UPDATE_SAVED_LAYER_DATA"

@@ -35,6 +35,7 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
         Map: mapID
       })
     }
+    //eslint-disable-next-line
   }, [currentNode])
 
   const handleEdit = (values) => {
@@ -64,10 +65,6 @@ const EditModal = ({ showEditModal, setShowEditModal, editItemType, currentNode,
 
     setShowEditModal(false);
   }
-
-  const handleOk = (e) => {
-    setShowEditModal(false);
-  };
 
   const handleCancel = () => {
     setShowEditModal(false);

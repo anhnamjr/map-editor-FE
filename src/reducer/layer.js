@@ -3,16 +3,15 @@ import {
   CLEAR_LAYER_DATA,
   UPDATE_LAYER_DATA,
   ADD_LAYER_DATA,
-  REVERSE_BACKUP_GEOM,
-  SET_BACKUP_GEOM,
-  DELETE_GEOM
+  DELETE_GEOM,
 } from "../constants/actions";
 import { findIndex } from "lodash";
 
 const initState = {
   layerData: {},
   layerCol: [],
-  backupGeom: "",
+  editedGeomId: [],
+  deletedGeomId: [],
 };
 
 export const layerReducer = (state = initState, action) => {
@@ -51,10 +50,11 @@ export const layerReducer = (state = initState, action) => {
       const idx = findIndex(layerData.features, {
         properties: { geoID: geom.properties.geoID },
       });
-      layerData.features[idx].geometry = geom.geometry;
+      layerData.features[idx] = geom;
       return {
         ...state,
         layerData: layerData,
+        editedGeomId: geom.properties.geoID ? [...state.editedGeomId, geom.properties.geoID] : [...state.editedGeomId]
       };
     }
 
@@ -64,17 +64,7 @@ export const layerReducer = (state = initState, action) => {
       return {
         ...state,
         layerData: newData,
-      };
-
-    case SET_BACKUP_GEOM:
-      return {
-        ...state,
-        backupGeom: action.payload,
-      };
-    case REVERSE_BACKUP_GEOM:
-      return {
-        ...state,
-        backupGeom: "",
+        deletedGeomId: [...state.deletedGeomId, action.payload]
       };
     default:
       return { ...state };

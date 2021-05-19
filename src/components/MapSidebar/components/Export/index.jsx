@@ -10,6 +10,7 @@ const Export = () => {
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const [selected, setSelected] = useState(null);
   const [exportLinks, setExportLinks] = useState([]);
+  //eslint-disable-next-line
   const [loading, setLoading] = useState(false);
 
   const handleChange = (val) => {
