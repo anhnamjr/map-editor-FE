@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./style.scss";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
@@ -25,7 +25,11 @@ export default function SignIn() {
       const { token } = res.data;
       localStorage.setItem("token", token);
       history.push("/");
-    });
+    })
+      .catch(err => {
+        message.error(err.response.data.message)
+        setLoading(false);
+      });
   };
 
   return (

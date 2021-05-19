@@ -16,7 +16,6 @@ const Import = () => {
   const [loading, setLoading] = useState(false);
 
   const beforeUpload = (file) => {
-    console.log(file);
     setFileList([
       ...fileList,
       {
@@ -41,14 +40,17 @@ const Import = () => {
     }).then((res) => {
       setLoading(false);
       setMap(null);
+      setLayerName("")
       setFileList([]);
       message.success("Import successfully!")
     })
       .catch(err => {
         setLoading(false);
-        setMap(null);
-        setFileList([]);
-        message.error(err.data.msg)
+        // setLayerName("")
+        // setMap(null);
+        // setFileList([]);
+
+        message.error(err.response.data.msg.name)
       })
   };
 
@@ -72,7 +74,6 @@ const Import = () => {
   );
 
   const handleClick = (value) => {
-    console.log(value);
     setMap(value);
   };
 
@@ -123,7 +124,7 @@ const Import = () => {
           onChange={handleChange}
           beforeUpload={beforeUpload}
         >
-          {uploadButton}
+          {fileList.length === 0 && uploadButton}
         </Upload>
       </div>
       <div style={{ textAlign: "center", width: "100%" }}>
