@@ -3,7 +3,8 @@ import {
   REMOVE_FROM_UNSAVE,
   TOGGLE_UNSAVE,
   UPDATE_UNSAVE_LAYER_DATA,
-  CLEAR_UNSAVE
+  CLEAR_UNSAVE,
+  SET_UNSAVE
 } from "../constants/actions";
 import { findIndex } from "lodash";
 
@@ -51,6 +52,12 @@ export const unSaveReducer = (state = initState, action) => {
         ...state,
         unSaveGeom: []
       }
+    case SET_UNSAVE:
+      return {
+        ...state,
+        unSaveGeom: action.payload
+      };
+
     default:
       return { ...state };
   }

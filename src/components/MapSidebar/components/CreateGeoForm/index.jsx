@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -55,6 +55,8 @@ const layout = {
 const types = ["Line", "Polygon", "Marker"];
 
 const AddForm = () => {
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const currentLayerId = useSelector(
     (state) => state.treeReducer.currentEditLayer
@@ -96,6 +98,7 @@ const AddForm = () => {
   };
 
   const handleDelete = () => {
+    setDeleteLoading(true);
     if (typeof geom.properties.geoID !== "number") {
       dispatch({
         type: DELETE_GEOM,
@@ -110,17 +113,19 @@ const AddForm = () => {
       });
       dispatch({
         type: REMOVE_FROM_UNSAVE,
-        payload: geom.properties.geoID
+        payload: geom.properties.geoID,
       });
+      setDeleteLoading(false);
     }
-  }
+  };
 
   const onSave = (values) => {
-
+    setSaveLoading(true);
     if (typeof geom.properties.geoID === "number") {
       const newValues = { ...values, radius: geom.properties.radius };
-      AXIOS_INSTANCE.post(`${BASE_URL}/geom`, { properties: newValues, }).then(
+      AXIOS_INSTANCE.post(`${BASE_URL}/geom`, { properties: newValues }).then(
         (res) => {
+          setSaveLoading(false);
           message.success(res.data.msg);
           form.resetFields();
           dispatch({
@@ -143,7 +148,7 @@ const AddForm = () => {
     } else {
       let properties = {
         ...values,
-        radius: geom.properties.radius
+        radius: geom.properties.radius,
       };
       properties = omit(properties, ["layerID", "geometry"]);
       const newValues = {
@@ -154,6 +159,7 @@ const AddForm = () => {
       };
 
       AXIOS_INSTANCE.put(`${BASE_URL}/geom`, newValues).then((res) => {
+        setSaveLoading(false);
         message.success(res.data.msg);
         form.resetFields();
         dispatch({
