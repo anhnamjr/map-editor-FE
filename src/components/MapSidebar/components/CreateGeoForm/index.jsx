@@ -20,7 +20,7 @@ import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
 import { FaLocationArrow } from "react-icons/fa";
 import { DeleteFilled, CheckOutlined } from "@ant-design/icons"
-import { omit, get } from "lodash";
+import { get, uniq, without, omit, isEmpty } from "lodash";
 import {
   SET_FILL_COLOR,
   STORE_SHAPE_REF,
@@ -39,6 +39,7 @@ import {
   CLEAR_SHAPE_REF
 } from "../../../../constants/actions";
 import "./styles.scss";
+import Restful from "../../../../service/Restful";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;
@@ -62,7 +63,7 @@ const AddForm = () => {
   const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
   const layerCols = useSelector((state) => state.treeReducer.currentLayerCol);
   const color = useSelector((state) => state.colorReducer);
-  const { deletedGeomId } = useSelector((state) => state.layerReducer)
+  const { deletedGeomId, editedGeomId, layerData } = useSelector((state) => state.layerReducer)
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
@@ -207,14 +208,22 @@ const AddForm = () => {
   };
 
   const handleSaveLayer = async () => {
-    const data1 = await AXIOS_INSTANCE.post(`${BASE_URL}/geom`, {
-      arrGeom: unSaveGeom
-    })
-    console.log(data1)
-
-    const data2 = await AXIOS_INSTANCE.delete(`${BASE_URL}/geom?layerID=${currentLayerId}&geoID=${deletedGeomId.join(",")}`);
-
-    console.log(data2)
+    if (!isEmpty(unSaveGeom)) {
+      const data1 = await Restful.post(`${BASE_URL}/geom`, {
+        arrGeom: unSaveGeom
+      })
+      console.log(data1)
+    }
+    if (!isEmpty(deletedGeomId)) {
+      const data2 = await Restful.delete(`${BASE_URL}/geom`, { layerID: currentLayerId, geoID: deletedGeomId.join(",") });
+      console.log(data2)
+    }
+    const onlyEdited = uniq(without(editedGeomId, ...deletedGeomId));
+    const editedGeom = layerData.features.filter(item => onlyEdited.indexOf(item.properties.geoID) !== -1)
+    if (editedGeom.length > 0) {
+      const data3 = await Restful.put(`${BASE_URL}/geom`, { arrGeom: editedGeom })
+      console.log(data3)
+    }
   }
 
   return currentLayerId ? (

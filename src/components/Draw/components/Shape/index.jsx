@@ -34,6 +34,9 @@ export default function Shape({ item }) {
           ...e.target.toGeoJSON(),
           properties: item.properties,
         };
+        if (e.target._mRadius) {
+          editGeom.properties.radius = e.target._mRadius
+        }
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
         if (typeof item.properties.geoID === "number") {
           dispatch({ type: UPDATE_UNSAVE_LAYER_DATA, payload: { geom: editGeom } });
@@ -109,7 +112,7 @@ export default function Shape({ item }) {
     );
   }
   if (item.geometry.type === "Point") {
-    if (item.properties.radius !== -1) {
+    if (item.properties.radius > 0) {
       return (
         <Circle
           ref={shapeRef}
