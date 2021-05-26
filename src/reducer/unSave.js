@@ -40,7 +40,10 @@ export const unSaveReducer = (state = initState, action) => {
       const idx = findIndex(unSaveGeom, {
         properties: { geoID: geom.properties.geoID },
       });
-      unSaveGeom[idx].geometry = geom.geometry;
+      console.log(idx)
+      if(idx) {
+        unSaveGeom[idx].geometry = geom.geometry;
+      }
       return {
         ...state,
         unSaveGeom: unSaveGeom,

@@ -11,7 +11,6 @@ import {
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
-import AddLayerModal from "./components/AddLayerModal";
 import { fetchLayerTree, fetchLayerCols } from "../../actions/fetchLayerTree";
 import "./style.scss";
 
@@ -23,7 +22,6 @@ const LayerTree = () => {
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [editItemType, setEditItemType] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showAddLayerModal, setShowAddLayerModal] = useState(false);
   const [currentNode, setCurrentNode] = useState(null);
 
   const dispatch = useDispatch();
@@ -39,10 +37,6 @@ const LayerTree = () => {
     setShowEditModal(true);
   };
 
-  const openAddLayerModal = (nodeData) => {
-    setCurrentNode({ ...nodeData });
-    setShowAddLayerModal(true);
-  };
 
   const handleDelete = (nodeData) => {
     const userConfirm = window.confirm(
@@ -71,8 +65,8 @@ const LayerTree = () => {
 
   useEffect(() => {
     dispatch(fetchLayerTree());
-    const localUnsave = JSON.parse(localStorage.getItem("unsave")) || []
-    dispatch({ type: SET_UNSAVE, payload: localUnsave })
+    // const localUnsave = JSON.parse(localStorage.getItem("unsave")) || []
+    // dispatch({ type: SET_UNSAVE, payload: localUnsave })
   }, [dispatch]);
 
   useEffect(() => {
@@ -170,11 +164,6 @@ const LayerTree = () => {
         editItemType={editItemType}
         currentNode={currentNode}
         treeData={treeData}
-      />
-      <AddLayerModal
-        showAddLayerModal={showAddLayerModal}
-        setShowAddLayerModal={setShowAddLayerModal}
-        currentNode={currentNode}
       />
       <Tree
         treeData={treeData}

@@ -1,6 +1,6 @@
 // import axios from "axios";
 import { AXIOS_INSTANCE } from "../config/requestInterceptor";
-import { FETCH_LAYER_TREE, SET_CURRENT_LAYER_COL } from "../constants/actions";
+import { FETCH_LAYER_TREE, SET_CURRENT_LAYER_COL, SET_CURRENT_LAYER_STYLE } from "../constants/actions";
 import { BASE_URL } from "../constants/endpoint";
 
 export const fetchLayerTree = (/*userId*/) => async (dispatch) => {
@@ -21,7 +21,12 @@ export const fetchLayerCols = (id) => async (dispatch) => {
 
   dispatch({
     type: SET_CURRENT_LAYER_COL,
-    payload: data,
+    payload: [...data.opt],
   });
+
+  dispatch({
+    type: SET_CURRENT_LAYER_STYLE,
+    payload: [...data.def]
+  })
 };
 

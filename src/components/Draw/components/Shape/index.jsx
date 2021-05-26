@@ -23,7 +23,6 @@ export default function Shape({ item }) {
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
   const newColor = useSelector((state) => state.colorReducer);
-  // const isEditing = useSelector((state) => state.storeGeom.isEditing);
 
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {

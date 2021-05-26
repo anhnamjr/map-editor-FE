@@ -18,17 +18,13 @@ import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
-import { FaLocationArrow } from "react-icons/fa";
-import { DeleteFilled, CheckOutlined } from "@ant-design/icons"
+import { DeleteFilled } from "@ant-design/icons"
 import { get, uniq, without, omit, isEmpty } from "lodash";
 import {
-  SET_FILL_COLOR,
   STORE_SHAPE_REF,
   SET_EDIT,
   SET_NOT_EDIT,
-  SET_COLOR,
-  SET_WEIGHT,
-  SET_FILL_OPACITY,
+  SET_PROPERTIES,
   REMOVE_FROM_UNSAVE,
   UPDATE_LAYER_DATA,
   ADD_LAYER_DATA,
@@ -36,7 +32,8 @@ import {
   UPDATE_UNSAVE_LAYER_DATA,
   DELETE_GEOM,
   CLEAR_UNSAVE,
-  CLEAR_SHAPE_REF
+  CLEAR_SHAPE_REF,
+  UPDATE_FROM_UNSAVE
 } from "../../../../constants/actions";
 import "./styles.scss";
 import Restful from "../../../../service/Restful";
@@ -197,46 +194,54 @@ const AddForm = () => {
     });
   }, [geom, form, color, currentLayerId, layerCols]);
 
-  const onChangeFillColor = (color) => {
-    dispatch({ type: SET_FILL_COLOR, payload: color.color });
-  };
+  const handleChangeDefaultProps = (name, val) => {
+    dispatch({
+      type: SET_PROPERTIES,
+      payload: { [name]: val }
+    })
+  }
 
-  const onChangeColor = (color) => {
-    dispatch({ type: SET_COLOR, payload: color.color });
-  };
-
-  const onChangeWeight = (value) => {
-    dispatch({ type: SET_WEIGHT, payload: value });
-  };
-
-  const onChangeFillOpacity = (value) => {
-    dispatch({ type: SET_FILL_OPACITY, payload: value });
-  };
+  const handleOptionalChange = (name, val, type) => {
+    if (type === "numeric") {
+      form.setFieldsValue({ [name]: val })
+      geom.properties[name] = val
+      handleChangeDefaultProps(name, val)
+    } else {
+      form.setFieldsValue({ [name]: val.target.value })
+      geom.properties[name] = val.target.value
+      handleChangeDefaultProps(name, val.target.value)
+    }
+  }
 
   const handleSaveLayer = async () => {
+    setSaveLoading(true)
     if (!isEmpty(unSaveGeom)) {
       const data1 = await Restful.post(`${BASE_URL}/geom`, {
         arrGeom: unSaveGeom
       })
-      console.log(data1)
+      dispatch({ type: UPDATE_FROM_UNSAVE, payload: data1.geom.geom.features });
+      dispatch({ type: CLEAR_UNSAVE });
+      localStorage.setItem("unsave", JSON.stringify([]))
     }
     if (!isEmpty(deletedGeomId)) {
       const data2 = await Restful.delete(`${BASE_URL}/geom`, { layerID: currentLayerId, geoID: deletedGeomId.join(",") });
-      console.log(data2)
     }
     const onlyEdited = uniq(without(editedGeomId, ...deletedGeomId));
     const editedGeom = layerData.features.filter(item => onlyEdited.indexOf(item.properties.geoID) !== -1)
     if (editedGeom.length > 0) {
       const data3 = await Restful.put(`${BASE_URL}/geom`, { arrGeom: editedGeom })
-      console.log(data3)
     }
+    setSaveLoading(false)
+
   }
 
   return currentLayerId ? (
     <>
-      Layer: {currentLayerId}
-      <Button onClick={handleSaveLayer}>Save</Button>
+      <div style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}>
+        <Button loading={saveLoading} type="primary" onClick={handleSaveLayer}>Save Layer Data</Button>
+      </div>
       <Divider />
+      <h2 style={{ textAlign: "center" }}>Geom Detail</h2>
       <Form
         form={form}
         {...layout}
@@ -251,6 +256,7 @@ const AddForm = () => {
         style={{ marginTop: 20 }}
         onFinish={onSave}
         className="geom-form"
+      // onValuesChange={handleValuesChange}
       >
         <Form.Item label="Layer" name="layerID">
           <Select disabled style={{ width: "100%" }}>
@@ -269,15 +275,25 @@ const AddForm = () => {
         </Form.Item>
         {geom.geometry ? (
           <>
-            {layerCols.map((col, idx) => (
-              <Form.Item label={col.column_name} key={idx} name={col.column_name}>
-                {col.data_type === "numeric" ? (
-                  <InputNumber disabled={isEditing} />
-                ) : (
-                  <Input disabled={isEditing} />
-                )}
-              </Form.Item>
-            ))}
+            {layerCols.map((col, idx) => {
+              if (col.column_name !== "layerID") {
+                return (
+                  <Form.Item label={col.column_name} key={idx} name={col.column_name}>
+                    {col.data_type === "numeric" ? (
+                      <InputNumber disabled={isEditing}
+                        value={geom.properties[col.column_name]}
+                        onChange={(val) => handleOptionalChange([col.column_name], val, col.data_type)}
+                      />
+                    ) : (
+                        <Input disabled={isEditing}
+                          value={geom.properties[col.column_name]}
+                          onChange={(val) => handleOptionalChange([col.column_name], val, col.data_type)}
+                        />
+                      )}
+                  </Form.Item>
+                )
+              }
+            })}
 
             <Form.Item label="Geom" name="geometry">
               <Input.TextArea disabled />
@@ -286,14 +302,14 @@ const AddForm = () => {
               <InputColor
                 isEditing={isEditing}
                 color={color.fill}
-                onChange={onChangeFillColor}
+                onChange={(val) => handleChangeDefaultProps("fill", val.color)}
               />
             </Form.Item>
             <Form.Item label="Color" name="color">
               <InputColor
                 isEditing={isEditing}
                 color={color.color}
-                onChange={onChangeColor}
+                onChange={(val) => handleChangeDefaultProps("color", val.color)}
               />
             </Form.Item>
             <Form.Item label="Weight" name="weight">
@@ -303,7 +319,7 @@ const AddForm = () => {
                 min={1}
                 max={5}
                 step={1}
-                onChange={onChangeWeight}
+                onChange={(val) => handleChangeDefaultProps("weight", val)}
               />
             </Form.Item>
             <Form.Item label="Fill Opacity" name="fillOpacity">
@@ -313,7 +329,7 @@ const AddForm = () => {
                 min={0.1}
                 max={1}
                 step={0.1}
-                onChange={onChangeFillOpacity}
+                onChange={(val) => handleChangeDefaultProps("fillOpacity", val)}
               />
             </Form.Item>
             {/* <Form.Item {...tailLayout}>
@@ -332,19 +348,6 @@ const AddForm = () => {
                 alignItems: "center",
               }}
             >
-              <Button
-                type="primary"
-                onClick={isEditing ? onSaveCoordinate : onEditCoordinate}
-              >
-                <FaLocationArrow />
-              </Button>
-              <Tooltip title={geom && geom.properties && typeof geom.properties.geoID === "string"
-                ? "Save"
-                : "Create"}>
-                <Button type="primary" htmlType="submit">
-                  <CheckOutlined />
-                </Button>
-              </Tooltip>
               <Tooltip title="Delete">
                 <Button
                   type="primary"
@@ -360,11 +363,11 @@ const AddForm = () => {
       </Form>
     </>
   ) : (
-    <Empty
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={<Text>Vui lòng chọn layer</Text>}
-    />
-  );
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<Text>Vui lòng chọn layer</Text>}
+      />
+    );
 };
 
 export default AddForm;

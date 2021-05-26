@@ -3,8 +3,9 @@ import { Upload, message, Button, Select, Input } from "antd";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { PlusOutlined } from "@ant-design/icons";
 import { BASE_URL } from "../../../../constants/endpoint";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "./style.scss";
+import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 
 const { Option } = Select;
 
@@ -14,6 +15,7 @@ const Import = () => {
   const [layerName, setLayerName] = useState(null);
   const mapList = useSelector((state) => state.treeReducer.layerTree);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const beforeUpload = (file) => {
     setFileList([
@@ -43,6 +45,7 @@ const Import = () => {
       setLayerName("")
       setFileList([]);
       message.success("Import successfully!")
+      dispatch(fetchLayerTree());
     })
       .catch(err => {
         setLoading(false);
@@ -118,7 +121,6 @@ const Import = () => {
       <div style={{ width: "100%", padding: 20 }}>
         <Upload
           name="file"
-          // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           listType="picture-card"
           fileList={fileList}
           onChange={handleChange}

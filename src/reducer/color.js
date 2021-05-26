@@ -1,4 +1,12 @@
-import { SET_COLOR, SET_FILL_COLOR, SET_FILL_OPACITY, SET_WEIGHT, SET_FULL_COLOR } from "../constants/actions";
+import { 
+  SET_COLOR, 
+  SET_FILL_COLOR, 
+  SET_FILL_OPACITY, 
+  SET_WEIGHT, 
+  SET_FULL_COLOR, 
+  SET_ANOTHER_PROPERTIES,
+  SET_PROPERTIES
+} from "../constants/actions";
 
 const defaultColor = "#ffffff"
 const initialState = {
@@ -10,28 +18,15 @@ const initialState = {
 
 export const colorReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case SET_COLOR:
+    case SET_PROPERTIES:
       return {
         ...state,
-        color: action.payload
+        ...action.payload
       }
-    case SET_FILL_COLOR:
-      return {
-        ...state,
-        fill: action.payload
-      }
-    case SET_FILL_OPACITY:
-      return {
-        ...state,
-        fillOpacity: action.payload
-      }
-    case SET_WEIGHT:
-      return {
-        ...state,
-        weight: action.payload
-      }
+
     case SET_FULL_COLOR:
       return action.payload
+
     default:
       return state
   }

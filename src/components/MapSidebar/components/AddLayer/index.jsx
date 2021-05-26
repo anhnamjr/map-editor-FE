@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { BASE_URL } from "../../../../../src/constants/endpoint";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-import { Form, Input, Select, Button, Row, message, Col } from "antd";
+import { Form, Input, Select, Button, Row, message, Col, InputNumber } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLayerTree } from "../../../../actions/fetchLayerTree";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import InputColor from "../../../InputColor";
 
 const { Option } = Select;
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
 
 export default function LayerMap() {
   const [options, setOptions] = useState([]);
@@ -48,14 +46,20 @@ export default function LayerMap() {
       });
   };
 
-  const onFinishFailed = (errorInfo) => {};
+  const onFinishFailed = (errorInfo) => { };
 
   return (
     <Form
       name="addLayer"
       layout="vertical"
       form={form}
-      initialValues={{ remember: true }}
+      initialValues={{
+        remember: true,
+        fill: "#40a9ff",
+        color: "#40a9ff",
+        weight: 3,
+        fillOpacity: 0.3
+      }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
@@ -85,6 +89,31 @@ export default function LayerMap() {
       >
         <Input placeholder="Layer name" />
       </Form.Item>
+
+      <Form.Item label="Fill Color" name="fill">
+        <InputColor />
+      </Form.Item>
+      <Form.Item label="Color" name="color">
+        <InputColor />
+      </Form.Item>
+      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+        <Form.Item label="Weight" name="weight">
+          <InputNumber
+            className="form-item-color"
+            min={1}
+            max={5}
+            step={1}
+          />
+        </Form.Item>
+        <Form.Item label="Fill Opacity" name="fillOpacity">
+          <InputNumber
+            className="form-item-color"
+            min={0.1}
+            max={1}
+            step={0.1}
+          />
+        </Form.Item>
+      </div>
 
       <Form.List name="columns">
         {(fields, { add, remove }) => (
@@ -139,10 +168,12 @@ export default function LayerMap() {
         )}
       </Form.List>
 
-      <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          Add
-        </Button>
+      <Form.Item>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Add
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );

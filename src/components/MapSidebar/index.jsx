@@ -25,22 +25,22 @@ const MapSidebar = ({ map }) => {
 
   const onClose = () => setCollapsed(true);
 
-  useEffect(() => {
-    const confirmationMessage = "Changes you made may not be saved.";
-    const beforeUnloadHandler = (e) => {
-      (e || window.event).returnValue = confirmationMessage;
-      return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
-    };
+  // useEffect(() => {
+  //   const confirmationMessage = "Changes you made may not be saved.";
+  //   const beforeUnloadHandler = (e) => {
+  //     (e || window.event).returnValue = confirmationMessage;
+  //     return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+  //   };
 
-    if (unSaveGeom.length !== 0 || isEditing) {
-      window.addEventListener("beforeunload", beforeUnloadHandler);
-    } else {
-      window.removeEventListener("beforeunload", beforeUnloadHandler);
-    }
-    return () => {
-      window.removeEventListener("beforeunload", beforeUnloadHandler);
-    };
-  }, [unSaveGeom, isEditing]);
+  //   if (unSaveGeom.length !== 0 || isEditing) {
+  //     window.addEventListener("beforeunload", beforeUnloadHandler);
+  //   } else {
+  //     window.removeEventListener("beforeunload", beforeUnloadHandler);
+  //   }
+  //   return () => {
+  //     window.removeEventListener("beforeunload", beforeUnloadHandler);
+  //   };
+  // }, [unSaveGeom, isEditing]);
 
   useEffect(() => {
     setSelected(geom.geometry ? "geom" : "maps");

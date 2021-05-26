@@ -4,6 +4,7 @@ import {
   UPDATE_LAYER_DATA,
   ADD_LAYER_DATA,
   DELETE_GEOM,
+  UPDATE_FROM_UNSAVE
 } from "../constants/actions";
 import { findIndex } from "lodash";
 
@@ -57,6 +58,15 @@ export const layerReducer = (state = initState, action) => {
         editedGeomId: geom.properties.geoID ? [...state.editedGeomId, geom.properties.geoID] : [...state.editedGeomId]
       };
     }
+
+    case UPDATE_FROM_UNSAVE:
+      return {
+        ...state,
+        layerData: {
+          ...state.layerData,
+          features: [...state.layerData.features, ...action.payload],
+        }
+      }
 
     case DELETE_GEOM:
       const newData = { ...state.layerData }

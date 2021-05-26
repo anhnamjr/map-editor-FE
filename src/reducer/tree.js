@@ -1,9 +1,14 @@
-import { FETCH_LAYER_TREE, SET_CURRENT_EDIT_LAYER, SET_CURRENT_LAYER_COL } from '../constants/actions';
+import { FETCH_LAYER_TREE, 
+    SET_CURRENT_EDIT_LAYER, 
+    SET_CURRENT_LAYER_COL, 
+    SET_CURRENT_LAYER_STYLE 
+} from '../constants/actions';
 
 const initState = {
     layerTree: [],
     currentEditLayer: "",
-    currentLayerCol: []
+    currentLayerCol: [],
+    currentLayerStyle: {}
 }
 
 export const treeReducer = (state = initState, action) => {
@@ -25,6 +30,14 @@ export const treeReducer = (state = initState, action) => {
                 ...state,
                 currentLayerCol: action.payload
             }
+
+        case SET_CURRENT_LAYER_STYLE:
+            const style = action.payload.map(item => ({[item.column_name]: item.column_default}))
+            console.log(style)
+            return {
+                ...state,
+                currentLayerStyle: action.payload
+            } 
         default: return { ...state }
     }
 }
