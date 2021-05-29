@@ -37,6 +37,7 @@ import {
 } from "../../../../constants/actions";
 import "./styles.scss";
 import Restful from "../../../../service/Restful";
+import ErrorList from "antd/lib/form/ErrorList";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;
@@ -215,26 +216,34 @@ const AddForm = () => {
 
   const handleSaveLayer = async () => {
     setSaveLoading(true)
+    let status = {}
     if (!isEmpty(unSaveGeom)) {
       const data1 = await Restful.post(`${BASE_URL}/geom`, {
         arrGeom: unSaveGeom
       })
-      console.log(data1)
+      status.create = data1
       dispatch({ type: UPDATE_FROM_UNSAVE, payload: data1.geom.geom.features });
       dispatch({ type: CLEAR_UNSAVE });
       localStorage.setItem("unsave", JSON.stringify([]))
     }
     if (!isEmpty(deletedGeomId)) {
       const data2 = await Restful.delete(`${BASE_URL}/geom`, { layerID: currentLayerId, geoID: deletedGeomId.join(",") });
-      console.log(data2)
+      status.delete = data2
     }
     const onlyEdited = uniq(without(editedGeomId, ...deletedGeomId));
     const editedGeom = layerData.features.filter(item => onlyEdited.indexOf(item.properties.geoID) !== -1)
     if (editedGeom.length > 0) {
       const data3 = await Restful.put(`${BASE_URL}/geom`, { arrGeom: editedGeom })
-      console.log(data3)
+      status.update = data3
     }
     setSaveLoading(false)
+    status = Object.values(status)
+    const err = status.filter(item => item.success === false)
+    if (err.length !== 0) {
+      err.forEach(item => message.error(item.msg))
+    } else {
+      message.success("Save!")
+    }
   }
 
   return currentLayerId ? (
