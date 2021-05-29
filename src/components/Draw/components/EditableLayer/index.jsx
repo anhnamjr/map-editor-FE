@@ -11,9 +11,10 @@ import { TOGGLE_UNSAVE } from "../../../../constants/actions";
 export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
   const { unSaveGeom, showUnsave } = useSelector(
-    (state) => state.unSaveReducer,
-    shallowEqual
+    (state) => state.unSaveReducer
   );
+
+  const { currentLayerStyle, currentEditLayer } = useSelector(state => state.treeReducer)
 
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
@@ -26,17 +27,12 @@ export default function EditableLayer({ geoData }) {
       geometry: geom,
       properties: {
         geoID: Math.random(),
-        // layerID: "",
-        geoName: "New",
-        color: "#40a9ff",
-        dashArray: 1,
-        dayModify: null,
-        description: "77777777",
-        fill: "#40a9ff",
-        fillOpacity: 0.3,
-        properties: null,
-        radius: 0,
-        weight: 3,
+        layerID: currentEditLayer,
+        radius: -1,
+        color: currentLayerStyle.color || "#40a9ff",
+        fill: currentLayerStyle.fill || "#40a9ff",
+        fillOpacity: currentLayerStyle.fillOpacity || 0.3,
+        weight: currentLayerStyle.weight || 3,
       },
     };
     if (e.layer._mRadius) {

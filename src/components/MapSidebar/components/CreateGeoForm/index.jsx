@@ -219,20 +219,22 @@ const AddForm = () => {
       const data1 = await Restful.post(`${BASE_URL}/geom`, {
         arrGeom: unSaveGeom
       })
+      console.log(data1)
       dispatch({ type: UPDATE_FROM_UNSAVE, payload: data1.geom.geom.features });
       dispatch({ type: CLEAR_UNSAVE });
       localStorage.setItem("unsave", JSON.stringify([]))
     }
     if (!isEmpty(deletedGeomId)) {
       const data2 = await Restful.delete(`${BASE_URL}/geom`, { layerID: currentLayerId, geoID: deletedGeomId.join(",") });
+      console.log(data2)
     }
     const onlyEdited = uniq(without(editedGeomId, ...deletedGeomId));
     const editedGeom = layerData.features.filter(item => onlyEdited.indexOf(item.properties.geoID) !== -1)
     if (editedGeom.length > 0) {
       const data3 = await Restful.put(`${BASE_URL}/geom`, { arrGeom: editedGeom })
+      console.log(data3)
     }
     setSaveLoading(false)
-
   }
 
   return currentLayerId ? (

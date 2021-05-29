@@ -32,11 +32,14 @@ export const treeReducer = (state = initState, action) => {
             }
 
         case SET_CURRENT_LAYER_STYLE:
-            const style = action.payload.map(item => ({[item.column_name]: item.column_default}))
-            console.log(style)
+            let raw = action.payload.map(item => ({[item.column_name]: item.column_default}))
+            let style={}
+            raw = raw.forEach(item => {
+                style = {...style, ...item}
+            })
             return {
                 ...state,
-                currentLayerStyle: action.payload
+                currentLayerStyle: style
             } 
         default: return { ...state }
     }

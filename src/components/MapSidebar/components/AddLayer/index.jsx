@@ -27,10 +27,15 @@ export default function LayerMap() {
 
   const onFinish = (values) => {
     setLoading(true);
+    const { color, fill, fillOpacity, weight } = values
     const data = {
       mapID: values.Map,
       layerName: values.name,
       columns: values.columns,
+      color: color.color,
+      fill: fill.color,
+      fillOpacity,
+      weight
     };
     AXIOS_INSTANCE.post(`${BASE_URL}/layer`, data)
       .then((res) => {
