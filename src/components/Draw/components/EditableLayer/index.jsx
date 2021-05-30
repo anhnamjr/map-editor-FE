@@ -14,7 +14,9 @@ export default function EditableLayer({ geoData }) {
     (state) => state.unSaveReducer
   );
 
-  const { currentLayerStyle, currentEditLayer } = useSelector(state => state.treeReducer)
+  const { currentLayerStyle, currentEditLayer } = useSelector(
+    (state) => state.treeReducer
+  );
 
   const controlCreate = (e) => {
     let geom = e.layer.toGeoJSON().geometry;
@@ -42,8 +44,8 @@ export default function EditableLayer({ geoData }) {
       };
     }
     let localUnsave = JSON.parse(localStorage.getItem("unsave")) || [];
-    localUnsave.push(shapeItem)
-    localStorage.setItem("unsave", JSON.stringify(localUnsave))
+    localUnsave.push(shapeItem);
+    localStorage.setItem("unsave", JSON.stringify(localUnsave));
     dispatch(AddToUnsave(shapeItem));
     dispatch({ type: TOGGLE_UNSAVE, payload: true });
     e.layer.remove();
@@ -62,65 +64,6 @@ export default function EditableLayer({ geoData }) {
     }
   };
 
-  // const handleEdit = (e) => {
-  //   const editedId = Object.entries(e.layers._layers);
-  //   const editedGeom = editedId.map((item) => {
-  //     //circle
-  //     if (item[1]._mRadius)
-  //       return {
-  //         geoID: item[1].options.id,
-  //         // type:'Circle',
-  //         geom: {
-  //           type: "Point",
-  //           // coordinates: item[1]._latlngs
-  //           coordinates: Object.values(item[1]._latlng).reverse(),
-  //         },
-  //         radius: item[1]._mRadius,
-  //       };
-
-  //     if (item[1]._latlngs) {
-  //       //line string
-  //       if (item[1]._latlngs.length > 1)
-  //         return {
-  //           geoID: item[1].options.id,
-  //           geom: {
-  //             type: "LineString", // 2d
-  //             coordinates: reverseCoor(
-  //               item[1]._latlngs.map((coor) => {
-  //                 return Object.values(coor).slice(0, 2);
-  //               })
-  //             ),
-  //           },
-  //         };
-  //       //polygon
-  //       if (item[1]._latlngs.length === 1)
-  //         return {
-  //           geoID: item[1].options.id,
-  //           geom: {
-  //             type: "Polygon", //3d
-  //             coordinates: [
-  //               reverseCoor(
-  //                 item[1]._latlngs[0].map((coor) => {
-  //                   return Object.values(coor).slice(0, 2);
-  //                 })
-  //               ),
-  //             ],
-  //           },
-  //         };
-  //     }
-  //     //marker
-  //     return {
-  //       geoID: item[1].options.id,
-  //       geom: {
-  //         type: "Point",
-  //         // coordinates: item[1]._latlngs
-  //         coordinates: Object.values(item[1]._latlng).reverse(),
-  //       },
-  //     };
-  //   });
-  //   axios.post(`${BASE_URL}/edit-geom`, editedGeom);
-  // };
-
   const handleDelete = (e) => {
     const deletedId = Object.values(e.layers._layers).map(
       (item) => item.options.id
@@ -130,19 +73,21 @@ export default function EditableLayer({ geoData }) {
 
   return (
     <FeatureGroup>
-      <EditControl
-        position="topright"
-        onCreated={controlCreate}
-        // onEdited={handleEdit}
-        onDeleted={handleDelete}
-        draw={{
-          circlemarker: false,
-        }}
-        edit={{
-          edit: false,
-          remove: false,
-        }}
-      />
+      {currentEditLayer && (
+        <EditControl
+          position="topright"
+          onCreated={controlCreate}
+          // onEdited={handleEdit}
+          onDeleted={handleDelete}
+          draw={{
+            circlemarker: false,
+          }}
+          edit={{
+            edit: false,
+            remove: false,
+          }}
+        />
+      )}
       {renderGeo(geoData)}
       {unSaveGeom.length !== 0 && showUnsave && renderUnsave(unSaveGeom)}
     </FeatureGroup>

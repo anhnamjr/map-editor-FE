@@ -17,6 +17,7 @@
     "leaflet.pm": "^2.2.0",
     "lodash": "^4.17.21",
     "node-sass": "^4.14.1",
+    "omit.js": "^2.0.2",
     "rc-color-picker": "^1.2.6",
     "react": "16.8.6",
     "react-color": "^2.19.3",

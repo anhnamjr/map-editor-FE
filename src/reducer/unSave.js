@@ -4,7 +4,7 @@ import {
   TOGGLE_UNSAVE,
   UPDATE_UNSAVE_LAYER_DATA,
   CLEAR_UNSAVE,
-  SET_UNSAVE
+  SET_UNSAVE,
 } from "../constants/actions";
 import { findIndex } from "lodash";
 
@@ -40,7 +40,7 @@ export const unSaveReducer = (state = initState, action) => {
       const idx = findIndex(unSaveGeom, {
         properties: { geoID: geom.properties.geoID },
       });
-      if(idx) {
+      if (idx >= 0) {
         unSaveGeom[idx].geometry = geom.geometry;
       }
       return {
@@ -52,12 +52,12 @@ export const unSaveReducer = (state = initState, action) => {
     case CLEAR_UNSAVE:
       return {
         ...state,
-        unSaveGeom: []
-      }
+        unSaveGeom: [],
+      };
     case SET_UNSAVE:
       return {
         ...state,
-        unSaveGeom: action.payload
+        unSaveGeom: action.payload,
       };
 
     default:

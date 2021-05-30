@@ -7,7 +7,7 @@ import {
   STORE_GEOM_COOR,
   STORE_SHAPE_REF,
   UPDATE_UNSAVE_LAYER_DATA,
-  UPDATE_LAYER_DATA
+  UPDATE_LAYER_DATA,
 } from "../../../../constants/actions";
 
 export default function Shape({ item }) {
@@ -34,13 +34,16 @@ export default function Shape({ item }) {
           properties: item.properties,
         };
         if (e.target._mRadius) {
-          editGeom.properties.radius = e.target._mRadius
+          editGeom.properties.radius = e.target._mRadius;
         }
         dispatch({ type: STORE_GEOM_COOR, payload: { ...editGeom } });
         if (typeof item.properties.geoID === "number") {
-          dispatch({ type: UPDATE_UNSAVE_LAYER_DATA, payload: { geom: editGeom } });
+          dispatch({
+            type: UPDATE_UNSAVE_LAYER_DATA,
+            payload: { geom: editGeom },
+          });
         } else {
-          dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } })
+          dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } });
         }
       });
     } else {
@@ -56,9 +59,12 @@ export default function Shape({ item }) {
         properties: { ...item.properties, ...newColor },
       };
       if (typeof item.properties.geoID === "number") {
-        dispatch({ type: UPDATE_UNSAVE_LAYER_DATA, payload: { geom: editGeom } });
+        dispatch({
+          type: UPDATE_UNSAVE_LAYER_DATA,
+          payload: { geom: editGeom },
+        });
       } else {
-        dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } })
+        dispatch({ type: UPDATE_LAYER_DATA, payload: { geom: editGeom } });
       }
       setColor(newColor);
     }
@@ -66,7 +72,6 @@ export default function Shape({ item }) {
   }, [newColor, temp]);
 
   const onClickShape = () => {
-
     dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
     dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
     dispatch({ type: STORE_GEOM_COOR, payload: item });
