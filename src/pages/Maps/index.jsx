@@ -14,6 +14,7 @@ const PrintControl = withLeaflet(PrintControlDefault);
 const Maps = () => {
   const [geoData, setGeoData] = useState({});
   const data = useSelector((state) => state.layerReducer.layerData);
+  const { center } = useSelector((state) => state.mapReducer);
   const mapRef = useRef();
   const printControlRef = useRef();
   const dispatch = useDispatch();
@@ -23,12 +24,19 @@ const Maps = () => {
   }, [data]);
 
   const handleClearShapeRef = () => {
-    dispatch({ type: CLEAR_SHAPE_REF })
-  }
+    dispatch({ type: CLEAR_SHAPE_REF });
+  };
 
   return (
     <>
-      <Map className="mapStyle" doubleClickZoom={false} zoom={13} center={[10.7646598, 106.6855794]} onDblClick={handleClearShapeRef} ref={mapRef}>
+      <Map
+        className="mapStyle"
+        doubleClickZoom={false}
+        zoom={13}
+        center={center || [10.7646598, 106.6855794]}
+        onDblClick={handleClearShapeRef}
+        ref={mapRef}
+      >
         <MapLayerControl mapRef={mapRef} />
         <ZoomControl position="topright" />
         <Draw geoData={geoData} />

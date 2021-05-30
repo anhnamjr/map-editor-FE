@@ -1,73 +1,72 @@
 import React, { useState } from "react";
-import { Input, AutoComplete } from 'antd'
-import { useDispatch } from "react-redux"
-import { BASE_URL } from "../../../../constants/endpoint"
-import { searchGeom } from "../../../../actions/searchGeom"
-import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
-const { Search } = Input;
+import { useDispatch } from "react-redux";
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
+import { CHANGE_MAP_CENTER } from "../../../../constants/actions";
+import "./style.scss";
 
 const SearchForm = () => {
-  const [options, setOptions] = useState([]);
-  const dispatch = useDispatch()
+  const [address, setAddress] = useState("");
+  const dispatch = useDispatch();
 
-  const searchResult = (data) =>
-    data.map((item, index) => {
-      return {
-        value: item.geoName,
-        id: item.geoID,
-        label: (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-            key={index}
-          >
-            <span>
-              {item.geoName}
-            </span>
-          </div>
-        ),
-      };
-    });
+  const handleChange = (address) => {
+    setAddress(address);
+  };
 
-
-  const searchStyle = {
-    marginTop: 6,
-  }
-
-
-  const onSearch = async (searchText) => {
-    // const { data } = await setTimeout(() => axios.get(`${BASE_URL}/search?input=${searchText}`), 500)
-    if (searchText) {
-      const { data } = await AXIOS_INSTANCE.get(`${BASE_URL}/search?input=${searchText}`)
-      setOptions(searchResult(data))
-    } else {
-      setOptions([])
-    }
-  }
-
-  const handleSelect = (value, options) => {
-    dispatch(searchGeom(options.id))
-  }
+  const handleSelect = (address) => {
+    setAddress(address);
+    geocodeByAddress(address)
+      .then((results) => getLatLng(results[0]))
+      .then((latLng) => {
+        dispatch({
+          type: CHANGE_MAP_CENTER,
+          payload: Object.values(latLng),
+        });
+      })
+      .catch((error) => console.error("Error", error));
+  };
 
   return (
-    <AutoComplete
-      dropdownMatchSelectWidth={252}
-      onSearch={onSearch}
-      options={options}
+    <PlacesAutocomplete
+      value={address}
+      onChange={handleChange}
       onSelect={handleSelect}
     >
-      <Search
-        size="large"
-        placeholder="Enter the name"
-        enterButton
-        allowClear
-        style={searchStyle} />
-
-    </AutoComplete>
-
-
+      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+        <div className="search">
+          <input
+            {...getInputProps({
+              placeholder: "Search Places ...",
+              className: "location-search-input",
+            })}
+          />
+          <div className="autocomplete-dropdown-container">
+            {loading && <div>Loading...</div>}
+            {suggestions.map((suggestion, index) => {
+              const className = suggestion.active
+                ? "suggestion-item active"
+                : "suggestion-item";
+              // inline style for demonstration purpose
+              // const style = suggestion.active
+              //   ? { backgroundColor: "#dadada", cursor: "pointer", padding: 10 }
+              //   : { backgroundColor: "#ffffff", cursor: "pointer" };
+              return (
+                <div
+                  {...getSuggestionItemProps(suggestion, {
+                    className,
+                  })}
+                  key={index}
+                >
+                  <span>{suggestion.description}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </PlacesAutocomplete>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { FeatureGroup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../../../constants/endpoint";
 import Shape from "../Shape";
