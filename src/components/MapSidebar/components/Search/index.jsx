@@ -5,6 +5,7 @@ import PlacesAutocomplete, {
   getLatLng,
 } from "react-places-autocomplete";
 import { CHANGE_MAP_CENTER } from "../../../../constants/actions";
+import "./style.scss";
 
 const SearchForm = () => {
   const [address, setAddress] = useState("");
@@ -15,6 +16,7 @@ const SearchForm = () => {
   };
 
   const handleSelect = (address) => {
+    setAddress(address);
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then((latLng) => {
@@ -33,7 +35,7 @@ const SearchForm = () => {
       onSelect={handleSelect}
     >
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-        <div>
+        <div className="search">
           <input
             {...getInputProps({
               placeholder: "Search Places ...",
@@ -44,17 +46,16 @@ const SearchForm = () => {
             {loading && <div>Loading...</div>}
             {suggestions.map((suggestion, index) => {
               const className = suggestion.active
-                ? "suggestion-item--active"
+                ? "suggestion-item active"
                 : "suggestion-item";
               // inline style for demonstration purpose
-              const style = suggestion.active
-                ? { backgroundColor: "#fafafa", cursor: "pointer" }
-                : { backgroundColor: "#ffffff", cursor: "pointer" };
+              // const style = suggestion.active
+              //   ? { backgroundColor: "#dadada", cursor: "pointer", padding: 10 }
+              //   : { backgroundColor: "#ffffff", cursor: "pointer" };
               return (
                 <div
                   {...getSuggestionItemProps(suggestion, {
                     className,
-                    style,
                   })}
                   key={index}
                 >

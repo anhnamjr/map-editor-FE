@@ -20,14 +20,17 @@ export default function SignIn() {
 
   const onFinish = (values) => {
     setLoading(true);
-    axios.post(`${AUTH_URL}/sign-in`, values).then((res) => {
-      setLoading(false);
-      const { token } = res.data;
-      localStorage.setItem("token", token);
-      history.push("/");
-    })
-      .catch(err => {
-        message.error(err.response.data.message)
+    axios
+      .post(`${AUTH_URL}/sign-in`, values)
+      .then((res) => {
+        setLoading(false);
+        const { token } = res.data;
+        localStorage.setItem("token", token);
+        history.push("/");
+        message.success("Login Successfully!");
+      })
+      .catch((err) => {
+        message.error(err.response.data.message);
         setLoading(false);
       });
   };

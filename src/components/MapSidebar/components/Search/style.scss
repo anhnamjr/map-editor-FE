@@ -1,0 +1,39 @@
+.search {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  flex-direction: column;
+
+  .location-search-input {
+    outline: none;
+    height: 40px;
+    padding: 4px 10px;
+    border: 1px solid #1890ff;
+    border-radius: 3px;
+    width: 300px;
+    transition: 0.3s;
+    margin-bottom: 4px;
+
+    &:focus,
+    &:hover {
+      box-shadow: 0 0 5px #1890ff;
+      transition: 0.3s;
+    }
+  }
+
+  .autocomplete-dropdown-container {
+    width: 300px;
+
+    .suggestion-item {
+      cursor: pointer;
+      background-color: #fff;
+      transition: 0.3s;
+      padding: 10px;
+
+      &.active {
+        background-color: #fafafa;
+        color: #1890ff;
+      }
+    }
+  }
+}
