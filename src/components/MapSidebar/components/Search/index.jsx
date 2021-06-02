@@ -4,8 +4,10 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
-import { CHANGE_MAP_CENTER } from "../../../../constants/actions";
+import { CHANGE_MAP_CENTER, CLEAR_SEARCH } from "../../../../constants/actions";
 import "./style.scss";
+import { Tooltip } from "antd"
+import { CloseCircleFilled } from "@ant-design/icons"
 
 const SearchForm = () => {
   const [address, setAddress] = useState("");
@@ -20,13 +22,19 @@ const SearchForm = () => {
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then((latLng) => {
+        console.log(latLng)
         dispatch({
           type: CHANGE_MAP_CENTER,
-          payload: Object.values(latLng),
+          payload: { coor: Object.values(latLng), showMarker: true },
         });
       })
       .catch((error) => console.error("Error", error));
   };
+
+  const handleClearAddress = () => {
+    setAddress("")
+    dispatch({ type: CLEAR_SEARCH });
+  }
 
   return (
     <PlacesAutocomplete
@@ -36,22 +44,23 @@ const SearchForm = () => {
     >
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <div className="search">
-          <input
-            {...getInputProps({
-              placeholder: "Search Places ...",
-              className: "location-search-input",
-            })}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              {...getInputProps({
+                placeholder: "Search Places ...",
+                className: "location-search-input",
+              })}
+            />
+            <Tooltip title="Clear">
+              <div className="delete-btn" onClick={handleClearAddress}><CloseCircleFilled /></div>
+            </Tooltip>
+          </div>
           <div className="autocomplete-dropdown-container">
             {loading && <div>Loading...</div>}
             {suggestions.map((suggestion, index) => {
               const className = suggestion.active
                 ? "suggestion-item active"
                 : "suggestion-item";
-              // inline style for demonstration purpose
-              // const style = suggestion.active
-              //   ? { backgroundColor: "#dadada", cursor: "pointer", padding: 10 }
-              //   : { backgroundColor: "#ffffff", cursor: "pointer" };
               return (
                 <div
                   {...getSuggestionItemProps(suggestion, {
