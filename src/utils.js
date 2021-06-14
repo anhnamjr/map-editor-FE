@@ -1,3 +1,6 @@
+import { map } from "leaflet";
+import { size } from "lodash";
+
 export const reverseCoor = (coor) => {
   let res = [];
   coor.forEach((item) => {
@@ -43,16 +46,45 @@ export const toSlug = (str) => {
 
   // return
   return str;
-}
+};
 
-export const calGeomCenter = coor => {
-  let x=[], y=[]
-  const flatCoor = coor.flat(4)
-  for (let i=0;i<flatCoor.length;i+=2){
-    x.push(flatCoor[i])
-    y.push(flatCoor[i+1])
+export const calGeomCenter = (coor) => {
+  let x = [],
+    y = [];
+  const flatCoor = coor.flat(4);
+  for (let i = 0; i < flatCoor.length; i += 2) {
+    x.push(flatCoor[i]);
+    y.push(flatCoor[i + 1]);
   }
-  let meanX = x.reduce((total, num) => total = total + num) / x.length
-  let meanY = y.reduce((total, num) => total = total + num) / y.length
-  return [meanX, meanY]
-}
+  let meanX = x.reduce((total, num) => (total = total + num)) / x.length;
+  let meanY = y.reduce((total, num) => (total = total + num)) / y.length;
+  return [meanX, meanY];
+};
+
+export const getMidPoint = (coorA, coorB) => {
+  let midPoint = [9, 0];
+
+  midPoint[0] = (coorA[0] + coorB[0]) / 2;
+  midPoint[1] = (coorA[1] + coorB[1]) / 2;
+  return midPoint;
+};
+
+export const distance = (coorA, coorB) => {
+  return Math.sqrt(
+    Math.pow(coorA[0] - coorB[0], 2) + Math.pow(coorA[1] - coorB[1], 2)
+  );
+};
+
+export const getMidPointNearest = (coor, coorArr) => {
+  let res = 0;
+  let disMin = distance(coor, coorArr[0]);
+  for (let i = 0; i < size(coorArr); i++) {
+    const d = distance(coor, coorArr[i]);
+    if (d < disMin) {
+      res = i;
+      disMin = d;
+    }
+  }
+  // console.log(res);
+  return coorArr[res];
+};

@@ -1,22 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import "antd/dist/antd.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { Map, TileLayer, ZoomControl, withLeaflet, Marker } from "react-leaflet";
+import {
+  Map,
+  TileLayer,
+  ZoomControl,
+  withLeaflet,
+  Marker,
+} from "react-leaflet";
 import MapSidebar from "../../components/MapSidebar";
 import { useSelector, useDispatch } from "react-redux";
 import MapLayerControl from "../../components/MapLayerControl";
 import Draw from "../../components/Draw";
 import PrintControlDefault from "react-leaflet-easyprint";
-import { CLEAR_SHAPE_REF } from "../../constants/actions";
+import { CLEAR_SHAPE_REF, GET_MOUSE_POSITION } from "../../constants/actions";
+import { get } from "lodash";
+import L from "leaflet";
+import useDebounce from "../../hooks/useDebounce";
 
 const PrintControl = withLeaflet(PrintControlDefault);
 
 const Maps = () => {
   const [geoData, setGeoData] = useState({});
-  const [zoom, setZoom] = useState(13)
+  const [zoom, setZoom] = useState(13);
   const data = useSelector((state) => state.layerReducer.layerData);
   const { center, showMarker } = useSelector((state) => state.mapReducer);
   const mapRef = useRef();
+  const [mousePosition, setMousePosition] = useState(null);
   const printControlRef = useRef();
   const dispatch = useDispatch();
 
@@ -34,6 +44,20 @@ const Maps = () => {
     dispatch({ type: CLEAR_SHAPE_REF });
   };
 
+  const position = useDebounce(mousePosition);
+  const onGetMousePosition = (e) => {
+    setMousePosition(e.latlng);
+  };
+
+  useEffect(() => {
+    if (position) {
+      dispatch({
+        type: GET_MOUSE_POSITION,
+        payload: [position.lng, position.lat],
+      });
+    }
+  }, [position]);
+
   return (
     <>
       <Map
@@ -42,6 +66,7 @@ const Maps = () => {
         zoom={zoom}
         center={center || [10.7646598, 106.6855794]}
         onDblClick={handleClearShapeRef}
+        onMouseMove={onGetMousePosition}
         ref={mapRef}
       >
         {showMarker && <Marker position={center} />}

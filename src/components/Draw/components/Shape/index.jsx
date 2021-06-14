@@ -8,7 +8,9 @@ import {
   STORE_SHAPE_REF,
   UPDATE_UNSAVE_LAYER_DATA,
   UPDATE_LAYER_DATA,
+  SET_GEOM_R_TREE,
 } from "../../../../constants/actions";
+import { get } from "lodash";
 
 export default function Shape({ item }) {
   const initialState = {
@@ -17,12 +19,34 @@ export default function Shape({ item }) {
     fillOpacity: item.properties.fillOpacity,
     weight: item.properties.weight,
   };
+  console.log(initialState);
 
   const [color, setColor] = useState(initialState);
   const dispatch = useDispatch();
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
   const newColor = useSelector((state) => state.colorReducer);
+
+  useEffect(() => {
+    const leafletElement = shapeRef.current.leafletElement;
+    let bb;
+    if (get(item, "geometry.type", "") === "Point") {
+      const point = get(item, "geometry.coordinates", []);
+      bb = { minX: point[0], minY: point[1], maxX: point[0], maxY: point[1] };
+    } else {
+      const bound = leafletElement.getBounds();
+      bb = {
+        minX: bound._southWest.lng,
+        minY: bound._southWest.lat,
+        maxX: bound._northEast.lng,
+        maxY: bound._northEast.lat,
+      };
+    }
+    dispatch({
+      type: SET_GEOM_R_TREE,
+      payload: { ...bb, geom: item },
+    });
+  }, []);
 
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {

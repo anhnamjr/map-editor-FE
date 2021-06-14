@@ -7,6 +7,7 @@ import { userReducer } from "./user";
 import { storeShapeRef } from "./shapeRef";
 import { unSaveReducer } from "./unSave";
 import { colorReducer } from "./color";
+import { snap } from "./snap";
 
 export const rootReducer = combineReducers({
   treeReducer,
@@ -17,4 +18,5 @@ export const rootReducer = combineReducers({
   storeShapeRef,
   unSaveReducer,
   colorReducer,
+  snap,
 });

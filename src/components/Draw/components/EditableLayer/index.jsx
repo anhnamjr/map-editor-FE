@@ -7,6 +7,7 @@ import { BASE_URL } from "../../../../constants/endpoint";
 import Shape from "../Shape";
 import { AddToUnsave } from "../../../../actions/unSave";
 import { TOGGLE_UNSAVE } from "../../../../constants/actions";
+import SnapPoint from "./SnapPoint";
 
 export default function EditableLayer({ geoData }) {
   const dispatch = useDispatch();
@@ -90,6 +91,7 @@ export default function EditableLayer({ geoData }) {
       )}
       {renderGeo(geoData)}
       {unSaveGeom.length !== 0 && showUnsave && renderUnsave(unSaveGeom)}
+      <SnapPoint type="midPoint" />
     </FeatureGroup>
   );
 }

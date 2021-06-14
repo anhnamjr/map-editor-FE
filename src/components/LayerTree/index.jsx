@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Tree, Button, Dropdown, Menu, message } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
 import {
   FETCH_LAYER_DATA,
   CLEAR_LAYER_DATA,
   TOGGLE_UNSAVE,
   SET_CURRENT_EDIT_LAYER,
-  SET_UNSAVE
+  SET_R_TREE,
+  SET_MID_POINT,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import { fetchLayerTree, fetchLayerCols } from "../../actions/fetchLayerTree";
 import "./style.scss";
+import RBush from "rbush";
+import { get, size, map } from "lodash";
+import { getMidPoint, getMidPointNearest } from "../../utils";
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -27,6 +31,10 @@ const LayerTree = () => {
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state.treeReducer.layerTree) || null;
+  const { tree, mousePosition, mouseBound } = useSelector(
+    (state) => state.snap,
+    shallowEqual
+  );
   const { currentEditLayer } = useSelector((state) => state.treeReducer) || "";
   const { showUnsave, unSaveGeom } =
     useSelector((state) => state.unSaveReducer) || false;
@@ -36,7 +44,6 @@ const LayerTree = () => {
     setEditItemType(nodeData.children ? "Map" : "Layer");
     setShowEditModal(true);
   };
-
 
   const handleDelete = (nodeData) => {
     const userConfirm = window.confirm(
@@ -70,8 +77,50 @@ const LayerTree = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (data) setTreeData(data);
+    if (data) {
+      setTreeData(data);
+      const initRTree = new RBush(size(data.features));
+      dispatch({ type: SET_R_TREE, payload: initRTree });
+    }
   }, [data]);
+
+  useEffect(() => {
+    if (tree) {
+      const mouseBound = {
+        minX: mousePosition[0] - 0.0005 * (18 - 13),
+        minY: mousePosition[1] - 0.0005 * (18 - 13),
+        maxX: mousePosition[0] + 0.0005 * (18 - 13),
+        maxY: mousePosition[1] + 0.0005 * (18 - 13),
+      };
+      const searchResult = tree.search(mouseBound);
+      let midPoints = [];
+      map(searchResult, (item) => {
+        const coordinates = get(item, "geom.geometry.coordinates", []);
+        // Case Polygon
+        if (size(coordinates) === 1) {
+          for (let i = 0; i < size(coordinates[0]) - 1; i++) {
+            const midPoint = getMidPoint(
+              coordinates[0][i],
+              coordinates[0][i + 1]
+            );
+            midPoints.push(midPoint);
+          }
+        } else if (size(coordinates) > 1 && size(coordinates[0] > 1)) {
+          for (let i = 0; i < size(coordinates) - 1; i++) {
+            const midPoint = getMidPoint(coordinates[i], coordinates[i + 1]);
+            midPoints.push(midPoint);
+          }
+        }
+      });
+
+      if (size(midPoints) > 0) {
+        const midPointNearest = getMidPointNearest(mousePosition, midPoints);
+        dispatch({ type: SET_MID_POINT, payload: midPointNearest });
+      } else {
+        dispatch({ type: SET_MID_POINT, payload: null });
+      }
+    }
+  }, [mousePosition]);
 
   const onExpand = (expandedKeys) => {
     setExpandedKeys(expandedKeys);
@@ -129,8 +178,9 @@ const LayerTree = () => {
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
         <div
-          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""
-            }`}
+          className={`site-dropdown-context-menu ${
+            currentEditLayer === nodeData.key ? "active" : ""
+          }`}
           onClick={() => handleClickLayer(nodeData)}
         >
           {nodeData.title}
