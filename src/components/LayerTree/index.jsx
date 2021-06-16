@@ -7,12 +7,13 @@ import {
   CLEAR_LAYER_DATA,
   TOGGLE_UNSAVE,
   SET_CURRENT_EDIT_LAYER,
-  SET_UNSAVE
+  SET_UNSAVE,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";
 import { fetchLayerTree, fetchLayerCols } from "../../actions/fetchLayerTree";
 import "./style.scss";
+import { BsMap, BsLayers } from "react-icons/bs";
 
 const LayerTree = () => {
   const [treeData, setTreeData] = useState([]);
@@ -36,7 +37,6 @@ const LayerTree = () => {
     setEditItemType(nodeData.children ? "Map" : "Layer");
     setShowEditModal(true);
   };
-
 
   const handleDelete = (nodeData) => {
     const userConfirm = window.confirm(
@@ -129,11 +129,12 @@ const LayerTree = () => {
     return (
       <Dropdown overlay={menu} trigger={["contextMenu"]}>
         <div
-          className={`site-dropdown-context-menu ${currentEditLayer === nodeData.key ? "active" : ""
-            }`}
+          className={`site-dropdown-context-menu ${
+            currentEditLayer === nodeData.key ? "active" : ""
+          }`}
           onClick={() => handleClickLayer(nodeData)}
         >
-          {nodeData.title}
+          {nodeData.children ? <BsMap /> : <BsLayers />} {nodeData.title}
         </div>
       </Dropdown>
     );

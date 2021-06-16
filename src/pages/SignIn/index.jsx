@@ -30,7 +30,7 @@ export default function SignIn() {
         message.success("Login Successfully!");
       })
       .catch((err) => {
-        message.error(err.response.data.message);
+        message.error("Login fail!");
         setLoading(false);
       });
   };
