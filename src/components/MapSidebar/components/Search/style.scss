@@ -12,12 +12,34 @@
     border-radius: 3px;
     width: 300px;
     transition: 0.3s;
-    margin-bottom: 4px;
+    margin-bottom: 0;
+    padding-right: 28px;
 
     &:focus,
     &:hover {
       box-shadow: 0 0 5px #1890ff;
       transition: 0.3s;
+    }
+  }
+
+  .delete-btn {
+    position: absolute;
+    cursor: pointer;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 3%;
+    transition: 0.3s;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.2);
+      transition: 0.3s;
+    }
+
+    svg {
+      transition:0.3s;
+      &:hover {
+        fill: red;
+      }
     }
   }
 
