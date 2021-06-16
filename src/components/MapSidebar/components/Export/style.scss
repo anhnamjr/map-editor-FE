@@ -1,0 +1,22 @@
+.export-link-container {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+
+  .export-link {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+    background: #f1f1f1;
+    // color: #000;
+    border-radius: 3px;
+
+    &:hover {
+      border: 1px dashed #1890ff;
+    }
+  }
+}

@@ -23,6 +23,30 @@ main,
   font-size: 2em;
 }
 
-.ant-select-dropdown {
+.ant-modal-mask {
   z-index: 2001;
+}
+
+.ant-modal-wrap {
+  z-index: 2002;
+}
+
+.ant-select-dropdown {
+  z-index: 2003;
+}
+.ant-dropdown {
+  z-index: 2003;
+}
+
+.ant-popconfirm {
+  z-index: 4000;
+}
+
+.geom {
+  padding-right: 20px;
+}
+
+
+.ant-upload-list-item-actions a {
+  display: none;
 }

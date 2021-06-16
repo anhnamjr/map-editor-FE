@@ -1,18 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, Tab } from "react-leaflet-sidetabs";
 import { FiHome, FiChevronLeft, FiSearch, FiSettings } from "react-icons/fi";
+import { FileOutlined } from "@ant-design/icons";
 import { BsGeoAlt } from "react-icons/bs";
 import LayerTree from "../LayerTree";
 import AddForm from "./components/CreateGeoForm";
+import SearchForm from "./components/Search";
+import { Tabs, Button } from "antd";
+import AddMap from "./components/AddMap";
+import AddLayer from "./components/AddLayer";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import File from "./components/File";
 
-const MapSidebar = () => {
+const { TabPane } = Tabs;
+
+const MapSidebar = ({ map }) => {
+  // const { shapeItem } = useContext(ShapeContext)
+  const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
+  const { geom = null } = useSelector((state) => state.storeGeom);
+
   const onClose = () => setCollapsed(true);
+
+  // useEffect(() => {
+  //   const confirmationMessage = "Changes you made may not be saved.";
+  //   const beforeUnloadHandler = (e) => {
+  //     (e || window.event).returnValue = confirmationMessage;
+  //     return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+  //   };
+
+  //   if (unSaveGeom.length !== 0 || isEditing) {
+  //     window.addEventListener("beforeunload", beforeUnloadHandler);
+  //   } else {
+  //     window.removeEventListener("beforeunload", beforeUnloadHandler);
+  //   }
+  //   return () => {
+  //     window.removeEventListener("beforeunload", beforeUnloadHandler);
+  //   };
+  // }, [unSaveGeom, isEditing]);
+
+  useEffect(() => {
+    setSelected(geom.geometry ? "geom" : "maps");
+  }, [geom]);
 
   const onOpen = (tab) => {
     setCollapsed(false);
     setSelected(tab);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    history.push("/signin");
   };
 
   return (
@@ -24,29 +64,33 @@ const MapSidebar = () => {
       selected={selected}
       onOpen={onOpen}
       onClose={onClose}
-      style={{ zIndex: 401 }}
+      style={{ zIndex: 401, padding: 10 }}
     >
       <Tab id="maps" header="Maps" icon={<FiHome />}>
-        <>
-          <h2>Your Maps</h2>
-          <LayerTree />
-        </>
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="Your Maps" key="1">
+            <h2>Your maps</h2>
+            <LayerTree />
+          </TabPane>
+          <TabPane tab="Add Map" key="2">
+            <AddMap />
+          </TabPane>
+          <TabPane tab="Add Layer" key="3" style={{ paddingRight: 20 }}>
+            <AddLayer />
+          </TabPane>
+        </Tabs>
       </Tab>
 
       <Tab id="search" header="Search" icon={<FiSearch />}>
-        <p>The noblest search is the search for excellence!</p>
+        <SearchForm />
       </Tab>
 
-      {/* <Tab id="map" header="Create Map" icon={<RiRoadMapLine />}>
-            <AddForm/>
-          </Tab>
-
-          <Tab id="layer" header="Create Layer" icon={<FiLayers />}>
-            <AddForm/>
-          </Tab> */}
-
       <Tab id="geom" header="Create GeoData" icon={<BsGeoAlt />}>
-        <AddForm />
+        <AddForm map={map} />
+      </Tab>
+
+      <Tab id="file" header="Import/Export File" icon={<FileOutlined />}>
+        <File />
       </Tab>
 
       <Tab
@@ -55,7 +99,7 @@ const MapSidebar = () => {
         anchor="bottom"
         icon={<FiSettings />}
       >
-        <p>We don't want privacy so much as privacy settings!</p>
+        <Button onClick={handleLogout}>Log out</Button>
       </Tab>
     </Sidebar>
   );
