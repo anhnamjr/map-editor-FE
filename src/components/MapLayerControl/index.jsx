@@ -1,48 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { LayersControl, TileLayer, GeoJSON, FeatureGroup } from "react-leaflet";
-import { AXIOS_INSTANCE } from "../../config/requestInterceptor";
-
-import { BASE_URL } from "../../constants/endpoint";
-
+import React from "react";
+import { LayersControl, TileLayer } from "react-leaflet";
 
 const { BaseLayer, Overlay } = LayersControl;
 
-export default function MapLayerControl({ mapRef }) {
-  const [provinceGeom, setProvinceGeom] = useState(null)
-  const [districtGeom, setDistrictGeom] = useState(null)
-
-  useEffect(() => {
-    const map = mapRef.current.leafletElement;
-    map.on("overlayadd", (e) => {
-      AXIOS_INSTANCE.get(`${BASE_URL}/default-layer?name=${e.name.toLowerCase()}`).then(res => {
-        switch (e.name) {
-          case "Province":
-            setProvinceGeom(res.data)
-            break
-          case "District":
-            setDistrictGeom(res.data)
-            break
-          default:
-            break
-
-        }
-      })
-    });
-
-    map.on("overlayremove", (e) => {
-      switch (e.name) {
-        case "Province":
-          setProvinceGeom(null)
-          return
-        case "District":
-          setDistrictGeom(null)
-          return
-        default:
-          break
-      }
-    });
-  }, [mapRef]);
-
+export default function MapLayerControl() {
   return (
     <LayersControl position="topright">
       <BaseLayer checked name="Standard">
@@ -75,16 +36,6 @@ export default function MapLayerControl({ mapRef }) {
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
         />
       </BaseLayer>
-      <Overlay name="Province">
-        <FeatureGroup>
-          {provinceGeom && <GeoJSON data={provinceGeom} />}
-        </FeatureGroup>
-      </Overlay>
-      <Overlay name="District">
-        <FeatureGroup>
-          {districtGeom && <GeoJSON data={districtGeom} />}
-        </FeatureGroup>
-      </Overlay>
     </LayersControl>
   );
 }
