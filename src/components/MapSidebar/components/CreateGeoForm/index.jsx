@@ -9,7 +9,7 @@ import {
   Typography,
   message,
   Tooltip,
-  Divider
+  Divider,
 } from "antd";
 import InputColor from "../../../InputColor";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,26 +18,23 @@ import { BASE_URL } from "../../../../constants/endpoint";
 import "rc-color-picker/assets/index.css";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
-import { DeleteFilled } from "@ant-design/icons"
+import { DeleteFilled } from "@ant-design/icons";
 import { get, uniq, without, omit, isEmpty } from "lodash";
 import {
   STORE_SHAPE_REF,
-  SET_EDIT,
   SET_NOT_EDIT,
   SET_PROPERTIES,
   REMOVE_FROM_UNSAVE,
   UPDATE_LAYER_DATA,
   ADD_LAYER_DATA,
   RESET_GEOM_DATA,
-  UPDATE_UNSAVE_LAYER_DATA,
   DELETE_GEOM,
   CLEAR_UNSAVE,
   CLEAR_SHAPE_REF,
-  UPDATE_FROM_UNSAVE
+  UPDATE_FROM_UNSAVE,
 } from "../../../../constants/actions";
 import "./styles.scss";
 import Restful from "../../../../service/Restful";
-import ErrorList from "antd/lib/form/ErrorList";
 
 const { Option, OptGroup } = Select;
 const { Text } = Typography;
@@ -53,17 +50,18 @@ const layout = {
 const types = ["Line", "Polygon", "Marker"];
 
 const AddForm = () => {
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const mapList = useSelector((state) => state.treeReducer.layerTree) || null;
   const currentLayerId = useSelector(
     (state) => state.treeReducer.currentEditLayer
   );
-  const { unSaveGeom } = useSelector((state) => state.unSaveReducer)
+  const { unSaveGeom } = useSelector((state) => state.unSaveReducer);
   const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
   const layerCols = useSelector((state) => state.treeReducer.currentLayerCol);
   const color = useSelector((state) => state.colorReducer);
-  const { deletedGeomId, editedGeomId, layerData } = useSelector((state) => state.layerReducer)
+  const { deletedGeomId, editedGeomId, layerData } = useSelector(
+    (state) => state.layerReducer
+  );
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   var geoID = null;
@@ -72,48 +70,23 @@ const AddForm = () => {
     geoID = geom.properties.geoID ? geom.properties.geoID : null;
   }
 
-  const onEditCoordinate = () => {
-    dispatch({
-      type: SET_EDIT,
-    });
-  };
-
-  const onSaveCoordinate = () => {
-    if (typeof geom.properties.geoID === "number") {
-      dispatch({
-        type: UPDATE_UNSAVE_LAYER_DATA,
-        payload: { geom },
-      });
-    } else {
-      dispatch({
-        type: UPDATE_LAYER_DATA,
-        payload: { geom },
-      });
-    }
-    dispatch({
-      type: SET_NOT_EDIT,
-    });
-  };
-
   const handleDelete = () => {
-    setDeleteLoading(true);
     if (typeof geom.properties.geoID !== "number") {
       dispatch({
         type: DELETE_GEOM,
-        payload: geom.properties.geoID
+        payload: geom.properties.geoID,
       });
     } else {
       dispatch({
-        type: RESET_GEOM_DATA
+        type: RESET_GEOM_DATA,
       });
       dispatch({
-        type: CLEAR_SHAPE_REF
+        type: CLEAR_SHAPE_REF,
       });
       dispatch({
         type: REMOVE_FROM_UNSAVE,
         payload: geom.properties.geoID,
       });
-      setDeleteLoading(false);
     }
   };
 
@@ -198,58 +171,69 @@ const AddForm = () => {
   const handleChangeDefaultProps = (name, val) => {
     dispatch({
       type: SET_PROPERTIES,
-      payload: { [name]: val }
-    })
-  }
+      payload: { [name]: val },
+    });
+  };
 
   const handleOptionalChange = (name, val, type) => {
     if (type === "numeric") {
-      form.setFieldsValue({ [name]: val })
-      geom.properties[name] = val
-      handleChangeDefaultProps(name, val)
+      form.setFieldsValue({ [name]: val });
+      geom.properties[name] = val;
+      handleChangeDefaultProps(name, val);
     } else {
-      form.setFieldsValue({ [name]: val.target.value })
-      geom.properties[name] = val.target.value
-      handleChangeDefaultProps(name, val.target.value)
+      form.setFieldsValue({ [name]: val.target.value });
+      geom.properties[name] = val.target.value;
+      handleChangeDefaultProps(name, val.target.value);
     }
-  }
+  };
 
   const handleSaveLayer = async () => {
-    setSaveLoading(true)
-    let status = {}
+    setSaveLoading(true);
+    let status = {};
     if (!isEmpty(unSaveGeom)) {
       const data1 = await Restful.post(`${BASE_URL}/geom`, {
-        arrGeom: unSaveGeom
-      })
-      status.create = data1
+        arrGeom: unSaveGeom,
+      });
+      status.create = data1;
       dispatch({ type: UPDATE_FROM_UNSAVE, payload: data1.geom.geom.features });
       dispatch({ type: CLEAR_UNSAVE });
-      localStorage.setItem("unsave", JSON.stringify([]))
+      localStorage.setItem("unsave", JSON.stringify([]));
     }
     if (!isEmpty(deletedGeomId)) {
-      const data2 = await Restful.delete(`${BASE_URL}/geom`, { layerID: currentLayerId, geoID: deletedGeomId.join(",") });
-      status.delete = data2
+      const data2 = await Restful.delete(`${BASE_URL}/geom`, {
+        layerID: currentLayerId,
+        geoID: deletedGeomId.join(","),
+      });
+      status.delete = data2;
     }
     const onlyEdited = uniq(without(editedGeomId, ...deletedGeomId));
-    const editedGeom = layerData.features.filter(item => onlyEdited.indexOf(item.properties.geoID) !== -1)
+    const editedGeom = layerData.features.filter(
+      (item) => onlyEdited.indexOf(item.properties.geoID) !== -1
+    );
     if (editedGeom.length > 0) {
-      const data3 = await Restful.put(`${BASE_URL}/geom`, { arrGeom: editedGeom })
-      status.update = data3
+      const data3 = await Restful.put(`${BASE_URL}/geom`, {
+        arrGeom: editedGeom,
+      });
+      status.update = data3;
     }
-    setSaveLoading(false)
-    status = Object.values(status)
-    const err = status.filter(item => item.success === false)
+    setSaveLoading(false);
+    status = Object.values(status);
+    const err = status.filter((item) => item.success === false);
     if (err.length !== 0) {
-      err.forEach(item => message.error(item.msg))
+      err.forEach((item) => message.error(item.msg));
     } else {
-      message.success("Save!")
+      message.success("Save!");
     }
-  }
+  };
 
   return currentLayerId ? (
     <>
-      <div style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}>
-        <Button loading={saveLoading} type="primary" onClick={handleSaveLayer}>Save Layer Data</Button>
+      <div
+        style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}
+      >
+        <Button loading={saveLoading} type="primary" onClick={handleSaveLayer}>
+          Save Layer Data
+        </Button>
       </div>
       <Divider />
       <h2 style={{ textAlign: "center" }}>Geom Detail</h2>
@@ -267,7 +251,7 @@ const AddForm = () => {
         style={{ marginTop: 20 }}
         onFinish={onSave}
         className="geom-form"
-      // onValuesChange={handleValuesChange}
+        // onValuesChange={handleValuesChange}
       >
         <Form.Item label="Layer" name="layerID">
           <Select disabled style={{ width: "100%" }}>
@@ -289,21 +273,40 @@ const AddForm = () => {
             {layerCols.map((col, idx) => {
               if (col.column_name !== "layerID") {
                 return (
-                  <Form.Item label={col.column_name} key={idx} name={col.column_name}>
+                  <Form.Item
+                    label={col.column_name}
+                    key={idx}
+                    name={col.column_name}
+                  >
                     {col.data_type === "numeric" ? (
-                      <InputNumber disabled={isEditing}
+                      <InputNumber
+                        disabled={isEditing}
                         value={geom.properties[col.column_name]}
-                        onChange={(val) => handleOptionalChange([col.column_name], val, col.data_type)}
+                        onChange={(val) =>
+                          handleOptionalChange(
+                            [col.column_name],
+                            val,
+                            col.data_type
+                          )
+                        }
                       />
                     ) : (
-                        <Input disabled={isEditing}
-                          value={geom.properties[col.column_name]}
-                          onChange={(val) => handleOptionalChange([col.column_name], val, col.data_type)}
-                        />
-                      )}
+                      <Input
+                        disabled={isEditing}
+                        value={geom.properties[col.column_name]}
+                        onChange={(val) =>
+                          handleOptionalChange(
+                            [col.column_name],
+                            val,
+                            col.data_type
+                          )
+                        }
+                      />
+                    )}
                   </Form.Item>
-                )
+                );
               }
+              return null;
             })}
 
             <Form.Item label="Geom" name="geometry">
@@ -360,11 +363,7 @@ const AddForm = () => {
               }}
             >
               <Tooltip title="Delete">
-                <Button
-                  type="primary"
-                  onClick={handleDelete}
-                  danger
-                >
+                <Button type="primary" onClick={handleDelete} danger>
                   <DeleteFilled />
                 </Button>
               </Tooltip>
@@ -374,11 +373,11 @@ const AddForm = () => {
       </Form>
     </>
   ) : (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={<Text>Vui lòng chọn layer</Text>}
-      />
-    );
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={<Text>Vui lòng chọn layer</Text>}
+    />
+  );
 };
 
 export default AddForm;

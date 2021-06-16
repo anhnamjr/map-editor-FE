@@ -7,7 +7,6 @@ import {
   CLEAR_LAYER_DATA,
   TOGGLE_UNSAVE,
   SET_CURRENT_EDIT_LAYER,
-  SET_UNSAVE,
 } from "../../constants/actions";
 import { BASE_URL } from "../../constants/endpoint";
 import EditModal from "./components/EditModal";

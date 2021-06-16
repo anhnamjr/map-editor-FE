@@ -20,8 +20,7 @@ const MapSidebar = ({ map }) => {
   const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("maps");
-  const { geom = null, isEditing } = useSelector((state) => state.storeGeom);
-  const { unSaveGeom } = useSelector((state) => state.unSaveReducer);
+  const { geom = null } = useSelector((state) => state.storeGeom);
 
   const onClose = () => setCollapsed(true);
 
