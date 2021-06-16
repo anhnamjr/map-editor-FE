@@ -31,7 +31,7 @@ export default function AddMap() {
   };
 
   const onFinishFailed = (errorInfo) => {
-    message.danger(errorInfo);
+    message.error("Vui lòng nhập tên map!");
   };
 
   return (
