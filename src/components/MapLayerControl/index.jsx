@@ -1,7 +1,7 @@
 import React from "react";
 import { LayersControl, TileLayer } from "react-leaflet";
 
-const { BaseLayer, Overlay } = LayersControl;
+const { BaseLayer } = LayersControl;
 
 export default function MapLayerControl() {
   return (
