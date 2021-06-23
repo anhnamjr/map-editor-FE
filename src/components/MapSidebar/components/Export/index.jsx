@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Select, Button } from "antd";
+import { Select, Button, message } from "antd";
 import { useSelector } from "react-redux";
 import { AXIOS_INSTANCE } from "../../../../config/requestInterceptor";
 import { BASE_URL } from "../../../../constants/endpoint";
@@ -27,30 +27,31 @@ const Export = () => {
 
   const handleExport = () => {
     setLoading(true);
-    AXIOS_INSTANCE.request({
-      url: `${BASE_URL}/export/geojson?layerID=${selected}&layerName=${toSlug(
-        layerName
-      )}`,
-      method: "GET",
-    })
-      .then((res) => {
-        setFileLink(res.data.file);
-        setLoading(false);
+    if (layerName !== null && layerName !== "") {
+      AXIOS_INSTANCE.request({
+        url: `${BASE_URL}/export/geojson?layerID=${selected}&layerName=${toSlug(
+          layerName
+        )}`,
+        method: "GET",
       })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+        .then((res) => {
+          setFileLink(res.data.file);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      message.error("Vui lòng chọn layer!");
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <h3>Select layer to export</h3>
-      <Select
-        mode="multiple"
-        style={{ width: "100%", marginTop: 10 }}
-        onChange={handleChange}
-      >
+      <Select style={{ width: "100%", marginTop: 10 }} onChange={handleChange}>
         {mapList &&
           mapList.map((item) => (
             <OptGroup key={item.key} label={item.title}>

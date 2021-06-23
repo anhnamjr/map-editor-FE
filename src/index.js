@@ -11,11 +11,14 @@ import SignUp from "./pages/SignUp";
 
 import "./styles.css";
 import { PrivateRoute } from "./components/PrivateRoute";
-const middleware = [];
-middleware.push(applyMiddleware(thunk));
-if (process.env.REACT_APP_NODE_ENV === "development")
-  middleware.push(window.__REDUX_DEVTOOLS_EXTENSION__());
-const store = createStore(rootReducer, compose(...middleware));
+
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(thunk),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
 
 const rootElement = document.getElementById("root");
 

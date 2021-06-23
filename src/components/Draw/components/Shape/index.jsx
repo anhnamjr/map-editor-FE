@@ -23,6 +23,7 @@ export default function Shape({ item }) {
   const shapeRef = useRef();
   const temp = useSelector((state) => state.storeShapeRef);
   const newColor = useSelector((state) => state.colorReducer);
+  const { currentEditLayer } = useSelector((state) => state.treeReducer);
 
   useEffect(() => {
     if (item.properties.geoID === temp.shapeRef) {
@@ -72,9 +73,11 @@ export default function Shape({ item }) {
   }, [newColor, temp]);
 
   const onClickShape = () => {
-    dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
-    dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
-    dispatch({ type: STORE_GEOM_COOR, payload: item });
+    if (item.properties.layerID === currentEditLayer) {
+      dispatch({ type: STORE_SHAPE_REF, payload: item.properties.geoID });
+      dispatch({ type: SET_FULL_COLOR, payload: { ...color } });
+      dispatch({ type: STORE_GEOM_COOR, payload: item });
+    }
   };
 
   if (item.geometry.type === "LineString") {
